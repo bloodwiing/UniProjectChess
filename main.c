@@ -1,22 +1,19 @@
 #include <stdio.h>
 #include "con_lib.h"
-#include "piece.h"
-
-void generateOriginalSet();
+#include "defaults.h"
 
 int main() {
+    Team * team = createDefaultTeamBlack();
 
-}
+    printTeam(team);
 
-void generateOriginalSet() {
-    FILE * file = fopen("set/original.chess", "wb");
+    FILE * stream = fopen("set/original.chess", "wb");
+    saveTeam(team, stream);
+    fclose(stream);
 
-    // pawn
-    Move pawn_moves[1];
-    fillMove(pawn_moves + 0, 0, 1);
-    Move pawn_attack[2];
-    fillMove(pawn_attack + 0, 1, 1);
-    fillMove(pawn_attack + 1, -1, 1);
-    MoveSet * pawn_set = createMoveSet(pawn_moves, 1, pawn_attack, 2);
-    Piece * piece = createPiece();
+    stream = fopen("set/original.chess", "rb");
+    Team * loaded = loadTeam(stream);
+    fclose(stream);
+
+    printTeam(loaded);
 }
