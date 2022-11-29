@@ -115,7 +115,7 @@ void initDefaultKing(Piece * piece, uint8_t team) {
 }
 
 Team * createDefaultTeamWhite() {
-    Piece * pieces = calloc(sizeof(Piece), 6);
+    Piece * pieces = calloc(6, sizeof(Piece));
     initDefaultPawn(pieces + 0, 1);
     initDefaultRook(pieces + 1, 1);
     initDefaultKnight(pieces + 2, 1);
@@ -127,9 +127,8 @@ Team * createDefaultTeamWhite() {
 }
 
 Team * createDefaultTeamBlack() {
-    Piece * pieces = calloc(sizeof(Piece), 6);
+    Piece * pieces = calloc(6, sizeof(Piece));
     initDefaultPawn(pieces + 0, 0);
-    printMoveSet(pieces[0].move_set);
     initDefaultRook(pieces + 1, 0);
     initDefaultKnight(pieces + 2, 0);
     initDefaultBishop(pieces + 3, 0);
@@ -137,4 +136,11 @@ Team * createDefaultTeamBlack() {
     initDefaultKing(pieces + 5, 0);
 
     return createTeam("Black", "\x1B[30m", pieces, 6);
+}
+
+Board * createDefaultBoard() {
+    Team * teams = calloc(2, sizeof(Team));
+    memcpy(teams + 0, createDefaultTeamBlack(), sizeof(Team));
+    memcpy(teams + 1, createDefaultTeamWhite(), sizeof(Team));
+    return createBoard("Normal", 8, 8, teams, 2);
 }

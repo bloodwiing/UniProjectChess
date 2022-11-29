@@ -21,9 +21,6 @@ Team * loadTeam(FILE * stream) {
     out->pieces = malloc(sizeof(Piece) * out->piece_count);
     for (int i = 0; i < out->piece_count; i++)
         loadPiece(out->pieces + i, stream);
-    printf("\n\n------\n");
-    printTeam(out);
-    printf("\n\n------\n");
     return out;
 }
 

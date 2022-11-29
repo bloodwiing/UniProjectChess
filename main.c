@@ -3,17 +3,17 @@
 #include "defaults.h"
 
 int main() {
-    Team * team = createDefaultTeamBlack();
+    Board * board = createDefaultBoard();
 
-    printTeam(team);
+    printBoard(board);
 
     FILE * stream = fopen("set/original.chess", "wb");
-    saveTeam(team, stream);
+    saveBoard(board, stream);
     fclose(stream);
 
     stream = fopen("set/original.chess", "rb");
-    Team * loaded = loadTeam(stream);
+    Board * loaded = loadBoard(stream);
     fclose(stream);
 
-    printTeam(loaded);
+    printBoard(loaded);
 }

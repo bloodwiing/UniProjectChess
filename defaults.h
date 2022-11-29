@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "piece.h"
 #include "team.h"
+#include "board.h"
 
 Piece * createDefaultPawn(uint8_t team);
 Piece * createDefaultRook(uint8_t team);
@@ -14,5 +15,7 @@ Piece * createDefaultKing(uint8_t team);
 
 Team * createDefaultTeamWhite();
 Team * createDefaultTeamBlack();
+
+Board * createDefaultBoard();
 
 #endif
