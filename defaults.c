@@ -72,7 +72,7 @@ void initDefaultBishop(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 4, moves, 4);
 
     // create the piece
-    initPiece(piece, "Rook", team == 1 ? "♖" : "♜", team == 1 ? 'r' : 'R', false, false, team, move_set);
+    initPiece(piece, "Rook", team == 1 ? "♖" : "♜", team == 1 ? 'b' : 'B', false, false, team, move_set);
 }
 
 void initDefaultQueen(Piece * piece, uint8_t team) {
