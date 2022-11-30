@@ -3,17 +3,17 @@
 #include "defaults.h"
 
 int main() {
-    Board * board = createDefaultBoard();
+    Scenario * scenario = createDefaultScenario();
 
-    printBoard(board);
+    printScenario(scenario);
 
-    FILE * stream = fopen("set/original.chess", "wb");
-    saveBoard(board, stream);
+    FILE * stream = fopen("scenario/original.chess", "wb");
+    saveScenario(scenario, stream);
     fclose(stream);
 
-    stream = fopen("set/original.chess", "rb");
-    Board * loaded = loadBoard(stream);
+    stream = fopen("scenario/original.chess", "rb");
+    Scenario * loaded = loadScenario(stream);
     fclose(stream);
 
-    printBoard(loaded);
+    printScenario(loaded);
 }

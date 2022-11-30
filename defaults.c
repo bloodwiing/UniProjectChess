@@ -1,6 +1,6 @@
 #include "defaults.h"
 #include <string.h>
-#include "defs.h"
+#include "model/defs.h"
 
 void initDefaultPawn(Piece * piece, uint8_t team) {
     // move possibilities
@@ -139,7 +139,7 @@ Team * createDefaultTeamBlack() {
     return createTeam("Black", "\x1B[30m", pieces, 6);
 }
 
-Board * createDefaultBoard() {
+Scenario * createDefaultScenario() {
     Team * teams = calloc(2, sizeof(Team));
     memcpy(teams + 0, createDefaultTeamBlack(), sizeof(Team));
     memcpy(teams + 1, createDefaultTeamWhite(), sizeof(Team));
@@ -166,5 +166,5 @@ Board * createDefaultBoard() {
     spawns[30] = *createSpawn(6, 7, 0, 2);  // black knight
     spawns[31] = *createSpawn(7, 7, 0, 1);  // black rook
 
-    return createBoard("Normal", 8, 8, teams, 2, spawns, 32);
+    return createScenario("Normal", 8, 8, teams, 2, spawns, 32);
 }
