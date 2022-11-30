@@ -13,8 +13,8 @@ typedef enum InputType {
 typedef struct UserSettings {
 
     struct {
-        bool colourful;
-        bool unicode;
+        bool_t colourful;
+        bool_t unicode;
     } display;
 
     InputType inputs;

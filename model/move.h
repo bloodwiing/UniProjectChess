@@ -6,10 +6,10 @@
 
 typedef struct Move {
     int8_t x, y;
-    bool repeat;
+    bool_t repeat;
 } Move;
 
-void initMove(Move * move, int8_t x, int8_t y, bool repeat);
+void initMove(Move * move, int8_t x, int8_t y, bool_t repeat);
 void printMove(Move move);
 
 #endif

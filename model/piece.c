@@ -1,7 +1,7 @@
 #include "piece.h"
 #include <string.h>
 
-void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool upgradable, bool protect, uint8_t team, MoveSet * move_set) {
+void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, uint8_t team, MoveSet * move_set) {
     strcpy(piece->name, name);
     wcscpy(piece->unicode, unicode);
     piece->symbol = symbol;

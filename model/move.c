@@ -1,7 +1,7 @@
 #include "move.h"
 #include <stdio.h>
 
-void initMove(Move * move, int8_t x, int8_t y, bool repeat) {
+void initMove(Move * move, int8_t x, int8_t y, bool_t repeat) {
     move->x = x;
     move->y = y;
     move->repeat = repeat;
