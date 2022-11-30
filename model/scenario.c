@@ -37,16 +37,16 @@ Scenario * loadScenario(FILE * stream) {
 }
 
 void printScenario(Scenario * scenario) {
-    printf("Scenario: \n"
-           "\tName: %s\n"
-           "\tSize X: %d\n"
-           "\tSize Y: %d\n"
-           "\tTeams:\n",
-           scenario->name, scenario->size_x, scenario->size_y);
+    wprintf(L"Scenario: \n"
+             "\tName: %s\n"
+             "\tSize X: %d\n"
+             "\tSize Y: %d\n"
+             "\tTeams:\n",
+             scenario->name, scenario->size_x, scenario->size_y);
     for (int i = 0; i < scenario->team_count; i++)
         printTeam(scenario->teams + i);
 
-    printf("\tSpawns:\n");
+    wprintf(L"\tSpawns:\n");
     for (int i = 0; i < scenario->spawn_count; i++)
         printSpawnResolved(scenario->spawns + i, scenario);
 }
@@ -65,10 +65,10 @@ Spawn * createSpawnFromPiece(Scenario * scenario, uint8_t x, uint8_t y, Piece * 
 void printSpawnResolved(Spawn * spawn, Scenario * scenario) {
     Team * team = scenario->teams + spawn->team;
     Piece * piece = team->pieces + spawn->type;
-    printf("Spawn (Resolved): \n"
-           "\tX: %d\n"
-           "\tY: %d\n"
-           "\tTeam: %s\n"
-           "\tPiece: %s\n",
-           spawn->x, spawn->y, team->name, piece->name);
+    wprintf(L"Spawn (Resolved): \n"
+             "\tX: %d\n"
+             "\tY: %d\n"
+             "\tTeam: %s\n"
+             "\tPiece: %s\n",
+             spawn->x, spawn->y, team->name, piece->name);
 }

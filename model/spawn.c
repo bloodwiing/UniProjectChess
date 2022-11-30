@@ -20,10 +20,10 @@ Spawn * loadSpawn(FILE * stream) {
 }
 
 void printSpawn(Spawn * spawn) {
-    printf("Spawn: \n"
-           "\tX: %d\n"
-           "\tY: %d\n"
-           "\tTeam: %d\n"
-           "\tPiece: %d",
-           spawn->x, spawn->y, spawn->team, spawn->type);
+    wprintf(L"Spawn: \n"
+             "\tX: %d\n"
+             "\tY: %d\n"
+             "\tTeam: %d\n"
+             "\tPiece: %d",
+             spawn->x, spawn->y, spawn->team, spawn->type);
 }

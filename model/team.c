@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-Team * createTeam(char * name, char * colour, Piece * pieces, uint8_t piece_count) {
+Team * createTeam(char * name, int colour, Piece * pieces, uint8_t piece_count) {
     Team * out = malloc(sizeof(Team));
     strcpy(out->name, name);
-    strcpy(out->colour, colour);
+    out->colour = colour;
     out->pieces = pieces;
     out->piece_count = piece_count;
     return out;
@@ -27,10 +27,10 @@ Team * loadTeam(FILE * stream) {
 }
 
 void printTeam(Team * team) {
-    printf("Team: \n"
-           "\tName: %s\n"
-           "\tPieces:\n",
-           team->name);
+    wprintf(L"Team: \n"
+             "\tName: %s\n"
+             "\tPieces:\n",
+             team->name);
     for (int i = 0; i < team->piece_count; i++)
         printPiece(team->pieces + i);
 }

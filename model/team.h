@@ -7,13 +7,13 @@
 
 typedef struct Team {
     char name[20];
-    char colour[6];
+    int colour;
 
     uint8_t piece_count;
     Piece * pieces;
 } Team;
 
-Team * createTeam(char * name, char * colour, Piece * pieces, uint8_t piece_count);
+Team * createTeam(char * name, int colour, Piece * pieces, uint8_t piece_count);
 void saveTeam(Team * team, FILE * stream);
 Team * loadTeam(FILE * stream);
 void printTeam(Team * team);

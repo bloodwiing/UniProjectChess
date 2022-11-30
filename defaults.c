@@ -1,6 +1,7 @@
 #include "defaults.h"
 #include <string.h>
 #include "model/defs.h"
+#include "ui/con_lib.h"
 
 void initDefaultPawn(Piece * piece, uint8_t team) {
     // move possibilities
@@ -17,7 +18,7 @@ void initDefaultPawn(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 1, attacks, 2);
 
     // create the piece
-    initPiece(piece, "Pawn", team == 1 ? "♙" : "♟", team == 1 ? 'p' : 'P', true, false, team, move_set);
+    initPiece(piece, "Pawn", team == 1 ? L"♙" : L"♟", team == 1 ? 'p' : 'P', true, false, team, move_set);
 }
 
 void initDefaultRook(Piece * piece, uint8_t team) {
@@ -33,7 +34,7 @@ void initDefaultRook(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 4, moves, 4);
 
     // create the piece
-    initPiece(piece, "Rook", team == 1 ? "♖" : "♜", team == 1 ? 'r' : 'R', false, false, team, move_set);
+    initPiece(piece, "Rook", team == 1 ? L"♖" : L"♜", team == 1 ? 'r' : 'R', false, false, team, move_set);
 }
 
 void initDefaultKnight(Piece * piece, uint8_t team) {
@@ -56,7 +57,7 @@ void initDefaultKnight(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 8, moves, 8);
 
     // create the piece
-    initPiece(piece, "Knight", team == 1 ? "♘" : "♞", team == 1 ? 'n' : 'N', false, false, team, move_set);
+    initPiece(piece, "Knight", team == 1 ? L"♘" : L"♞", team == 1 ? 'n' : 'N', false, false, team, move_set);
 }
 
 void initDefaultBishop(Piece * piece, uint8_t team) {
@@ -72,7 +73,7 @@ void initDefaultBishop(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 4, moves, 4);
 
     // create the piece
-    initPiece(piece, "Rook", team == 1 ? "♖" : "♜", team == 1 ? 'b' : 'B', false, false, team, move_set);
+    initPiece(piece, "Rook", team == 1 ? L"♖" : L"♜", team == 1 ? 'b' : 'B', false, false, team, move_set);
 }
 
 void initDefaultQueen(Piece * piece, uint8_t team) {
@@ -92,7 +93,7 @@ void initDefaultQueen(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 8, moves, 8);
 
     // create the piece
-    initPiece(piece, "Queen", team == 1 ? "♕" : "♛", team == 1 ? 'q' : 'Q', false, false, team, move_set);
+    initPiece(piece, "Queen", team == 1 ? L"♕" : L"♛", team == 1 ? 'q' : 'Q', false, false, team, move_set);
 }
 
 void initDefaultKing(Piece * piece, uint8_t team) {
@@ -112,7 +113,7 @@ void initDefaultKing(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 8, moves, 8);
 
     // create the piece
-    initPiece(piece, "King", team == 1 ? "♔" : "♚", team == 1 ? 'k' : 'K', false, true, team, move_set);
+    initPiece(piece, "King", team == 1 ? L"♔" : L"♚", team == 1 ? 'k' : 'K', false, true, team, move_set);
 }
 
 Team * createDefaultTeamWhite() {
@@ -124,7 +125,7 @@ Team * createDefaultTeamWhite() {
     initDefaultQueen(pieces + 4, 1);
     initDefaultKing(pieces + 5, 1);
 
-    return createTeam("White", "\x1B[37m", pieces, 6);
+    return createTeam("White", COLOR_ORANGE, pieces, 6);
 }
 
 Team * createDefaultTeamBlack() {
@@ -136,7 +137,7 @@ Team * createDefaultTeamBlack() {
     initDefaultQueen(pieces + 4, 0);
     initDefaultKing(pieces + 5, 0);
 
-    return createTeam("Black", "\x1B[30m", pieces, 6);
+    return createTeam("Black", COLOR_RED, pieces, 6);
 }
 
 Scenario * createDefaultScenario() {

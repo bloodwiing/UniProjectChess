@@ -8,6 +8,6 @@ void initMove(Move * move, int8_t x, int8_t y, bool repeat) {
 }
 
 void printMove(Move move) {
-    printf("x %d, y %d, repeat %s\n",
-           move.x, move.y, move.repeat == true ? "YES" : "NO");
+    wprintf(L"x %d, y %d, repeat %s\n",
+             move.x, move.y, move.repeat == true ? "YES" : "NO");
 }

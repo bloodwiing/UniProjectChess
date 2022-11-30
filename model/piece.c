@@ -1,9 +1,9 @@
 #include "piece.h"
 #include <string.h>
 
-void initPiece(Piece * piece, char * name, char * unicode, char symbol, bool upgradable, bool protect, uint8_t team, MoveSet * move_set) {
+void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool upgradable, bool protect, uint8_t team, MoveSet * move_set) {
     strcpy(piece->name, name);
-    strcpy(piece->unicode, unicode);
+    wcscpy(piece->unicode, unicode);
     piece->symbol = symbol;
     piece->upgradable = upgradable;
     piece->protect = protect;
@@ -22,14 +22,14 @@ void loadPiece(Piece * piece, FILE * stream) {
 }
 
 void printPiece(Piece * piece) {
-    printf("Piece: \n"
-           "\tName: %s\n"
-           "\tUnicode: %s\n"
-           "\tSymbol: %c\n"
-           "\tUpgradable: %s\n"
-           "\tProtect: %s\n"
-           "\tTeam: %d\n"
-           "\tMove Set:\n",
-           piece->name, piece->unicode, piece->symbol, piece->upgradable ? "Yes" : "No", piece->protect ? "Yes" : "No", piece->team);
+    wprintf(L"Piece: \n"
+             "\tName: %s\n"
+             "\tUnicode: %ls\n"
+             "\tSymbol: %c\n"
+             "\tUpgradable: %s\n"
+             "\tProtect: %s\n"
+             "\tTeam: %d\n"
+             "\tMove Set:\n",
+             piece->name, piece->unicode, piece->symbol, piece->upgradable ? "Yes" : "No", piece->protect ? "Yes" : "No", piece->team);
     printMoveSet(piece->move_set);
 }

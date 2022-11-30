@@ -36,16 +36,16 @@ MoveSet * loadMoveSet(FILE * stream) {
 }
 
 void printMoveSet(MoveSet * move_set) {
-    printf("Move Set:\n"
-           "\tMoves:\n");
+    wprintf(L"Move Set:\n"
+             "\tMoves:\n");
     for (int i = 0; i < move_set->move_count; i++) {
-        printf("\t\t");
+        wprintf(L"\t\t");
         printMove(move_set->moves[i]);
     }
 
-    printf("\tAttacks:\n");
+    wprintf(L"\tAttacks:\n");
     for (int i = 0; i < move_set->attack_count; i++) {
-        printf("\t\t");
+        wprintf(L"\t\t");
         printMove(move_set->attacks[i]);
     }
 }
