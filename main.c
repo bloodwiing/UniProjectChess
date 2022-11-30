@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include "defaults.h"
 #include "ui/board.h"
+#include "ui/con_lib.h"
+#include "settings/settings.h"
 
 int main() {
-    Scenario * scenario = createDefaultScenario();
-
-    Board * board = createBoard(scenario);
-    renderBoard(board, 0, 0, 0, 0, 50, 50);
+    UserSettings * settings = safeLoadUserSettings();
+    printf("%d %d %d", settings->inputs, settings->display.unicode, settings->display.colorful);
 }
