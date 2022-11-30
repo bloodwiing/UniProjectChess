@@ -1,4 +1,4 @@
-#include <stdbool.h>
+#include "defs.h"
 #include "defaults.h"
 
 void initDefaultPawn(Piece * piece, uint8_t team) {
@@ -142,5 +142,28 @@ Board * createDefaultBoard() {
     Team * teams = calloc(2, sizeof(Team));
     memcpy(teams + 0, createDefaultTeamBlack(), sizeof(Team));
     memcpy(teams + 1, createDefaultTeamWhite(), sizeof(Team));
-    return createBoard("Normal", 8, 8, teams, 2);
+
+    Spawn * spawns = calloc(32, sizeof(Spawn));
+    spawns[0] = *createSpawn(0, 0, 1, 1);  // white rook
+    spawns[1] = *createSpawn(1, 0, 1, 2);  // white knight
+    spawns[2] = *createSpawn(2, 0, 1, 3);  // white bishop
+    spawns[3] = *createSpawn(3, 0, 1, 4);  // white queen
+    spawns[4] = *createSpawn(4, 0, 1, 5);  // white king
+    spawns[5] = *createSpawn(5, 0, 1, 3);  // white bishop
+    spawns[6] = *createSpawn(6, 0, 1, 2);  // white knight
+    spawns[7] = *createSpawn(7, 0, 1, 1);  // white rook
+    for (int i = 0; i < 8; i++) {
+        spawns[8+i] = *createSpawn(i, 1, 1, 0);  // white pawn
+        spawns[16+i] = *createSpawn(i, 6, 0, 0);  // black pawn
+    }
+    spawns[24] = *createSpawn(0, 7, 0, 1);  // black rook
+    spawns[25] = *createSpawn(1, 7, 0, 2);  // black knight
+    spawns[26] = *createSpawn(2, 7, 0, 3);  // black bishop
+    spawns[27] = *createSpawn(3, 7, 0, 4);  // black queen
+    spawns[28] = *createSpawn(4, 7, 0, 5);  // black king
+    spawns[29] = *createSpawn(5, 7, 0, 3);  // black bishop
+    spawns[30] = *createSpawn(6, 7, 0, 2);  // black knight
+    spawns[31] = *createSpawn(7, 7, 0, 1);  // black rook
+
+    return createBoard("Normal", 8, 8, teams, 2, spawns, 32);
 }
