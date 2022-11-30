@@ -56,7 +56,7 @@ void initDefaultKnight(Piece * piece, uint8_t team) {
     initMoveSet(move_set, moves, 8, moves, 8);
 
     // create the piece
-    initPiece(piece, "Knight", team == 1 ? "♘" : "♞", team == 1 ? 'k' : 'K', false, false, team, move_set);
+    initPiece(piece, "Knight", team == 1 ? "♘" : "♞", team == 1 ? 'n' : 'N', false, false, team, move_set);
 }
 
 void initDefaultBishop(Piece * piece, uint8_t team) {
