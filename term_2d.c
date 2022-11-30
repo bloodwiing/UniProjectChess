@@ -1,4 +1,4 @@
-#include "con_lib.h"
+#include "ui/con_lib.h"
 
 // Piešia staciakampį
 // x, y - viršutinio kairio kampo koordinatės
