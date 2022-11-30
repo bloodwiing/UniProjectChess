@@ -1,4 +1,6 @@
 #include "team.h"
+#include <stdlib.h>
+#include <string.h>
 
 Team * createTeam(char * name, char * colour, Piece * pieces, uint8_t piece_count) {
     Team * out = malloc(sizeof(Team));
