@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include "../utils/files.h"
 
-const char user_setting_string[] = "INPUT %d\n"
-                                    "COLOURFUL %d\n"
-                                    "UNICODE %d";
+const char user_setting_string[] = "# ROOK'S GAMBIT Settings\n"
+                                   "input=%d\n"
+                                   "colourful=%d\n"
+                                   "unicode=%d";
 
 void initDefaultUserSettings(UserSettings * settings) {
     settings->inputs = Arrows;
-    settings->display.colorful = true;
+    settings->display.colourful = true;
     settings->display.unicode = false;
 }
 
@@ -19,18 +20,18 @@ UserSettings * createDefaultUserSettings() {
 }
 
 void saveSettings(UserSettings * settings, FILE * stream) {
-    fprintf(stream, user_setting_string, settings->inputs, settings->display.colorful, settings->display.unicode);
+    fprintf(stream, user_setting_string, settings->inputs, settings->display.colourful, settings->display.unicode);
 }
 
 UserSettings * loadSettings(FILE * stream) {
     UserSettings * out = calloc(sizeof(UserSettings), 1);
-    fscanf(stream, user_setting_string, &out->inputs, (int *)&out->display.colorful, (int *)&out->display.unicode);
+    fscanf(stream, user_setting_string, &out->inputs, (int *)&out->display.colourful, (int *)&out->display.unicode);
     return out;
 }
 
 int saveUserSettings(UserSettings * settings) {
     createDirectoryIfMissing("data");
-    FILE * file = fopen("data/settings.dat", "wb");
+    FILE * file = fopen("data/settings.ini", "wb");
     if (file == NULL) return -1;
     saveSettings(settings, file);
     fclose(file);
@@ -38,7 +39,7 @@ int saveUserSettings(UserSettings * settings) {
 }
 
 UserSettings * loadUserSettings() {
-    FILE * file = fopen("data/settings.dat", "rb");
+    FILE * file = fopen("data/settings.ini", "rb");
     if (file == NULL) return NULL;
     UserSettings * settings = loadSettings(file);
     fclose(file);
