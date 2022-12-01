@@ -12,4 +12,7 @@ size_t strU32len(uint32_t * string);
 size_t strU32lenAsU16(uint32_t * string);
 uint16_t * convertU32toU16(uint32_t * string, size_t size);
 
+wchar_t * createWStr(uint16_t * string, size_t size);
+uint16_t * createU16(wchar_t * string, size_t size);
+
 #endif //CHESS_ENCODING_H

@@ -73,3 +73,21 @@ uint16_t * convertU32toU16(uint32_t * string, size_t size) {
 
     return out;
 }
+
+#if defined(__SIZEOF_WCHAR_T__) && __SIZEOF_WCHAR_T__ == 4
+wchar_t * createWStr(uint16_t * string, size_t size) {
+    return (wchar_t *)convertU16toU32(string, size);
+}
+
+uint16_t * createU16(wchar_t * string, size_t size) {
+    return convertU32toU16((uint32_t *)string, size);
+}
+#else
+wchar_t * createWStr(uint16_t * string, size_t size) {
+    return (wchar_t *)string;
+}
+
+uint16_t * createU16(wchar_t * string, size_t size) {
+    return (uint16_t *)string;
+}
+#endif
