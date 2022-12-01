@@ -23,6 +23,8 @@ int main() {
     saveScenario(scenario, file);
     fclose(file);
 
+    wprintf(L"%d\n", sizeof(void *));
+
 //    con_clear();
 //    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
 }
