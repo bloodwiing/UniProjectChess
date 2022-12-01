@@ -15,12 +15,16 @@ int main() {
     UserSettings * settings = safeLoadUserSettings();
 
     createDirectoryIfMissing("scenario");
-    FILE * file = fopen("scenario/original.chess", "rb");
-    Scenario * scenario = loadScenario(file);
+//    FILE * file = fopen("scenario/original.chess", "rb");
+//    Scenario * scenario = loadScenario(file);
+//    fclose(file);
+    FILE * file = fopen("scenario/original.chess", "wb");
+    Scenario * scenario = createDefaultScenario();
+    saveScenario(scenario, file);
     fclose(file);
 
-    con_clear();
-    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
+//    con_clear();
+//    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
 }
 
 #ifdef _WIN32
