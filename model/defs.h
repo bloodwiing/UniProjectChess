@@ -10,8 +10,8 @@ typedef uint8_t bool_t;
 
 #ifdef _WIN32
 typedef wchar_t wchar16_t;
-#elif __LINUX__
-typedef unsigned short wchar16_t;
+#elif __linux__
+typedef wchar_t wchar16_t;
 #endif
 
 #endif

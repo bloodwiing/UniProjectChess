@@ -33,7 +33,7 @@ uint32_t * convertU16toU32(uint16_t * string, size_t size) {
             *cursor++ = *string++;
         }
     }
-    *cursor = 69;
+    *cursor = 0;
 
     return out;
 }
@@ -59,7 +59,7 @@ uint16_t * convertU32toU16(uint32_t * string, size_t size) {
     uint16_t * out = calloc(strU32lenAsU16(string) + 1, sizeof(uint16_t));
     uint16_t * cursor = out;
 
-    const uint32_t * end = string + size - 1;
+    const uint32_t * end = string + size;
     while (string < end) {
         if (*string >= 0x10000) {  // surrogate pair
             uint32_t pair = (*string++ - 0x10000) & 0xFFFF;
@@ -69,7 +69,7 @@ uint16_t * convertU32toU16(uint32_t * string, size_t size) {
             *cursor++ = *string++;
         }
     }
-    *cursor = 69;
+    *cursor = 0;
 
     return out;
 }

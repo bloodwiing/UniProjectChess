@@ -13,10 +13,16 @@ int main() {
     setlocale(LC_ALL, "");
     setupConsole();
 
+    wprintf(L"\nDebug\n");
+    uint16_t len_test[] = {10, 55357, 56833, 0};
+    wprintf(L"Len test: %d\n", strU16lenAsU32(len_test));
+
     wprintf(L"\nStart with UTF-16\n");
-    uint16_t test[] = L"\U0001F601This is a test\U0001F601\U0001F601\u0040";
+    uint16_t test[] = {55357, 56833, 84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 116, 101, 115, 116, 55357, 56833, 55357, 56833, 64, 0};
     wprintf(L"Length U16: %d\n", strU16len(test));
     wprintf(L"Length U16 as U32: %d\n", strU16lenAsU32(test));
+    wprintf(L"sizeof uint16_t: %d\n", sizeof(uint16_t));
+    wprintf(L"sizeof test[]: %d\n", sizeof(test));
     wprintf(L"[");
     for (int i = 0; i <= 21; i++) {
         wprintf(L"%hu ", *(test + i));
@@ -24,7 +30,7 @@ int main() {
     wprintf(L"]\n");
 
     wprintf(L"\nConvert to UTF-32\n");
-    uint32_t * test32 = convertU16toU32(test, 18);
+    uint32_t * test32 = convertU16toU32(test, 21);
     wprintf(L"Length U32: %d\n", strU32len(test32));
     wprintf(L"Length U32 as U16: %d\n", strU32lenAsU16(test32));
     wprintf(L"[");
@@ -34,7 +40,7 @@ int main() {
     wprintf(L"]\n");
 
     wprintf(L"\nBack to UTF-16\n");
-    uint16_t * res16 = convertU32toU16(test32, 21);
+    uint16_t * res16 = convertU32toU16(test32, 18);
     wprintf(L"Length U16: %d\n", strU16len(res16));
     wprintf(L"Length U16 as U32: %d\n", strU16lenAsU32(res16));
     wprintf(L"[");
