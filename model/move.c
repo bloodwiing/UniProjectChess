@@ -1,5 +1,5 @@
 #include "move.h"
-#include <stdio.h>
+#include <wchar.h>
 
 void initMove(Move * move, int8_t x, int8_t y, bool_t repeat) {
     move->x = x;

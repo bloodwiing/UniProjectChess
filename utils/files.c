@@ -4,7 +4,7 @@
 
 #ifdef __linux__
 void createDirectory(char * name) {
-    mkdir(name, 0600);
+    mkdir(name, 0775);
 }
 #elif defined(_WIN32)
 #include<direct.h>
@@ -16,7 +16,7 @@ void createDirectory(char * name) {
 void createDirectoryIfMissing(char * name) {
     struct stat st = {0};
 
-    if (stat("/some/directory", &st) == -1) {
+    if (stat(name, &st) == -1) {
         createDirectory(name);
     }
 }

@@ -1,5 +1,6 @@
 #include "moveset.h"
 #include <stdlib.h>
+#include <wchar.h>
 
 void initMoveSet(MoveSet * move_set, Move * moves, uint8_t move_count, Move * attacks, uint8_t attack_count) {
     move_set->moves = moves;

@@ -2,6 +2,7 @@
 #include "con_lib.h"
 #include <string.h>
 #include "render.h"
+#include <wchar.h>
 
 Board * createBoard(Scenario * scenario, UserSettings * settings) {
     Board * out = malloc(sizeof(Board));

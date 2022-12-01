@@ -1,4 +1,5 @@
 #include "spawn.h"
+#include <wchar.h>
 
 Spawn * createSpawn(uint8_t x, uint8_t y, uint8_t team, uint8_t type) {
     Spawn * out = malloc(sizeof(Spawn));

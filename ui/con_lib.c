@@ -1,4 +1,5 @@
 #include "con_lib.h"
+#include <wchar.h>
 
 // Bibliotekos realizacija. TOP SECRET
 #ifdef __linux__
@@ -15,9 +16,9 @@
 void con_setup_reset();
 
 void con_clear() {
-  printf("\x1B[0m"); // reset colour
-  printf("\x1B[1;1H"); // reset position
-  printf("\x1B[2J"); // clear screen
+  wprintf(L"\x1B[0m"); // reset colour
+  wprintf(L"\x1B[1;1H"); // reset position
+  wprintf(L"\x1B[2J"); // clear screen
 }
 
 void con_handle_abort() {
@@ -44,31 +45,31 @@ int con_read_key() {
 
 void con_set_color(int bg, int fg) {
   switch (bg) {
-    case COLOR_BLACK:   printf("\x1B[40m"); break;
-    case COLOR_RED:     printf("\x1B[41m"); break;
-    case COLOR_GREEN:   printf("\x1B[42m"); break;
-    case COLOR_ORANGE:  printf("\x1B[43m"); break;
-    case COLOR_BLUE:    printf("\x1B[44m"); break;
-    case COLOR_MAGENTA: printf("\x1B[45m"); break;
-    case COLOR_CYAN:    printf("\x1B[46m"); break;
-    case COLOR_GRAY:    printf("\x1B[47m"); break;
+    case COLOR_BLACK:   wprintf(L"\x1B[40m"); break;
+    case COLOR_RED:     wprintf(L"\x1B[41m"); break;
+    case COLOR_GREEN:   wprintf(L"\x1B[42m"); break;
+    case COLOR_ORANGE:  wprintf(L"\x1B[43m"); break;
+    case COLOR_BLUE:    wprintf(L"\x1B[44m"); break;
+    case COLOR_MAGENTA: wprintf(L"\x1B[45m"); break;
+    case COLOR_CYAN:    wprintf(L"\x1B[46m"); break;
+    case COLOR_GRAY:    wprintf(L"\x1B[47m"); break;
   }
 
   switch (fg) {
-    case COLOR_BLACK:   printf("\x1B[30m"); break;
-    case COLOR_RED:     printf("\x1B[31m"); break;
-    case COLOR_GREEN:   printf("\x1B[32m"); break;
-    case COLOR_ORANGE:  printf("\x1B[33m"); break;
-    case COLOR_BLUE:    printf("\x1B[34m"); break;
-    case COLOR_MAGENTA: printf("\x1B[35m"); break;
-    case COLOR_CYAN:    printf("\x1B[36m"); break;
-    case COLOR_GRAY:    printf("\x1B[37m"); break;
+    case COLOR_BLACK:   wprintf(L"\x1B[30m"); break;
+    case COLOR_RED:     wprintf(L"\x1B[31m"); break;
+    case COLOR_GREEN:   wprintf(L"\x1B[32m"); break;
+    case COLOR_ORANGE:  wprintf(L"\x1B[33m"); break;
+    case COLOR_BLUE:    wprintf(L"\x1B[34m"); break;
+    case COLOR_MAGENTA: wprintf(L"\x1B[35m"); break;
+    case COLOR_CYAN:    wprintf(L"\x1B[36m"); break;
+    case COLOR_GRAY:    wprintf(L"\x1B[37m"); break;
   }
 }
 
 void con_set_pos(int x, int y) {
   if (x >= 0 && y >= 0 && x < 400 && y < 200) {
-    printf("\x1B[%i;%iH", y + 1, x + 1);
+    wprintf(L"\x1B[%i;%iH", y + 1, x + 1);
   }
 }
 
@@ -80,9 +81,9 @@ void con_setup_reset() {
 
 void con_show_cursor(int show) {
   if (show) {
-    printf("\x1B[?25h");
+    wprintf(L"\x1B[?25h");
   } else {
-    printf("\x1B[?25l");
+    wprintf(L"\x1B[?25l");
   }
 }
 

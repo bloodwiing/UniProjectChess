@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "defs.h"
 #include "moveset.h"
+#include <wchar.h>
 
 typedef struct Piece {
     char name[20];
