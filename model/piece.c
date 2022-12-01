@@ -1,7 +1,8 @@
 #include "piece.h"
 #include <string.h>
+#include <stdlib.h>
 
-void initPiece(Piece * piece, char * name, wchar16_t * unicode, char symbol, bool_t upgradable, bool_t protect, uint8_t team, MoveSet * move_set) {
+void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, uint8_t team, MoveSet * move_set) {
     strcpy(piece->name, name);
     wcscpy(piece->unicode, unicode);
     piece->symbol = symbol;
@@ -12,12 +13,16 @@ void initPiece(Piece * piece, char * name, wchar16_t * unicode, char symbol, boo
 }
 
 void savePiece(Piece * piece, FILE * stream) {
-    fwrite(piece, sizeof(Piece) - sizeof(MoveSet *), 1, stream);
+    fwrite(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t[4]), 1, stream);
+    fwrite(createU16(piece->unicode, 4), sizeof(wchar16_t), 4, stream);
     saveMoveSet(piece->move_set, stream);
 }
 
 void loadPiece(Piece * piece, FILE * stream) {
-    fread(piece, sizeof(Piece) - sizeof(MoveSet *), 1, stream);
+    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar16_t[unicode_length]), 1, stream);
+    wchar16_t * name = malloc(sizeof(wchar16_t) * unicode_length);
+    fread(&name, sizeof(wchar16_t), unicode_length, stream);
+    memcpy(piece->name, createWStr(name, unicode_length), unicode_length);
     piece->move_set = loadMoveSet(stream);
 }
 

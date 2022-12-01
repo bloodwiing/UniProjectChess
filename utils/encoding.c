@@ -74,7 +74,8 @@ uint16_t * convertU32toU16(uint32_t * string, size_t size) {
     return out;
 }
 
-#if defined(__SIZEOF_WCHAR_T__) && __SIZEOF_WCHAR_T__ == 4
+#ifdef __SIZEOF_WCHAR_T__
+#if __SIZEOF_WCHAR_T__ == 4
 wchar_t * createWStr(uint16_t * string, size_t size) {
     return (wchar_t *)convertU16toU32(string, size);
 }
@@ -82,12 +83,13 @@ wchar_t * createWStr(uint16_t * string, size_t size) {
 uint16_t * createU16(wchar_t * string, size_t size) {
     return convertU32toU16((uint32_t *)string, size);
 }
-#else
-wchar_t * createWStr(uint16_t * string, size_t size) {
+#elif __SIZEOF_WCHAR_T__ == 2
+wchar_t * createWStr(wchar16_t * string, size_t size) {
     return (wchar_t *)string;
 }
 
-uint16_t * createU16(wchar_t * string, size_t size) {
-    return (uint16_t *)string;
+wchar16_t * createU16(wchar_t * string, size_t size) {
+    return (wchar16_t *)string;
 }
-#endif
+#endif // __SIZEOF_WCHAR_T__
+#endif // defined(__SIZEOF_WCHAR_T__)
