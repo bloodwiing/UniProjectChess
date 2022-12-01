@@ -2,7 +2,7 @@
 #include "scenario.h"
 #include <wchar.h>
 
-Scenario * createScenario(char * name, uint8_t size_x, uint8_t size_y, Team * teams, uint8_t team_count, Spawn * spawns, uint8_t spawn_count) {
+Scenario * createScenario(char * name, uint8_t size_x, uint8_t size_y, Team * teams, uint8_t team_count, Spawn * spawns, uint16_t spawn_count) {
     Scenario * out = malloc(sizeof(Scenario));
     strcpy(out->name, name);
     out->size_x = size_x;

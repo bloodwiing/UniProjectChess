@@ -10,13 +10,13 @@ typedef struct Scenario {
     uint8_t size_x, size_y;
 
     uint8_t team_count;
-    uint8_t spawn_count;
+    uint16_t spawn_count;
 
     Team * teams;
     Spawn * spawns;
 } Scenario;
 
-Scenario * createScenario(char * name, uint8_t size_x, uint8_t size_y, Team * teams, uint8_t team_count, Spawn * spawns, uint8_t spawn_count);
+Scenario * createScenario(char * name, uint8_t size_x, uint8_t size_y, Team * teams, uint8_t team_count, Spawn * spawns, uint16_t spawn_count);
 void saveScenario(Scenario * scenario, FILE * stream);
 Scenario * loadScenario(FILE * stream);
 void printScenario(Scenario * scenario);
