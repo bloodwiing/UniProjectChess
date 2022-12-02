@@ -12,6 +12,11 @@
 #define COLOR_GRAY      7
 #define COLOR_RESET     9
 
+// Ekrano dydis
+struct ConSize{
+    int height, width;
+};
+
 // Išvalo ekraną
 void con_clear();
 
@@ -44,5 +49,8 @@ void con_show_echo(int show);
 // Miega nurodytą sekundžių skaičių.
 // * seconds turi būti intervale [0.01; 100.0]
 void con_sleep(float seconds);
+
+// Grąžina ekrano dydį
+struct ConSize con_get_size();
 
 #endif // CON_LIB_H

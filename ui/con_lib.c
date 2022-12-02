@@ -115,6 +115,19 @@ void con_sleep(float seconds) {
   }
 }
 
+struct ConSize con_get_size() {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+    printf ("lines %d\n", w.ws_row);
+    printf ("columns %d\n", w.ws_col);
+
+    struct ConSize result;
+    result.width = w.ws_col;
+    result.height = w.ws_row;
+    return result;
+}
+
 #elif _WIN32
 
 #include <stdio.h>
@@ -162,6 +175,8 @@ int con_read_key() {
   return 0;
 }
 
+// Used for resetting to original colours
+WORD * defaultAttr = NULL;
 
 void con_set_color(int bg, int fg) {
   DWORD attr = 0;
@@ -291,6 +306,18 @@ void con_sleep(float seconds) {
   if (seconds >= 0.01f && seconds <= 100.0f) {
     Sleep((DWORD) (seconds * 1e3f));
   }
+}
+
+// Modified version of https://stackoverflow.com/questions/6812224/getting-terminal-size-in-c-for-windows/12642749#12642749
+struct ConSize con_get_size() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    struct ConSize size;
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    size.width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    size.height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    return size;
 }
 
 #endif // _WIN32
