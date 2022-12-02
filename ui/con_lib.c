@@ -12,6 +12,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 
 void con_setup_reset();
 
@@ -53,6 +54,7 @@ void con_set_color(int bg, int fg) {
     case COLOR_MAGENTA: wprintf(L"\x1B[45m"); break;
     case COLOR_CYAN:    wprintf(L"\x1B[46m"); break;
     case COLOR_GRAY:    wprintf(L"\x1B[47m"); break;
+    case COLOR_RESET:   wprintf(L"\x1B[49m"); break;
   }
 
   switch (fg) {
@@ -64,6 +66,7 @@ void con_set_color(int bg, int fg) {
     case COLOR_MAGENTA: wprintf(L"\x1B[35m"); break;
     case COLOR_CYAN:    wprintf(L"\x1B[36m"); break;
     case COLOR_GRAY:    wprintf(L"\x1B[37m"); break;
+    case COLOR_RESET:   wprintf(L"\x1B[39m"); break;
   }
 }
 
@@ -159,8 +162,18 @@ int con_read_key() {
   return 0;
 }
 
+
 void con_set_color(int bg, int fg) {
   DWORD attr = 0;
+
+  if (defaultAttr == NULL) {
+    defaultAttr = malloc(sizeof(WORD));
+    // https://stackoverflow.com/questions/25559077/how-to-get-background-color-back-to-previous-color-after-use-of-std-handle/25560218#25560218
+    CONSOLE_SCREEN_BUFFER_INFO Info;
+    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    GetConsoleScreenBufferInfo(hStdout, &Info);
+    *defaultAttr = Info.wAttributes;
+  }
 
   switch (bg) {
     case COLOR_RED:
@@ -189,6 +202,10 @@ void con_set_color(int bg, int fg) {
 
     case COLOR_GRAY:
       attr |= BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+      break;
+
+    default:
+      attr = *defaultAttr & (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
       break;
   }
 
@@ -219,6 +236,10 @@ void con_set_color(int bg, int fg) {
 
     case COLOR_GRAY:
       attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+      break;
+
+    default:
+      attr = *defaultAttr & (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
       break;
   }
 

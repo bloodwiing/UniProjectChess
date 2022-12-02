@@ -10,6 +10,7 @@
 #define COLOR_MAGENTA   5
 #define COLOR_CYAN      6
 #define COLOR_GRAY      7
+#define COLOR_RESET     9
 
 // Išvalo ekraną
 void con_clear();
