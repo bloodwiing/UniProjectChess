@@ -12,7 +12,7 @@ Board * createBoard(Scenario * scenario, UserSettings * settings) {
     out->width = scenario->size_x;
     out->height = scenario->size_y;
 
-    out->tiles = calloc(sizeof(Piece *), scenario->size_x * scenario->size_y * sizeof(Piece *));
+    out->tiles = calloc(scenario->size_x * scenario->size_y, sizeof(Piece *));
     for (int i = 0; i < scenario->spawn_count; i++) {
         Spawn * spawn = scenario->spawns + i;
         Team * team = scenario->teams + spawn->team;

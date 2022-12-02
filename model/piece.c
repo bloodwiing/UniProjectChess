@@ -13,13 +13,13 @@ void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool_
 }
 
 void savePiece(Piece * piece, FILE * stream) {
-    fwrite(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t[4]), 1, stream);
-    fwrite(createU16(piece->unicode, 4), sizeof(wchar16_t), 4, stream);
+    fwrite(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * unicode_length, 1, stream);
+    fwrite(createU16(piece->unicode, unicode_length), sizeof(wchar16_t), unicode_length, stream);
     saveMoveSet(piece->move_set, stream);
 }
 
 void loadPiece(Piece * piece, FILE * stream) {
-    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar16_t) * unicode_length, 1, stream);
+    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * unicode_length, 1, stream);
     wchar16_t name[unicode_length];
     fread(name, sizeof(wchar16_t), unicode_length, stream);
     memcpy(piece->unicode, createWStr(name, unicode_length), sizeof(wchar_t) * unicode_length);
