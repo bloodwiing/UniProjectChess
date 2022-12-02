@@ -27,17 +27,25 @@ void con_handle_abort() {
   exit(-1);
 }
 
-int con_read_key() {
+uint32_t con_read_key() {
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(STDIN_FILENO, &fds);
 
   struct timeval tv = { 0L, 0L };
   if (select(1, &fds, NULL, NULL, &tv)) {
-    unsigned char c;
+    uint32_t res = 0;
+    unsigned char c[4];
     size_t size;
     if ((size = read(0, &c, sizeof(c))) > 0) {
-      return c;
+      for (int i = 0; i < size; i++) {
+        unsigned char single = c[i];
+        if (single >= 65 && single <= 90)  // turn uppercase to lowercase
+          single += 32;
+        res <<= 8;
+        res |= single;
+      }
+      return res;
     }
   }
 

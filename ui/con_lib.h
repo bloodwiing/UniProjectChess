@@ -1,6 +1,8 @@
 #ifndef CON_LIB_H
 #define CON_LIB_H
 
+#include <stdint.h>
+
 // Spalvos
 #define COLOR_BLACK     0
 #define COLOR_RED       1
@@ -22,7 +24,7 @@ void con_clear();
 
 // Nuskaito vieną klavišą. 
 // Gražina 0, jei nėra ko daugiau skaityti
-int con_read_key();
+uint32_t con_read_key();
 
 // Nustato fono ir teksto spalvą
 // * bg - fono spalva (COLOR_*)
