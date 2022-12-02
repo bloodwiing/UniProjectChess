@@ -1,7 +1,14 @@
 #ifndef CHESS_FILES_H
 #define CHESS_FILES_H
 
-void createDirectory(char * name);
-void createDirectoryIfMissing(char * name);
+#include "../model/defs.h"
+
+void createDirectory(char * path);
+void createDirectoryIfMissing(char * path);
+
+char * combinePath(char * a, char * b);
+
+bool_t isPathFile(char * path);
+char ** listDirectoryFiles(char * path, size_t * count);
 
 #endif //CHESS_FILES_H
