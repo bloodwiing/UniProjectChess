@@ -6,7 +6,7 @@
 void renderText(wchar_t * format, ...) {
     va_list argv;
     va_start(argv, format);
-    vfwprintf_s(stdout, format, argv);
+    vfwprintf(stdout, format, argv);
     va_end(argv);
 }
 
@@ -16,7 +16,7 @@ void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * forma
 
     va_list argv;
     va_start(argv, format);
-    vfwprintf_s(stdout, format, argv);
+    vfwprintf(stdout, format, argv);
     va_end(argv);
 
     con_set_color(COLOR_RESET, COLOR_RESET);

@@ -4,13 +4,14 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #ifdef __linux__
 void createDirectory(char * name) {
     mkdir(name, 0775);
 }
 #elif defined(_WIN32)
-#include<direct.h>
+#include <direct.h>
 #include <stdio.h>
 
 void createDirectory(char * name) {
@@ -60,7 +61,7 @@ char ** listDirectoryFiles(char * path, size_t * count) {
         free(full);
     }
 
-    realloc(files, sizeof(char *) * (*count));
+    files = realloc(files, sizeof(char *) * (*count));
     closedir(dr);
 
     return files;
