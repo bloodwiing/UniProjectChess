@@ -5,6 +5,7 @@
 #include "settings/settings.h"
 #include <locale.h>
 #include "utils/files.h"
+#include "ui/view/mainmenu.h"
 
 void setupConsole();
 
@@ -14,10 +15,13 @@ int main() {
 
     UserSettings * settings = safeLoadUserSettings();
 
-    createDirectoryIfMissing("scenario");
-    FILE * file = fopen("scenario/original.chess", "rb");
-    Scenario * scenario = loadScenario(file);
-    fclose(file);
+    con_show_echo(false);
+    con_show_cursor(false);
+
+//    createDirectoryIfMissing("scenario");
+//    FILE * file = fopen("scenario/original.chess", "rb");
+//    Scenario * scenario = loadScenario(file);
+//    fclose(file);
 //    FILE * file = fopen("scenario/original.chess", "wb");
 //    Scenario * scenario = createDefaultScenario();
 //    saveScenario(scenario, file);
@@ -25,8 +29,10 @@ int main() {
 
 //    wprintf(L"%d\n", sizeof(void *));
 
-    con_clear();
-    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
+//    con_clear();
+//    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
+
+    mainMenuLoop(settings);
 }
 
 #ifdef _WIN32
