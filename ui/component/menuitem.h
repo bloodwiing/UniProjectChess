@@ -7,10 +7,9 @@
 typedef struct MenuItem {
     wchar_t text[30];
     void (*callback)();
-    bool_t selected;
 } MenuItem;
 
 MenuItem * createMenuItem(wchar_t * text, void (*callback)());
-void run(MenuItem * menu_item);
+void runMenuItem(MenuItem * menu_item);
 
 #endif //CHESS_MENUITEM_H

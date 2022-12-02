@@ -6,6 +6,7 @@
 #include <locale.h>
 #include "utils/files.h"
 #include "ui/view/mainmenu.h"
+#include "ui/render.h"
 
 void setupConsole();
 
@@ -29,7 +30,7 @@ int main() {
 
 //    wprintf(L"%d\n", sizeof(void *));
 
-//    con_clear();
+    con_clear();
 //    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
 
     mainMenuLoop(settings);

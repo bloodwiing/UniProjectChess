@@ -8,7 +8,7 @@ const char user_setting_string[] = "# ROOK'S GAMBIT Settings\n"
                                    "unicode=%d";
 
 void initDefaultUserSettings(UserSettings * settings) {
-    settings->inputs = Arrows;
+    settings->inputs = InputType_WASD;
     settings->display.colourful = true;
     settings->display.unicode = false;
 }

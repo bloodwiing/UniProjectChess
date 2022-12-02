@@ -5,9 +5,8 @@
 #include "../model/defs.h"
 
 typedef enum InputType {
-    WASD = 0,
-    Arrows = 1,
-    Commands = 2
+    InputType_WASD = 0,
+    InputType_Commands = 1
 } InputType;
 
 typedef struct UserSettings {
