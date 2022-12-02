@@ -162,7 +162,7 @@ void con_clear() {
   FillConsoleOutputAttribute(handle, 0, dwConSize, coordScreen, &cCharsWritten);
 }
 
-int con_read_key() {
+uint32_t con_read_key() {
   HANDLE handle = con_get_stdin();
   INPUT_RECORD input_record;
   DWORD num_events = 0;
@@ -175,8 +175,8 @@ int con_read_key() {
       break;
     }
 
-    if (input_record.EventType == KEY_EVENT) {
-      return input_record.Event.KeyEvent.uChar.AsciiChar;
+    if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown == TRUE) {
+      return input_record.Event.KeyEvent.wVirtualKeyCode;
     }
   }
 

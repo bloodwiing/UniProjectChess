@@ -5,8 +5,8 @@
 #include "../model/piece.h"
 #include "../model/team.h"
 
-void renderText(wchar_t * text);
-void renderTextColoured(UserSettings * settings, int fg, int bg, wchar_t * text);
+void renderText(wchar_t * format, ...);
+void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * format, ...);
 void renderPiece(UserSettings * settings, Team * team, Piece * piece);
 
 #endif //CHESS_RENDER_H
