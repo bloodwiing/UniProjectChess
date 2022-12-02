@@ -19,10 +19,10 @@ void savePiece(Piece * piece, FILE * stream) {
 }
 
 void loadPiece(Piece * piece, FILE * stream) {
-    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar16_t[unicode_length]), 1, stream);
-    wchar16_t * name = malloc(sizeof(wchar16_t) * unicode_length);
-    fread(&name, sizeof(wchar16_t), unicode_length, stream);
-    memcpy(piece->name, createWStr(name, unicode_length), unicode_length);
+    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar16_t) * unicode_length, 1, stream);
+    wchar16_t name[unicode_length];
+    fread(name, sizeof(wchar16_t), unicode_length, stream);
+    memcpy(piece->unicode, createWStr(name, unicode_length), sizeof(wchar_t) * unicode_length);
     piece->move_set = loadMoveSet(stream);
 }
 
