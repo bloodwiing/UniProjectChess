@@ -15,7 +15,7 @@ typedef struct MenuSelector {
 } MenuSelector;
 
 MenuSelector * createMenuSelector(UserSettings * settings);
-void addMenuItem(MenuSelector * menu_selector, wchar_t * name, void (*callback)());
+void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * data, void (*callback)(UserSettings *, char *));
 void displayMenuSelector(MenuSelector * menu_selector, int x, int y);
 bool_t updateMenuSelector(MenuSelector * menu_selector);
 

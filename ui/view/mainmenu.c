@@ -1,34 +1,35 @@
 #include "mainmenu.h"
 #include "../component/menuselector.h"
 #include "../con_lib.h"
+#include "scenariomenu.h"
 
-void onResume();
-void onStart();
-void onExit();
+void onMainMenuResume(UserSettings * settings, char * data);
+void onMainMenuStart(UserSettings * settings, char * data);
+void onMainMenuExit(UserSettings * settings, char * data);
 
 void mainMenuLoop(UserSettings * settings) {
+    con_clear();
     MenuSelector * selector = createMenuSelector(settings);
 
-    addMenuItem(selector, L"Resume", onResume);
-    addMenuItem(selector, L"Start", onStart);
-    addMenuItem(selector, L"Exit", onExit);
+    addMenuItem(selector, L"Resume", "", onMainMenuResume);
+    addMenuItem(selector, L"New Scenario", "", onMainMenuStart);
+    addMenuItem(selector, L"Quit", "", onMainMenuExit);
 
     while (updateMenuSelector(selector)) {
         displayMenuSelector(selector, 2, 2);
     }
 }
 
-void onResume() {
+void onMainMenuResume(UserSettings * settings, char * data) {
     con_set_pos(2, 10);
     wprintf(L"You're back!\n");
 }
 
-void onStart() {
-    con_set_pos(2, 10);
-    wprintf(L"Hello!      \n");
+void onMainMenuStart(UserSettings * settings, char * data) {
+    scenarioMenuLoop(settings);
 }
 
-void onExit() {
+void onMainMenuExit(UserSettings * settings, char * data) {
     con_set_pos(2, 10);
     wprintf(L"Goodbye!    \n");
 }

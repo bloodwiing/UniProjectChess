@@ -11,9 +11,9 @@ MenuSelector * createMenuSelector(UserSettings * settings) {
     return out;
 }
 
-void addMenuItem(MenuSelector * menu_selector, wchar_t * name, void (*callback)()) {
+void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * data, void (*callback)(UserSettings *, char *)) {
     menu_selector->items = realloc(menu_selector->items, sizeof(MenuItem) * ++(menu_selector->item_count));
-    menu_selector->items[menu_selector->item_count - 1] = createMenuItem(name, callback);
+    menu_selector->items[menu_selector->item_count - 1] = createMenuItem(menu_selector->settings, name, data, callback);
     if (menu_selector->item_count == 1)
         menu_selector->selected = 0;
 }

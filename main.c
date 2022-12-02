@@ -6,6 +6,7 @@
 #include <locale.h>
 #include "utils/files.h"
 #include "ui/view/mainmenu.h"
+#include "ui/view/scenariomenu.h"
 #include "ui/render.h"
 
 void setupConsole();
@@ -34,6 +35,7 @@ int main() {
 //    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
 
     mainMenuLoop(settings);
+//    scenarioMenuLoop(settings);
 }
 
 #ifdef _WIN32
