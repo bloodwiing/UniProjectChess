@@ -15,20 +15,22 @@ void mainMenuLoop(UserSettings * settings) {
     MenuSelector * selector = createMenuSelector(settings, updateMainMenu);
 
     con_set_pos(2, 1);
-    renderText(L"Rook's Gambit");
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"v0.2 beta");
+    con_set_pos(2, 2);
+    renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
 
     addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
-    addMenuItem(selector, L"New Scenario", "New day, new battle          ", onMainMenuStart);
-    addMenuItem(selector, L"Quit", "Leaving already?             ", onMainMenuExit);
+    addMenuItem(selector, L"New Scenario", "New day, new battle", onMainMenuStart);
+    addMenuItem(selector, L"Quit", "Leaving already?", onMainMenuExit);
 
     while (updateMenuSelector(selector)) {
-        displayMenuSelector(selector, 2, 3);
+        displayMenuSelector(selector, 2, 4);
     }
 }
 
 void updateMainMenu(UserSettings * settings, char * data) {
-    con_set_pos(5, 7);
-    renderTextColoured(settings, COLOR_RESET, COLOR_GREEN, L"%hs", data);
+    con_set_pos(5, 8);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MenuItemMaxStringLen, data);
 }
 
 void onMainMenuResume(UserSettings * settings, char * data) {

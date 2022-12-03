@@ -27,9 +27,9 @@ void displayMenuSelector(MenuSelector * menu_selector, int x, int y) {
         MenuItem * item = menu_selector->items[i];
 
         if (menu_selector->selected == i)
-            renderTextColoured(menu_selector->settings, COLOR_RESET, COLOR_YELLOW, L">> %ls", item->text);
+            renderTextColoured(menu_selector->settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L">> %ls", item->text);
         else
-            renderTextColoured(menu_selector->settings, COLOR_RESET, COLOR_GRAY, L"   %ls", item->text);
+            renderTextColoured(menu_selector->settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"   %ls", item->text);
     }
 }
 

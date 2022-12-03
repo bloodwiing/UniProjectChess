@@ -29,7 +29,7 @@ void scenarioMenuLoop(UserSettings * settings) {
     addMenuItem(selector, L"Back", "", onScenarioMenuLeave);
 
     con_set_pos(2, 1);
-    renderText(L"Scenario select");
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Scenario select");
 
     while (updateMenuSelector(selector)) {
         displayMenuSelector(selector, 2, 3);
@@ -37,13 +37,13 @@ void scenarioMenuLoop(UserSettings * settings) {
 }
 
 void updateScenarioMenu(UserSettings * settings, char * data) {
-    con_set_pos(2, 20);
-    wprintf(L"                                              ");
-
-    for (int i = 0; i < 20; ++i) {
-        con_set_pos(50, 2+i);
-        wprintf(L"                    ");
-    }
+//    con_set_pos(2, 20);
+//    wprintf(L"                                              ");
+//
+//    for (int i = 0; i < 20; ++i) {
+//        con_set_pos(50, 2+i);
+//        wprintf(L"                    ");
+//    }
 
     if (strlen(data) == 0)
         return;
@@ -54,7 +54,7 @@ void updateScenarioMenu(UserSettings * settings, char * data) {
     FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
     Scenario * scenario = loadScenario(file);
     fclose(file);
-    renderScenario(scenario, settings, 50, 2, 0, 0, 20, 20);
+    renderScenario(scenario, settings, 50, 2, 0, 0, 30, 10);
     free(scenario);
 }
 
