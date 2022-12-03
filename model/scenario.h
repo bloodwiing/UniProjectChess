@@ -5,6 +5,8 @@
 #include "team.h"
 #include "spawn.h"
 
+#define SCENARIO_FOLDER "./scenario"
+
 typedef struct Scenario {
     char name[20];
     uint8_t size_x, size_y;
