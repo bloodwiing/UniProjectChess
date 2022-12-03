@@ -9,6 +9,7 @@
 #include "ui/view/scenariomenu.h"
 #include "ui/render.h"
 #include "defaults.h"
+#include "ui/view/gamemenu.h"
 
 void setupConsole();
 
@@ -77,6 +78,8 @@ int main() {
 
     mainMenuLoop(settings);
 //    scenarioMenuLoop(settings);
+
+//    gameLoop(settings, s);
 }
 
 #ifdef _WIN32

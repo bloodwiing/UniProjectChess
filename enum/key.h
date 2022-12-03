@@ -8,7 +8,7 @@
 #define KEY_ARROW_UP 38
 #define KEY_ARROW_DOWN 40
 #define KEY_ARROW_LEFT 37
-#define KEY_ARROW_RIGHT 49
+#define KEY_ARROW_RIGHT 39
 
 #define KEY_W 87
 #define KEY_A 65
