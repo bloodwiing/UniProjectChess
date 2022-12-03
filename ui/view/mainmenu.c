@@ -1,3 +1,4 @@
+#include <malloc.h>
 #include "mainmenu.h"
 #include "../component/menuselector.h"
 #include "../con_lib.h"
@@ -26,6 +27,8 @@ void mainMenuLoop(UserSettings * settings) {
     while (updateMenuSelector(selector)) {
         displayMenuSelector(selector, 2, 4);
     }
+
+    free(selector);
 }
 
 void updateMainMenu(UserSettings * settings, char * data) {

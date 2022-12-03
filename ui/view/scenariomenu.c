@@ -8,6 +8,7 @@
 #include "../../model/scenario.h"
 #include "../render.h"
 #include "../board.h"
+#include "gamemenu.h"
 
 void updateScenarioMenu(UserSettings * settings, char * data);
 
@@ -34,33 +35,48 @@ void scenarioMenuLoop(UserSettings * settings) {
     while (updateMenuSelector(selector)) {
         displayMenuSelector(selector, 2, 3);
     }
+
+    for (int i = 0; i < count; i++) {
+        free(files + i);
+    }
+    free(files);
+    free(selector);
 }
 
 void updateScenarioMenu(UserSettings * settings, char * data) {
-//    con_set_pos(2, 20);
-//    wprintf(L"                                              ");
-//
-//    for (int i = 0; i < 20; ++i) {
-//        con_set_pos(50, 2+i);
-//        wprintf(L"                    ");
-//    }
-
-    if (strlen(data) == 0)
+    if (strlen(data) == 0) {
+        clearRect(50, 2, 30, 17);
         return;
-
-    con_set_pos(2, 20);
-    renderTextColoured(settings, COLOR_RESET, COLOR_GREEN, L"Currently selected: %hs", data);
+    }
 
     FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
     Scenario * scenario = loadScenario(file);
     fclose(file);
     renderScenario(scenario, settings, 50, 2, 0, 0, 30, 10);
+
+    con_set_pos(50, 14);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
+    con_set_pos(50, 15);
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Author: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->author);
+    con_set_pos(50, 17);
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Size: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d x %d", scenario->size_x, scenario->size_y);
+    con_set_pos(50, 18);
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Teams: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d", scenario->team_count);
+
     free(scenario);
 }
 
 void onScenarioMenuSelect(UserSettings * settings, char * data) {
-    con_set_pos(2, 20);
-    wprintf(L"Selected: %hs\n", data);
+    FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
+    Scenario * scenario = loadScenario(file);
+    fclose(file);
+    gameLoop(settings, scenario);
+    free(scenario);
+
+    scenarioMenuLoop(settings);
 }
 
 void onScenarioMenuLeave(UserSettings * settings, char * data) {
