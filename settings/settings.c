@@ -24,8 +24,10 @@ void saveSettings(UserSettings * settings, FILE * stream) {
 }
 
 UserSettings * loadSettings(FILE * stream) {
-    UserSettings * out = calloc(sizeof(UserSettings), 1);
-    fscanf(stream, user_setting_string, (int *)&out->inputs, (int *)&out->display.colourful, (int *)&out->display.unicode);
+    UserSettings * out = calloc(1, sizeof(UserSettings));
+    int input_type;
+    fscanf(stream, user_setting_string, &input_type, (int *)&out->display.colourful, (int *)&out->display.unicode);
+    out->inputs = input_type;
     return out;
 }
 
