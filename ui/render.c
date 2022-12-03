@@ -23,15 +23,20 @@ void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * forma
         con_set_color(COLOR_RESET, COLOR_RESET);
 }
 
-void renderPiece(UserSettings * settings, Team * team, Piece * piece) {
-    if (settings->display.colourful)
-        con_set_color(COLOR_RESET, team->colour);
-
+void renderPieceWithBackground(UserSettings * settings, Team * team, Piece * piece, int bg) {
     if (settings->display.unicode)
-        wprintf(L"%ls", piece->unicode);
+        renderTextColoured(settings, bg, team->colour, L"%ls", piece->unicode);
     else
-        wprintf(L"%c", piece->symbol);
+        renderTextColoured(settings, bg, team->colour, L"%c", piece->symbol);
+}
 
-    if (settings->display.colourful)
-        con_set_color(COLOR_RESET, COLOR_RESET);
+void renderPiece(UserSettings * settings, Team * team, Piece * piece) {
+    renderPieceWithBackground(settings, team, piece, COLOR_RESET);
+}
+
+void clearRect(int x, int y, int w, int h) {
+    for (int i = y; i < y + h;) {
+        con_set_pos(x, i++);
+        wprintf(L"%*s", w, "");
+    }
 }

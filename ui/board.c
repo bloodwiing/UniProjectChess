@@ -2,6 +2,7 @@
 #include "con_lib.h"
 #include <string.h>
 #include "render.h"
+#include "../engine/validation.h"
 #include <wchar.h>
 
 Board * createBoard(Scenario * scenario, UserSettings * settings) {
@@ -21,14 +22,16 @@ Board * createBoard(Scenario * scenario, UserSettings * settings) {
     }
 
     out->team_count = scenario->team_count;
-    out->teams = malloc(sizeof(Team *) * scenario->team_count);
+    out->teams = calloc(scenario->team_count, sizeof(Team));
     for (int i = 0; i < scenario->team_count; i++)
         out->teams[i] = scenario->teams[i];
+
+    out->turn = 0;
 
     return out;
 }
 
-void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h) {
+void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y) {
     int board_width = board->width * 2 + 1,
             board_height = board->height;
 
@@ -61,14 +64,22 @@ void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h
             }
 
             if (edge != ' ')
-                wprintf(L"%c", edge);
+                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%c", edge);
 
             else if (i % 2 == 1) {
                 int tile = i / 2 + j * board->width;
-                if (board->tiles[tile] != 0) {
-                    Piece *piece = board->tiles[tile];
-                    renderPiece(board->user_settings, board->teams + piece->team, piece);
-                } else wprintf(L" ");
+
+                bool_t valid = false;
+                if (sel_x != -1 && sel_y != -1)
+                    valid = validatePieceAnyMove(board, sel_x, sel_y, i / 2, j);
+
+                Piece *piece;
+                if ((piece = board->tiles[tile]) != NULL) {
+                    renderPieceWithBackground(board->user_settings, board->teams + piece->team, piece, valid ? COLOR_GREEN : COLOR_RESET);
+                } else {
+                    renderTextColoured(board->user_settings, valid ? COLOR_GREEN : COLOR_RESET, COLOR_LIGHT_GRAY, L" ");
+                }
+
             } else wprintf(L" ");
         }
 
@@ -79,6 +90,10 @@ void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h
         con_set_pos(pos_x - 1, pos_y + j + end++);
         wprintf(L"%*s", w, "");
     }
+}
+
+void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h) {
+    renderBoardWithSelection(board, pos_x, pos_y, i, j, w, h, -1, -1);
 }
 
 void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h) {

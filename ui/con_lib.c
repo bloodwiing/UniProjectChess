@@ -54,7 +54,7 @@ uint32_t con_read_key() {
 
 void con_set_color(int bg, int fg) {
   if (bg & COLOR_INTENSE) {
-    switch (bg) {
+    switch (bg & ~COLOR_INTENSE & 0b10111) {
       case COLOR_BLACK:   wprintf(L"\x1B[100m"); break;
       case COLOR_RED:     wprintf(L"\x1B[101m"); break;
       case COLOR_GREEN:   wprintf(L"\x1B[102m"); break;
@@ -80,7 +80,7 @@ void con_set_color(int bg, int fg) {
   }
 
   if (fg & COLOR_INTENSE) {
-    switch (fg) {
+    switch (fg & ~COLOR_INTENSE & 0b10111) {
       case COLOR_BLACK:   wprintf(L"\x1B[90m"); break;
       case COLOR_RED:     wprintf(L"\x1B[91m"); break;
       case COLOR_GREEN:   wprintf(L"\x1B[92m"); break;
@@ -214,6 +214,9 @@ uint32_t con_read_key() {
 // Used for resetting to original colours
 WORD * defaultAttr = NULL;
 
+#define FOREGROUND_BYTES (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY)
+#define BACKGROUND_BYTES (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY)
+
 void con_set_color(int bg, int fg) {
   DWORD attr = 0;
 
@@ -226,6 +229,7 @@ void con_set_color(int bg, int fg) {
     *defaultAttr = Info.wAttributes;
   }
 
+  if (bg & COLOR_INTENSE) attr |= BACKGROUND_INTENSITY;
   switch (bg & ~COLOR_INTENSE & 0b10111) {
     case COLOR_RED:
       attr |= BACKGROUND_RED;
@@ -256,13 +260,12 @@ void con_set_color(int bg, int fg) {
       break;
 
     case COLOR_RESET:
-      attr = *defaultAttr & (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+      attr = *defaultAttr & BACKGROUND_BYTES;
       break;
-
-    default: break;
   }
-  if (bg & COLOR_INTENSE) attr |= BACKGROUND_INTENSITY;
 
+  if (fg & COLOR_INTENSE) attr |= FOREGROUND_INTENSITY;
+  long a = fg & ~COLOR_INTENSE & 0b10111;
   switch (fg & ~COLOR_INTENSE & 0b10111) {
     case COLOR_RED:
       attr |= FOREGROUND_RED;
@@ -288,17 +291,14 @@ void con_set_color(int bg, int fg) {
       attr |= FOREGROUND_GREEN | FOREGROUND_BLUE;
       break;
 
-    case COLOR_DARK_GRAY:
+    case COLOR_LIGHT_GRAY:
       attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
       break;
 
-    case COLOR_LIGHT_GRAY:
-      attr = *defaultAttr & (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+    case COLOR_RESET:
+      attr = (*defaultAttr & FOREGROUND_BYTES) | (attr & BACKGROUND_BYTES);
       break;
-
-    default: break;
   }
-  if (fg & COLOR_INTENSE) attr |= FOREGROUND_INTENSITY;
 
   SetConsoleTextAttribute(con_get_stdout(), attr);
 }
