@@ -19,8 +19,6 @@ void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * forma
     vfwprintf(stdout, format, argv);
     va_end(argv);
 
-    con_set_color(COLOR_RESET, COLOR_RESET);
-
     if (settings->display.colourful)
         con_set_color(COLOR_RESET, COLOR_RESET);
 }

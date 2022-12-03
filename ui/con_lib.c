@@ -53,28 +53,56 @@ uint32_t con_read_key() {
 }
 
 void con_set_color(int bg, int fg) {
-  switch (bg) {
-    case COLOR_BLACK:   wprintf(L"\x1B[40m"); break;
-    case COLOR_RED:     wprintf(L"\x1B[41m"); break;
-    case COLOR_GREEN:   wprintf(L"\x1B[42m"); break;
-    case COLOR_ORANGE:  wprintf(L"\x1B[43m"); break;
-    case COLOR_BLUE:    wprintf(L"\x1B[44m"); break;
-    case COLOR_MAGENTA: wprintf(L"\x1B[45m"); break;
-    case COLOR_CYAN:    wprintf(L"\x1B[46m"); break;
-    case COLOR_GRAY:    wprintf(L"\x1B[47m"); break;
-    case COLOR_RESET:   wprintf(L"\x1B[49m"); break;
+  if (bg & COLOR_INTENSE) {
+    switch (bg) {
+      case COLOR_BLACK:   wprintf(L"\x1B[100m"); break;
+      case COLOR_RED:     wprintf(L"\x1B[101m"); break;
+      case COLOR_GREEN:   wprintf(L"\x1B[102m"); break;
+      case COLOR_ORANGE:  wprintf(L"\x1B[103m"); break;
+      case COLOR_BLUE:    wprintf(L"\x1B[104m"); break;
+      case COLOR_MAGENTA: wprintf(L"\x1B[105m"); break;
+      case COLOR_CYAN:    wprintf(L"\x1B[106m"); break;
+      case COLOR_GRAY:    wprintf(L"\x1B[107m"); break;
+      case COLOR_RESET:   wprintf(L"\x1B[49m"); break;
+    }
+  } else {
+    switch (bg) {
+      case COLOR_BLACK:   wprintf(L"\x1B[40m"); break;
+      case COLOR_RED:     wprintf(L"\x1B[41m"); break;
+      case COLOR_GREEN:   wprintf(L"\x1B[42m"); break;
+      case COLOR_ORANGE:  wprintf(L"\x1B[43m"); break;
+      case COLOR_BLUE:    wprintf(L"\x1B[44m"); break;
+      case COLOR_MAGENTA: wprintf(L"\x1B[45m"); break;
+      case COLOR_CYAN:    wprintf(L"\x1B[46m"); break;
+      case COLOR_GRAY:    wprintf(L"\x1B[47m"); break;
+      case COLOR_RESET:   wprintf(L"\x1B[49m"); break;
+    }
   }
 
-  switch (fg) {
-    case COLOR_BLACK:   wprintf(L"\x1B[30m"); break;
-    case COLOR_RED:     wprintf(L"\x1B[31m"); break;
-    case COLOR_GREEN:   wprintf(L"\x1B[32m"); break;
-    case COLOR_ORANGE:  wprintf(L"\x1B[33m"); break;
-    case COLOR_BLUE:    wprintf(L"\x1B[34m"); break;
-    case COLOR_MAGENTA: wprintf(L"\x1B[35m"); break;
-    case COLOR_CYAN:    wprintf(L"\x1B[36m"); break;
-    case COLOR_GRAY:    wprintf(L"\x1B[37m"); break;
-    case COLOR_RESET:   wprintf(L"\x1B[39m"); break;
+  if (fg & COLOR_INTENSE) {
+    switch (fg) {
+      case COLOR_BLACK:   wprintf(L"\x1B[90m"); break;
+      case COLOR_RED:     wprintf(L"\x1B[91m"); break;
+      case COLOR_GREEN:   wprintf(L"\x1B[92m"); break;
+      case COLOR_ORANGE:  wprintf(L"\x1B[93m"); break;
+      case COLOR_BLUE:    wprintf(L"\x1B[94m"); break;
+      case COLOR_MAGENTA: wprintf(L"\x1B[95m"); break;
+      case COLOR_CYAN:    wprintf(L"\x1B[96m"); break;
+      case COLOR_GRAY:    wprintf(L"\x1B[97m"); break;
+      case COLOR_RESET:   wprintf(L"\x1B[39m"); break;
+    }
+  } else {
+    switch (fg) {
+      case COLOR_BLACK:   wprintf(L"\x1B[30m"); break;
+      case COLOR_RED:     wprintf(L"\x1B[31m"); break;
+      case COLOR_GREEN:   wprintf(L"\x1B[32m"); break;
+      case COLOR_ORANGE:  wprintf(L"\x1B[33m"); break;
+      case COLOR_BLUE:    wprintf(L"\x1B[34m"); break;
+      case COLOR_MAGENTA: wprintf(L"\x1B[35m"); break;
+      case COLOR_CYAN:    wprintf(L"\x1B[36m"); break;
+      case COLOR_GRAY:    wprintf(L"\x1B[37m"); break;
+      case COLOR_RESET:   wprintf(L"\x1B[39m"); break;
+    }
   }
 }
 
@@ -198,7 +226,7 @@ void con_set_color(int bg, int fg) {
     *defaultAttr = Info.wAttributes;
   }
 
-  switch (bg) {
+  switch (bg & ~COLOR_INTENSE & 0b10111) {
     case COLOR_RED:
       attr |= BACKGROUND_RED;
       break;
@@ -223,16 +251,19 @@ void con_set_color(int bg, int fg) {
       attr |= BACKGROUND_GREEN | BACKGROUND_BLUE;
       break;
 
-    case COLOR_GRAY:
+    case COLOR_LIGHT_GRAY:
       attr |= BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
       break;
 
-    default:
+    case COLOR_RESET:
       attr = *defaultAttr & (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
       break;
-  }
 
-  switch (fg) {
+    default: break;
+  }
+  if (bg & COLOR_INTENSE) attr |= BACKGROUND_INTENSITY;
+
+  switch (fg & ~COLOR_INTENSE & 0b10111) {
     case COLOR_RED:
       attr |= FOREGROUND_RED;
       break;
@@ -257,14 +288,17 @@ void con_set_color(int bg, int fg) {
       attr |= FOREGROUND_GREEN | FOREGROUND_BLUE;
       break;
 
-    case COLOR_GRAY:
+    case COLOR_DARK_GRAY:
       attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
       break;
 
-    default:
+    case COLOR_LIGHT_GRAY:
       attr = *defaultAttr & (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
       break;
+
+    default: break;
   }
+  if (fg & COLOR_INTENSE) attr |= FOREGROUND_INTENSITY;
 
   SetConsoleTextAttribute(con_get_stdout(), attr);
 }

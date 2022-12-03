@@ -4,18 +4,31 @@
 #include <stdint.h>
 
 // Spalvos
-#define COLOR_BLACK     0
-#define COLOR_RED       1
-#define COLOR_GREEN     2
-#define COLOR_YELLOW    3
-#define COLOR_ORANGE    3
-#define COLOR_BLUE      4
-#define COLOR_MAGENTA   5
-#define COLOR_CYAN      6
-#define COLOR_GRAY      7
-#define COLOR_GREY      7
-#define COLOR_WHITE     7
-#define COLOR_RESET     9
+#define COLOR_BLACK       0
+#define COLOR_RED         1
+#define COLOR_GREEN       2
+#define COLOR_YELLOW      3
+#define COLOR_ORANGE      COLOR_YELLOW
+#define COLOR_BLUE        4
+#define COLOR_MAGENTA     5
+#define COLOR_CYAN        6
+#define COLOR_LIGHT_GRAY  7
+#define COLOR_LIGHT_GREY  COLOR_LIGHT_GRAY
+
+#define COLOR_INTENSE     8
+
+#define COLOR_DARK_GRAY       (COLOR_BLACK      | COLOR_INTENSE)
+#define COLOR_DARK_GREY       COLOR_DARK_GRAY
+#define COLOR_LIGHT_RED       (COLOR_RED        | COLOR_INTENSE)
+#define COLOR_LIGHT_GREEN     (COLOR_GREEN      | COLOR_INTENSE)
+#define COLOR_LIGHT_YELLOW    (COLOR_YELLOW     | COLOR_INTENSE)
+#define COLOR_LIGHT_ORANGE    COLOR_LIGHT_YELLOW
+#define COLOR_LIGHT_BLUE      (COLOR_BLUE       | COLOR_INTENSE)
+#define COLOR_LIGHT_MAGENTA   (COLOR_MAGENTA    | COLOR_INTENSE)
+#define COLOR_LIGHT_CYAN      (COLOR_CYAN       | COLOR_INTENSE)
+#define COLOR_WHITE           (COLOR_LIGHT_GRAY | COLOR_INTENSE)
+
+#define COLOR_RESET     16
 
 // Ekrano dydis
 struct ConSize{
