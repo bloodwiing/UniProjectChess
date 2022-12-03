@@ -55,53 +55,53 @@ uint32_t con_read_key() {
 void con_set_color(int bg, int fg) {
   if (bg & COLOR_INTENSE) {
     switch (bg & ~COLOR_INTENSE & 0b10111) {
-      case COLOR_BLACK:   wprintf(L"\x1B[100m"); break;
-      case COLOR_RED:     wprintf(L"\x1B[101m"); break;
-      case COLOR_GREEN:   wprintf(L"\x1B[102m"); break;
-      case COLOR_ORANGE:  wprintf(L"\x1B[103m"); break;
-      case COLOR_BLUE:    wprintf(L"\x1B[104m"); break;
-      case COLOR_MAGENTA: wprintf(L"\x1B[105m"); break;
-      case COLOR_CYAN:    wprintf(L"\x1B[106m"); break;
-      case COLOR_GRAY:    wprintf(L"\x1B[107m"); break;
-      case COLOR_RESET:   wprintf(L"\x1B[49m"); break;
+      case COLOR_BLACK:        wprintf(L"\x1B[100m"); break;
+      case COLOR_RED:          wprintf(L"\x1B[101m"); break;
+      case COLOR_GREEN:        wprintf(L"\x1B[102m"); break;
+      case COLOR_ORANGE:       wprintf(L"\x1B[103m"); break;
+      case COLOR_BLUE:         wprintf(L"\x1B[104m"); break;
+      case COLOR_MAGENTA:      wprintf(L"\x1B[105m"); break;
+      case COLOR_CYAN:         wprintf(L"\x1B[106m"); break;
+      case COLOR_LIGHT_GRAY:   wprintf(L"\x1B[107m"); break;
+      case COLOR_RESET:        wprintf(L"\x1B[49m"); break;
     }
   } else {
     switch (bg) {
-      case COLOR_BLACK:   wprintf(L"\x1B[40m"); break;
-      case COLOR_RED:     wprintf(L"\x1B[41m"); break;
-      case COLOR_GREEN:   wprintf(L"\x1B[42m"); break;
-      case COLOR_ORANGE:  wprintf(L"\x1B[43m"); break;
-      case COLOR_BLUE:    wprintf(L"\x1B[44m"); break;
-      case COLOR_MAGENTA: wprintf(L"\x1B[45m"); break;
-      case COLOR_CYAN:    wprintf(L"\x1B[46m"); break;
-      case COLOR_GRAY:    wprintf(L"\x1B[47m"); break;
-      case COLOR_RESET:   wprintf(L"\x1B[49m"); break;
+      case COLOR_BLACK:        wprintf(L"\x1B[40m"); break;
+      case COLOR_RED:          wprintf(L"\x1B[41m"); break;
+      case COLOR_GREEN:        wprintf(L"\x1B[42m"); break;
+      case COLOR_ORANGE:       wprintf(L"\x1B[43m"); break;
+      case COLOR_BLUE:         wprintf(L"\x1B[44m"); break;
+      case COLOR_MAGENTA:      wprintf(L"\x1B[45m"); break;
+      case COLOR_CYAN:         wprintf(L"\x1B[46m"); break;
+      case COLOR_LIGHT_GRAY:   wprintf(L"\x1B[47m"); break;
+      case COLOR_RESET:        wprintf(L"\x1B[49m"); break;
     }
   }
 
   if (fg & COLOR_INTENSE) {
     switch (fg & ~COLOR_INTENSE & 0b10111) {
-      case COLOR_BLACK:   wprintf(L"\x1B[90m"); break;
-      case COLOR_RED:     wprintf(L"\x1B[91m"); break;
-      case COLOR_GREEN:   wprintf(L"\x1B[92m"); break;
-      case COLOR_ORANGE:  wprintf(L"\x1B[93m"); break;
-      case COLOR_BLUE:    wprintf(L"\x1B[94m"); break;
-      case COLOR_MAGENTA: wprintf(L"\x1B[95m"); break;
-      case COLOR_CYAN:    wprintf(L"\x1B[96m"); break;
-      case COLOR_GRAY:    wprintf(L"\x1B[97m"); break;
-      case COLOR_RESET:   wprintf(L"\x1B[39m"); break;
+      case COLOR_BLACK:        wprintf(L"\x1B[90m"); break;
+      case COLOR_RED:          wprintf(L"\x1B[91m"); break;
+      case COLOR_GREEN:        wprintf(L"\x1B[92m"); break;
+      case COLOR_ORANGE:       wprintf(L"\x1B[93m"); break;
+      case COLOR_BLUE:         wprintf(L"\x1B[94m"); break;
+      case COLOR_MAGENTA:      wprintf(L"\x1B[95m"); break;
+      case COLOR_CYAN:         wprintf(L"\x1B[96m"); break;
+      case COLOR_LIGHT_GRAY:   wprintf(L"\x1B[97m"); break;
+      case COLOR_RESET:        wprintf(L"\x1B[39m"); break;
     }
   } else {
     switch (fg) {
-      case COLOR_BLACK:   wprintf(L"\x1B[30m"); break;
-      case COLOR_RED:     wprintf(L"\x1B[31m"); break;
-      case COLOR_GREEN:   wprintf(L"\x1B[32m"); break;
-      case COLOR_ORANGE:  wprintf(L"\x1B[33m"); break;
-      case COLOR_BLUE:    wprintf(L"\x1B[34m"); break;
-      case COLOR_MAGENTA: wprintf(L"\x1B[35m"); break;
-      case COLOR_CYAN:    wprintf(L"\x1B[36m"); break;
-      case COLOR_GRAY:    wprintf(L"\x1B[37m"); break;
-      case COLOR_RESET:   wprintf(L"\x1B[39m"); break;
+      case COLOR_BLACK:        wprintf(L"\x1B[30m"); break;
+      case COLOR_RED:          wprintf(L"\x1B[31m"); break;
+      case COLOR_GREEN:        wprintf(L"\x1B[32m"); break;
+      case COLOR_ORANGE:       wprintf(L"\x1B[33m"); break;
+      case COLOR_BLUE:         wprintf(L"\x1B[34m"); break;
+      case COLOR_MAGENTA:      wprintf(L"\x1B[35m"); break;
+      case COLOR_CYAN:         wprintf(L"\x1B[36m"); break;
+      case COLOR_LIGHT_GRAY:   wprintf(L"\x1B[37m"); break;
+      case COLOR_RESET:        wprintf(L"\x1B[39m"); break;
     }
   }
 }

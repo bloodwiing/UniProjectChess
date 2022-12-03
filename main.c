@@ -10,6 +10,7 @@
 #include "ui/render.h"
 #include "defaults.h"
 #include "ui/view/gamemenu.h"
+#include <string.h>
 
 void setupConsole();
 
