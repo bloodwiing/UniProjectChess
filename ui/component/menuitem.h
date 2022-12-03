@@ -5,7 +5,7 @@
 #include "../../model/defs.h"
 #include "../../settings/settings.h"
 
-#define MenuItemMaxStringLen 20
+#define MenuItemMaxStringLen 40
 
 typedef struct MenuItem {
     UserSettings * settings;
