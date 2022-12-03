@@ -5,13 +5,13 @@
 #include "../../model/defs.h"
 #include "../../settings/settings.h"
 
-#define MenuItemMaxStringLen 40
+#define MENU_ITEM_MAX_STRING_LEN 40
 
 typedef struct MenuItem {
     UserSettings * settings;
 
-    wchar_t text[MenuItemMaxStringLen];
-    char data[MenuItemMaxStringLen];
+    wchar_t text[MENU_ITEM_MAX_STRING_LEN];
+    char data[MENU_ITEM_MAX_STRING_LEN];
     void (*callback)(UserSettings *, char *);
 } MenuItem;
 

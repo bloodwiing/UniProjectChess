@@ -5,8 +5,8 @@
 MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, void (*callback)(UserSettings *, char *)) {
     MenuItem * out = malloc(sizeof(MenuItem));
     out->settings = settings;
-    wcsncpy(out->text, text, MenuItemMaxStringLen);
-    strncpy(out->data, data, MenuItemMaxStringLen);
+    wcsncpy(out->text, text, MENU_ITEM_MAX_STRING_LEN);
+    strncpy(out->data, data, MENU_ITEM_MAX_STRING_LEN);
     out->callback = callback;
     return out;
 }

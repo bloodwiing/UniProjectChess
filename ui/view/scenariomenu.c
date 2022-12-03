@@ -22,8 +22,8 @@ void scenarioMenuLoop(UserSettings * settings) {
     char ** files = listDirectoryFiles(SCENARIO_FOLDER, &count);
 
     for (int i = 0; i < count; i++) {
-        wchar_t name[MenuItemMaxStringLen];
-        mbstowcs(name, files[i], MenuItemMaxStringLen);
+        wchar_t name[MENU_ITEM_MAX_STRING_LEN];
+        mbstowcs(name, files[i], MENU_ITEM_MAX_STRING_LEN);
         addMenuItem(selector, name, files[i], onScenarioMenuSelect);
     }
     addMenuItem(selector, L"Back", "", onScenarioMenuLeave);

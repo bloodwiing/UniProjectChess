@@ -167,5 +167,5 @@ Scenario * createDefaultScenario() {
     spawns[30] = *createSpawn(6, 7, 1, 2);  // white knight
     spawns[31] = *createSpawn(7, 7, 1, 1);  // white rook
 
-    return createScenario("Normal", 8, 8, teams, 2, spawns, 32);
+    return createScenario("Normal", "BLOODWIING", 8, 8, teams, 2, spawns, 32);
 }

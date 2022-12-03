@@ -70,7 +70,7 @@ int main() {
     spawns[14] = *createSpawn(2, 3, 1, 0);  // white knight
     spawns[15] = *createSpawn(3, 3, 1, 0);  // white knight
 
-    Scenario * scenario = createScenario("Lol", 5, 5, teams, 2, spawns, 16);
+    Scenario * scenario = createScenario("Lol", "Someone random", 5, 5, teams, 2, spawns, 16);
     FILE * file = fopen("scenario/lol.chess", "wb");
     saveScenario(scenario, file);
     fclose(file);

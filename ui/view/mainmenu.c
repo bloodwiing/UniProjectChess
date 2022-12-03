@@ -30,7 +30,7 @@ void mainMenuLoop(UserSettings * settings) {
 
 void updateMainMenu(UserSettings * settings, char * data) {
     con_set_pos(5, 8);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MenuItemMaxStringLen, data);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MENU_ITEM_MAX_STRING_LEN, data);
 }
 
 void onMainMenuResume(UserSettings * settings, char * data) {
