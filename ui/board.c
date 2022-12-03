@@ -30,14 +30,15 @@ Board * createBoard(Scenario * scenario, UserSettings * settings) {
 
 void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h) {
     int board_width = board->width * 2 + 1,
-        board_height = board->height;
+            board_height = board->height;
 
     int width = w > board_width + 2 ? board_width + 2 : w,
-        height = h > board_height + 2 ? board_height + 2 : h;
+            height = h > board_height + 2 ? board_height + 2 : h;
 
     if (i > board_width + 2 - width) i = board_width + 2 - width;
     if (j > board_height + 2 - height) j = board_height + 2 - height;
     int reset_i = i - 1;
+    int reset_j = j - 1;
 
     pos_x += 1 - i;
     pos_y += 1 - j;
@@ -65,11 +66,18 @@ void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h
             else if (i % 2 == 1) {
                 int tile = i / 2 + j * board->width;
                 if (board->tiles[tile] != 0) {
-                    Piece * piece = board->tiles[tile];
+                    Piece *piece = board->tiles[tile];
                     renderPiece(board->user_settings, board->teams + piece->team, piece);
-                }
-            }
+                } else wprintf(L" ");
+            } else wprintf(L" ");
         }
+
+        wprintf(L"%*s", w - (width - reset_i) - 1, "");
+    }
+
+    for (int end = 0; end <= h - height - reset_j + 1;) {
+        con_set_pos(pos_x - 1, pos_y + j + end++);
+        wprintf(L"%*s", w, "");
     }
 }
 
