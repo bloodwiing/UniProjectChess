@@ -23,7 +23,7 @@ void mainMenuLoop(UserSettings * settings) {
     con_set_pos(2, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
 
-    if (isPathFile("./data/session.bin"))
+    if (isPathFile("./data/save.bin"))
         addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
     addMenuItem(selector, L"New Scenario", "New day, new battle", onMainMenuStart);
     addMenuItem(selector, L"Quit", "Leaving already?", onMainMenuExit);
