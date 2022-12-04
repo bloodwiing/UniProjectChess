@@ -19,7 +19,7 @@ void mainMenuLoop(UserSettings * settings) {
     MenuSelector * selector = createMenuSelector(settings, updateMainMenu);
 
     con_set_pos(2, 1);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"v0.2 beta");
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"v0.4 beta");
     con_set_pos(2, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
 

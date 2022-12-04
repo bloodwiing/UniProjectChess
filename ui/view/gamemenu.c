@@ -15,6 +15,7 @@ void gameLoop(UserSettings * settings, Board * board) {
     renderGameScreen(settings, state, board);
 
     bool_t game_active = true;
+    int16_t victor = -1;
 
     uint32_t key;
     while (game_active) {
@@ -53,6 +54,13 @@ void gameLoop(UserSettings * settings, Board * board) {
                         state->piece_selected = true;
                     } else {
                         if (validatePieceAnyMove(board, state->sel_x, state->sel_y, state->cur_x, state->cur_y)) {
+                            GamePiece * game_piece;
+                            if ((game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece) != NULL &&
+                                    getOriginalPiece(game_piece, board->scenario)->protect) {
+                                victor = board->active_turn;
+                                game_active = false;
+                                break;
+                            }
                             board->tiles[state->cur_x + board->width * state->cur_y]->game_piece = board->tiles[state->sel_x + board->width * state->sel_y]->game_piece;
                             board->tiles[state->sel_x + board->width * state->sel_y]->game_piece = NULL;
                             board->tiles[state->cur_x + board->width * state->cur_y]->game_piece->moves++;
@@ -75,12 +83,20 @@ void gameLoop(UserSettings * settings, Board * board) {
 //        con_sleep(0.08f);
     }
 
-    FILE * file = fopen("./data/save.bin", "wb");
+    if (victor == -1) {
+        FILE * file = fopen("./data/save.bin", "wb");
 
-    if (file != NULL) {
-        saveGameState(state, file);
-        fclose(file);
+        if (file != NULL) {
+            saveGameState(state, file);
+            fclose(file);
+        }
+    } else {
+        con_set_pos(2, 12);
+        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%hs ", (board->teams + victor)->name);
+        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"wins!");
+        con_sleep(3.0f);
     }
+
 
     free(state);
 }
