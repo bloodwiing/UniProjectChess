@@ -41,7 +41,7 @@ void updateMainMenu(UserSettings * settings, char * data) {
 }
 
 void onMainMenuResume(UserSettings * settings, char * data) {
-    FILE * file = fopen("./data/session.bin", "rb");
+    FILE * file = fopen("./data/save.bin", "rb");
     Board * board;
 
     if (file != NULL) {

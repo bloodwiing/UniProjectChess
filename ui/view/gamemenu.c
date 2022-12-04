@@ -75,7 +75,7 @@ void gameLoop(UserSettings * settings, Board * board) {
 //        con_sleep(0.08f);
     }
 
-    FILE * file = fopen("./data/session.bin", "wb");
+    FILE * file = fopen("./data/save.bin", "wb");
 
     if (file != NULL) {
         saveGameState(state, file);
