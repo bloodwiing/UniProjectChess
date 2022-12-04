@@ -43,13 +43,13 @@ bool_t updateMenuSelector(MenuSelector * menu_selector) {
         }
 
         switch (key) {
-            case (KEY_W):
-            case (KEY_ARROW_UP):
+            case KEY_W:
+            case KEY_ARROW_UP:
                 if (menu_selector->selected-- == 0) menu_selector->selected = menu_selector->item_count - 1;
                 runMenuSelectorUpdateCallback(menu_selector);
                 break;
-            case (KEY_S):
-            case (KEY_ARROW_DOWN):
+            case KEY_S:
+            case KEY_ARROW_DOWN:
                 if (menu_selector->selected++ == menu_selector->item_count - 1) menu_selector->selected = 0;
                 runMenuSelectorUpdateCallback(menu_selector);
                 break;
