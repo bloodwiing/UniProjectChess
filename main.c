@@ -1,15 +1,9 @@
 #include <stdio.h>
 #include "defaults.h"
-#include "engine/board.h"
 #include "ui/con_lib.h"
 #include "settings/settings.h"
 #include <locale.h>
-#include "utils/files.h"
 #include "ui/view/mainmenu.h"
-#include "ui/view/scenariomenu.h"
-#include "ui/render.h"
-#include "defaults.h"
-#include "ui/view/gamemenu.h"
 #include <string.h>
 
 void setupConsole();
@@ -23,19 +17,12 @@ int main() {
     con_show_echo(false);
     con_show_cursor(false);
 
-//    createDirectoryIfMissing("scenario");
-//    FILE * f = fopen("scenario/original.chess", "rb");
-//    Scenario * s = loadScenario(f);
-//    fclose(f);
+
     FILE * f = fopen("scenario/original.chess", "wb");
     Scenario * s = createDefaultScenario();
     saveScenario(s, f);
     fclose(f);
 
-//    wprintf(L"%d\n", sizeof(void *));
-
-    con_clear();
-//    renderScenario(scenario, settings, 5, 5, 0, 0, 20, 20);
 
     Piece * pieces = calloc(2, sizeof(Piece));
     initDefaultKnight(pieces + 0, 0);
@@ -72,15 +59,12 @@ int main() {
     spawns[14] = *createSpawn(2, 3, 1, 0);  // white knight
     spawns[15] = *createSpawn(3, 3, 1, 0);  // white knight
 
-    Scenario * scenario = createScenario("Lol", "Someone random", 5, 5, teams, 2, spawns, 16);
-    FILE * file = fopen("scenario/lol.chess", "wb");
+    Scenario * scenario = createScenario("Knight Square", "Other BLOODWIING", 5, 5, teams, 2, spawns, 16);
+    FILE * file = fopen("scenario/knights.chess", "wb");
     saveScenario(scenario, file);
     fclose(file);
 
     mainMenuLoop(settings);
-//    scenarioMenuLoop(settings);
-
-//    gameLoop(settings, s);
 }
 
 #ifdef _WIN32
