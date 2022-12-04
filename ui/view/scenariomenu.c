@@ -7,7 +7,7 @@
 #include "mainmenu.h"
 #include "../../model/scenario.h"
 #include "../render.h"
-#include "../board.h"
+#include "../../engine/board.h"
 #include "gamemenu.h"
 
 void updateScenarioMenu(UserSettings * settings, char * data);
@@ -71,10 +71,21 @@ void updateScenarioMenu(UserSettings * settings, char * data) {
 
 void onScenarioMenuSelect(UserSettings * settings, char * data) {
     FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
-    Scenario * scenario = loadScenario(file);
-    fclose(file);
-    gameLoop(settings, scenario);
+    Scenario * scenario;
+    Board * board;
+
+    if (file != NULL) {
+        scenario = loadScenario(file);
+        board = createBoard(scenario, settings);
+        fclose(file);
+    } else {
+        scenarioMenuLoop(settings);
+        return;
+    }
+
+    gameLoop(settings, board);
     free(scenario);
+    free(board);
 
     scenarioMenuLoop(settings);
 }

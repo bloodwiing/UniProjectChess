@@ -7,10 +7,11 @@
 #include "moveset.h"
 #include "../utils/encoding.h"
 
-#define unicode_length 4
+#define PIECE_UNICODE_LENGTH 4
+#define PIECE_NAME_LENGTH 20
 
 typedef struct Piece {
-    char name[20];
+    char name[PIECE_NAME_LENGTH];
 
     bool_t upgradable;
     bool_t protect;
@@ -18,7 +19,7 @@ typedef struct Piece {
     uint8_t team;
 
     char symbol;
-    wchar_t unicode[unicode_length];
+    wchar_t unicode[PIECE_UNICODE_LENGTH];
 
     MoveSet * move_set;
 } Piece;

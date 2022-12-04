@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "defaults.h"
-#include "ui/board.h"
+#include "engine/board.h"
 #include "ui/con_lib.h"
 #include "settings/settings.h"
 #include <locale.h>
@@ -41,13 +41,13 @@ int main() {
     initDefaultKnight(pieces + 0, 0);
     initDefaultKing(pieces + 1, 0);
 
-    Team * team1 = createTeam("Black", COLOR_RED, pieces, 2);
+    Team * team1 = createTeam("Black", COLOR_RED, pieces, 2, TeamDirectionUp);
 
     Piece * pieces2 = calloc(2, sizeof(Piece));
     initDefaultKnight(pieces2 + 0, 1);
     initDefaultKing(pieces2 + 1, 1);
 
-    Team * team2 = createTeam("White", COLOR_LIGHT_YELLOW, pieces2, 2);
+    Team * team2 = createTeam("White", COLOR_LIGHT_YELLOW, pieces2, 2, TeamDirectionDown);
 
     Team * teams = calloc(2, sizeof(Team));
     memcpy(teams + 0, team1, sizeof(Team));

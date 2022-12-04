@@ -15,6 +15,8 @@
 #define KEY_S 83
 #define KEY_D 68
 
+#define KEY_Q 81
+
 #elif __linux__
 
 #define KEY_ENTER 10
@@ -28,6 +30,8 @@
 #define KEY_A 97
 #define KEY_S 115
 #define KEY_D 100
+
+#define KEY_Q 113
 
 #endif
 

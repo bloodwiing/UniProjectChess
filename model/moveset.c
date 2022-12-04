@@ -2,20 +2,19 @@
 #include <stdlib.h>
 #include <wchar.h>
 
-void initMoveSet(MoveSet * move_set, Move * moves, uint8_t move_count, Move * attacks, uint8_t attack_count) {
+void initMoveSet(MoveSet * move_set, Move * moves, uint8_t move_count, Move * attacks, uint8_t attack_count, SpecialMove * specials, uint8_t special_count) {
     move_set->moves = moves;
     move_set->move_count = move_count;
     move_set->attacks = attacks;
     move_set->attack_count = attack_count;
+    move_set->specials = specials;
+    move_set->special_count = special_count;
 }
 
 void saveMoveSet(MoveSet * move_set, FILE * stream) {
-//    fwrite("---", 3, 1, stream);
     fwrite(&move_set->move_count, sizeof(uint8_t), 1, stream);
-//    fwrite("---", 3, 1, stream);
     for (int i = 0; i < move_set->move_count; i++)
         fwrite(move_set->moves + i, sizeof(Move), 1, stream);
-//    fwrite("---", 3, 1, stream);
 
     fwrite(&move_set->attack_count, sizeof(uint8_t), 1, stream);
     for (int i = 0; i < move_set->attack_count; i++)
@@ -38,15 +37,21 @@ MoveSet * loadMoveSet(FILE * stream) {
 
 void printMoveSet(MoveSet * move_set) {
     wprintf(L"Move Set:\n"
-             "\tMoves:\n");
+             "\tMoves: (%d)\n", move_set->move_count);
     for (int i = 0; i < move_set->move_count; i++) {
         wprintf(L"\t\t");
         printMove(move_set->moves[i]);
     }
 
-    wprintf(L"\tAttacks:\n");
+    wprintf(L"\tAttacks: (%d)\n", move_set->attack_count);
     for (int i = 0; i < move_set->attack_count; i++) {
         wprintf(L"\t\t");
         printMove(move_set->attacks[i]);
+    }
+
+    wprintf(L"\tSpecials: (%d)\n", move_set->special_count);
+    for (int i = 0; i < move_set->special_count; i++) {
+        wprintf(L"\t\t");
+        printSpecialMove(move_set->specials[i]);
     }
 }

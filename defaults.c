@@ -5,7 +5,7 @@
 
 void initDefaultPawn(Piece * piece, uint8_t team) {
     // move possibilities
-    Move * moves = malloc(sizeof(Move) * 1);
+    Move * moves = malloc(sizeof(Move));
     initMove(moves + 0, 0, 1, false);
 
     // attack possibilities
@@ -13,9 +13,13 @@ void initDefaultPawn(Piece * piece, uint8_t team) {
     initMove(attacks + 0, 1, 1, false);
     initMove(attacks + 1, -1, 1, false);
 
+    // special possibilities
+    SpecialMove * specials = malloc(sizeof(SpecialMove));
+    initSpecialMoveVulnerable(specials + 0, 0, 2, true, 0, -1);
+
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 1, attacks, 2);
+    initMoveSet(move_set, moves, 1, attacks, 2, specials, 1);
 
     // create the piece
     initPiece(piece, "Pawn", team == 1 ? L"♟" : L"♙", team == 1 ? 'p' : 'P', true, false, team, move_set);
@@ -31,7 +35,7 @@ void initDefaultRook(Piece * piece, uint8_t team) {
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 4, moves, 4);
+    initMoveSet(move_set, moves, 4, moves, 4, NULL, 0);
 
     // create the piece
     initPiece(piece, "Rook", team == 1 ? L"♜" : L"♖", team == 1 ? 'r' : 'R', false, false, team, move_set);
@@ -54,7 +58,7 @@ void initDefaultKnight(Piece * piece, uint8_t team) {
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 8, moves, 8);
+    initMoveSet(move_set, moves, 8, moves, 8, NULL, 0);
 
     // create the piece
     initPiece(piece, "Knight", team == 1 ? L"♞" : L"♘", team == 1 ? 'n' : 'N', false, false, team, move_set);
@@ -70,7 +74,7 @@ void initDefaultBishop(Piece * piece, uint8_t team) {
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 4, moves, 4);
+    initMoveSet(move_set, moves, 4, moves, 4, NULL, 0);
 
     // create the piece
     initPiece(piece, "Rook", team == 1 ? L"♜" : L"♖", team == 1 ? 'b' : 'B', false, false, team, move_set);
@@ -90,7 +94,7 @@ void initDefaultQueen(Piece * piece, uint8_t team) {
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 8, moves, 8);
+    initMoveSet(move_set, moves, 8, moves, 8, NULL, 0);
 
     // create the piece
     initPiece(piece, "Queen", team == 1 ? L"♛" : L"♕", team == 1 ? 'q' : 'Q', false, false, team, move_set);
@@ -110,7 +114,7 @@ void initDefaultKing(Piece * piece, uint8_t team) {
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 8, moves, 8);
+    initMoveSet(move_set, moves, 8, moves, 8, NULL, 0);
 
     // create the piece
     initPiece(piece, "King", team == 1 ? L"♚" : L"♔", team == 1 ? 'k' : 'K', false, true, team, move_set);
@@ -125,7 +129,7 @@ Team * createDefaultTeamWhite() {
     initDefaultQueen(pieces + 4, 1);
     initDefaultKing(pieces + 5, 1);
 
-    return createTeam("White", COLOR_LIGHT_ORANGE, pieces, 6);
+    return createTeam("White", COLOR_LIGHT_ORANGE, pieces, 6, TeamDirectionDown);
 }
 
 Team * createDefaultTeamBlack() {
@@ -137,7 +141,7 @@ Team * createDefaultTeamBlack() {
     initDefaultQueen(pieces + 4, 0);
     initDefaultKing(pieces + 5, 0);
 
-    return createTeam("Black", COLOR_RED, pieces, 6);
+    return createTeam("Black", COLOR_RED, pieces, 6, TeamDirectionUp);
 }
 
 Scenario * createDefaultScenario() {

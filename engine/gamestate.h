@@ -1,7 +1,8 @@
 #ifndef CHESS_GAMESTATE_H
 #define CHESS_GAMESTATE_H
 
-#include "../ui/board.h"
+#include "board.h"
+#include <stdio.h>
 
 typedef struct GameState {
     Board * board;
@@ -12,5 +13,7 @@ typedef struct GameState {
 } GameState;
 
 GameState * createGameState(Board * board);
+void saveGameState(GameState * game_state, FILE * stream);
+GameState * loadGameState(UserSettings * settings, FILE * stream);
 
 #endif //CHESS_GAMESTATE_H

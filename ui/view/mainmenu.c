@@ -4,6 +4,9 @@
 #include "../con_lib.h"
 #include "../render.h"
 #include "scenariomenu.h"
+#include "../../utils/files.h"
+#include "../../engine/board.h"
+#include "gamemenu.h"
 
 void updateMainMenu(UserSettings * settings, char * data);
 
@@ -20,7 +23,8 @@ void mainMenuLoop(UserSettings * settings) {
     con_set_pos(2, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
 
-    addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
+    if (isPathFile("./data/session.bin"))
+        addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
     addMenuItem(selector, L"New Scenario", "New day, new battle", onMainMenuStart);
     addMenuItem(selector, L"Quit", "Leaving already?", onMainMenuExit);
 
@@ -37,8 +41,19 @@ void updateMainMenu(UserSettings * settings, char * data) {
 }
 
 void onMainMenuResume(UserSettings * settings, char * data) {
-    con_set_pos(2, 10);
-    wprintf(L"You're back!\n");
+    FILE * file = fopen("./data/session.bin", "rb");
+    Board * board;
+
+    if (file != NULL) {
+        board = loadBoard(settings, file);
+        fclose(file);
+    } else {
+        mainMenuLoop(settings);
+        return;
+    }
+
+    gameLoop(settings, board);
+    mainMenuLoop(settings);
 }
 
 void onMainMenuStart(UserSettings * settings, char * data) {

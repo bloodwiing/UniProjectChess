@@ -3,7 +3,7 @@
 #include <wchar.h>
 
 Scenario * createScenario(char * name, char * author, uint8_t size_x, uint8_t size_y, Team * teams, uint8_t team_count, Spawn * spawns, uint16_t spawn_count) {
-    Scenario * out = malloc(sizeof(Scenario));
+    Scenario * out = calloc(1, sizeof(Scenario));
     strncpy(out->name, name, SCENARIO_MAX_STRING_LEN);
     strncpy(out->author, author, SCENARIO_MAX_STRING_LEN);
     out->size_x = size_x;
@@ -40,11 +40,12 @@ Scenario * loadScenario(FILE * stream) {
 
 void printScenario(Scenario * scenario) {
     wprintf(L"Scenario: \n"
-             "\tName: %s\n"
+             "\tName: %hs\n"
+             "\tAuthor: %hs\n"
              "\tSize X: %d\n"
              "\tSize Y: %d\n"
              "\tTeams:\n",
-             scenario->name, scenario->size_x, scenario->size_y);
+             scenario->name, scenario->author, scenario->size_x, scenario->size_y);
     for (int i = 0; i < scenario->team_count; i++)
         printTeam(scenario->teams + i);
 
@@ -70,7 +71,7 @@ void printSpawnResolved(Spawn * spawn, Scenario * scenario) {
     wprintf(L"Spawn (Resolved): \n"
              "\tX: %d\n"
              "\tY: %d\n"
-             "\tTeam: %s\n"
-             "\tPiece: %s\n",
+             "\tTeam: %hs\n"
+             "\tPiece: %hs\n",
              spawn->x, spawn->y, team->name, piece->name);
 }

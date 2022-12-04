@@ -13,16 +13,16 @@ void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool_
 }
 
 void savePiece(Piece * piece, FILE * stream) {
-    fwrite(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * unicode_length, 1, stream);
-    fwrite(createU16(piece->unicode, unicode_length), sizeof(wchar16_t), unicode_length, stream);
+    fwrite(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * PIECE_UNICODE_LENGTH, 1, stream);
+    fwrite(createU16(piece->unicode, PIECE_UNICODE_LENGTH), sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
     saveMoveSet(piece->move_set, stream);
 }
 
 void loadPiece(Piece * piece, FILE * stream) {
-    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * unicode_length, 1, stream);
-    wchar16_t name[unicode_length];
-    fread(name, sizeof(wchar16_t), unicode_length, stream);
-    memcpy(piece->unicode, createWStr(name, unicode_length), sizeof(wchar_t) * unicode_length);
+    fread(piece, sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * PIECE_UNICODE_LENGTH, 1, stream);
+    wchar16_t name[PIECE_UNICODE_LENGTH];
+    fread(name, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
+    memcpy(piece->unicode, createWStr(name, PIECE_UNICODE_LENGTH), sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
     piece->move_set = loadMoveSet(stream);
 }
 

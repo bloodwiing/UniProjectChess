@@ -36,7 +36,8 @@ char * combinePath(char * a, char * b) {
 bool_t isPathFile(char * path) {
     struct stat path_stat;
     stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
+    if (path == 0) return false;
+    return S_ISREG(path_stat.st_mode) != false;
 }
 
 char ** listDirectoryFiles(char * path, size_t * count) {
