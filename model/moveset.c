@@ -19,6 +19,10 @@ void saveMoveSet(MoveSet * move_set, FILE * stream) {
     fwrite(&move_set->attack_count, sizeof(uint8_t), 1, stream);
     for (int i = 0; i < move_set->attack_count; i++)
         fwrite(move_set->attacks + i, sizeof(Move), 1, stream);
+
+    fwrite(&move_set->special_count, sizeof(uint8_t), 1, stream);
+    for (int i = 0; i < move_set->special_count; i++)
+        fwrite(move_set->specials + i, sizeof(SpecialMove), 1, stream);
 }
 
 MoveSet * loadMoveSet(FILE * stream) {
@@ -31,6 +35,10 @@ MoveSet * loadMoveSet(FILE * stream) {
     fread(&out->attack_count, sizeof(uint8_t), 1, stream);
     out->attacks = malloc(sizeof(Move) * out->attack_count);
     fread(out->attacks, sizeof(Move), out->attack_count, stream);
+
+    fread(&out->special_count, sizeof(uint8_t), 1, stream);
+    out->specials = malloc(sizeof(Move) * out->special_count);
+    fread(out->specials, sizeof(SpecialMove), out->special_count, stream);
 
     return out;
 }
