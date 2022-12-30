@@ -2,6 +2,7 @@
 #include "con_lib.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include "../engine/validation.h"
 
 void renderText(wchar_t * format, ...) {
     va_list argv;
@@ -30,8 +31,140 @@ void renderPieceWithBackground(UserSettings * settings, Team * team, Piece * pie
         renderTextColoured(settings, bg, team->colour, L"%c", piece->symbol);
 }
 
+void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg) {
+    Piece * piece = getOriginalPiece(game_piece, scenario);
+    Team * team = scenario->teams + piece->team;
+    renderPieceWithBackground(settings, team, piece, bg);
+}
+
 void renderPiece(UserSettings * settings, Team * team, Piece * piece) {
     renderPieceWithBackground(settings, team, piece, COLOR_RESET);
+}
+
+char getEdgeChar(int i, int j, int board_width, int board_height) {
+    char edge = ' ';
+
+    if (i < 0 || i >= board_width)
+        edge = '|';
+    if (j < 0 || j >= board_height) {
+        if (edge != ' ')
+            edge = '+';
+        else
+            edge = '-';
+    }
+
+    return edge;
+}
+
+void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h) {
+    int board_width = board->width * 2 + 1,
+            board_height = board->height;
+
+    int width = w > board_width + 2 ? board_width + 2 : w,
+            height = h > board_height + 2 ? board_height + 2 : h;
+
+    if (i > board_width + 2 - width) i = board_width + 2 - width;
+    if (j > board_height + 2 - height) j = board_height + 2 - height;
+    int reset_i = i - 1;
+    int reset_j = j - 1;
+
+    pos_x += 1 - i;
+    pos_y += 1 - j;
+
+    width += i - 2;
+    height += j - 2;
+
+    for (--j; j <= height; ++j) {
+        for (i = reset_i; i <= width; ++i) {
+            con_set_pos(pos_x + i, pos_y + j);
+            char edge;
+
+            if ((edge = getEdgeChar(i, j, board_width, board_height)) != ' ')
+                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%c", edge);
+
+            else if (i % 2 == 1) {
+                int tile = i / 2 + j * board->width;
+
+                GamePiece * game_piece;
+                if ((game_piece = board->tiles[tile]->game_piece) != NULL)
+                    renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET);
+                else
+                    wprintf(L" ");
+            } else
+                wprintf(L" ");
+        }
+
+        wprintf(L"%*s", w - (width - reset_i) - 1, "");
+    }
+
+    for (int end = 0; end <= h - height - reset_j + 1;) {
+        con_set_pos(pos_x - 1, pos_y + j + end++);
+        wprintf(L"%*s", w, "");
+    }
+}
+
+void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y) {
+    renderBoard(board, pos_x, pos_y, i, j, w, h);
+
+    FILE * a = fopen("test.txt", "a");
+
+    uint8_t top_left_x = pos_x - i + 2,
+            top_left_y = pos_y - j + 1;
+
+    if (sel_x != -1 && sel_y != -1) {
+        Tile * selected = getTile(board, sel_x, sel_y);
+
+        fprintf(a, "Pos:  X: %d  Y: %d\n", sel_x, sel_y);
+        if (selected->game_piece != NULL)
+            fprintf(a, "Tile: %hs\n", getOriginalPiece(selected->game_piece, board->scenario)->name);
+        else
+            fprintf(a, "Tile: None\n");
+
+        fprintf(a, "Top Left:  X: %d  Y: %d\n", top_left_x, top_left_y);
+
+        for (int origin_index = 0; origin_index < selected->origin_count;) {
+
+            Path * target = selected->origins[origin_index++];
+
+            fprintf(a, "Origin Index: %d\n", origin_index);
+            fprintf(a, "Origin Vector:  X: %d  Y: %d\n", target->vector.x, target->vector.y);
+
+            uint8_t target_x = sel_x, target_y = sel_y;
+
+            while (target->next_path != NULL) {
+                fprintf(a, "Next PATH\n");
+
+                target_x += target->vector.x;
+                target_y += target->vector.y;
+
+                fprintf(a, "New Target X: %d\n", target_x);
+                fprintf(a, "New Target Y: %d\n", target_y);
+
+                Tile * tile = target->next_tile;
+                target = target->next_path;
+
+                con_set_pos(top_left_x + target_x * 2, top_left_y + target_y);
+
+                GamePiece * occupant;
+
+                if (((occupant = tile->game_piece) != NULL && occupant->team != selected->game_piece->team))
+                    renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);
+                else if (occupant == NULL)
+                    renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
+            }
+
+            fprintf(a, "End PATH\n");
+        }
+    }
+
+    fprintf(a, "\n\n");
+    fclose(a);
+}
+
+void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h) {
+    Board * board = createBoard(scenario, settings);
+    renderBoard(board, pos_x, pos_y, i, j, w, h);
+    free(board);
 }
 
 void clearRect(int x, int y, int w, int h) {

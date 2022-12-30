@@ -42,76 +42,32 @@ Board * createBoard(Scenario * scenario, UserSettings * settings) {
     return out;
 }
 
-void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y) {
-    int board_width = board->width * 2 + 1,
-            board_height = board->height;
-
-    int width = w > board_width + 2 ? board_width + 2 : w,
-            height = h > board_height + 2 ? board_height + 2 : h;
-
-    if (i > board_width + 2 - width) i = board_width + 2 - width;
-    if (j > board_height + 2 - height) j = board_height + 2 - height;
-    int reset_i = i - 1;
-    int reset_j = j - 1;
-
-    pos_x += 1 - i;
-    pos_y += 1 - j;
-
-    width += i - 2;
-    height += j - 2;
-
-    for (--j; j <= height; ++j) {
-        for (i = reset_i; i <= width; ++i) {
-            char edge = ' ';
-
-            con_set_pos(pos_x + i, pos_y + j);
-            if (i < 0 || i >= board_width)
-                edge = '|';
-            if (j < 0 || j >= board_height) {
-                if (edge != ' ')
-                    edge = '+';
-                else
-                    edge = '-';
-            }
-
-            if (edge != ' ')
-                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%c", edge);
-
-            else if (i % 2 == 1) {
-                int tile = i / 2 + j * board->width;
-
-                bool_t valid = false;
-                if (sel_x != -1 && sel_y != -1)
-                    valid = validatePieceAnyMove(board, sel_x, sel_y, i / 2, j);
-
-                GamePiece * game_piece;
-                if ((game_piece = board->tiles[tile]->game_piece) != NULL) {
-                    renderPieceWithBackground(board->user_settings, board->teams + game_piece->team,
-                                              getOriginalPiece(game_piece, board->scenario), valid ? COLOR_GREEN : COLOR_RESET);
-                } else {
-                    renderTextColoured(board->user_settings, valid ? COLOR_GREEN : COLOR_RESET, COLOR_LIGHT_GRAY, L" ");
-                }
-
-            } else wprintf(L" ");
-        }
-
-        wprintf(L"%*s", w - (width - reset_i) - 1, "");
-    }
-
-    for (int end = 0; end <= h - height - reset_j + 1;) {
-        con_set_pos(pos_x - 1, pos_y + j + end++);
-        wprintf(L"%*s", w, "");
-    }
+Team * getTeam(Board * board, int index) {
+    if (index < 0 || index >= board->team_count)
+        return NULL;
+    return board->teams + index;
 }
 
-void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h) {
-    renderBoardWithSelection(board, pos_x, pos_y, i, j, w, h, -1, -1);
+Team * getPieceTeam(Board * board, Piece * piece) {
+    return getTeam(board, piece->team);
 }
 
-void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h) {
-    Board * board = createBoard(scenario, settings);
-    renderBoard(board, pos_x, pos_y, i, j, w, h);
-    free(board);
+Team * getGamePieceTeam(Board * board, GamePiece * piece) {
+    return getTeam(board, piece->team);
+}
+
+Tile * getTile(Board * board, int x, int y) {
+    return board->tiles[x + board->width * y];
+}
+
+GamePiece * getBoardGamePiece(Board * board, int x, int y) {
+    return getTile(board, x, y)->game_piece;
+}
+
+Piece * getTilePiece(Board * board, Tile * tile) {
+    if (tile->game_piece == NULL)
+        return NULL;
+    return getOriginalPiece(tile->game_piece, board->scenario);
 }
 
 void saveBoard(Board * board, FILE * stream) {

@@ -1,1 +1,1 @@
-gcc -g -m64 main.c defaults.c model/move.c model/moveset.c model/piece.c model/team.c model/scenario.c model/spawn.c model/specialmove.c model/vector.c engine/gamestate.c engine/validation.c engine/board.c engine/gamepiece.c engine/tile.c ui/con_lib.c ui/render.c ui/view/mainmenu.c ui/view/scenariomenu.c ui/view/gamemenu.c ui/component/menuitem.c ui/component/menuselector.c settings/settings.c utils/files.c utils/encoding.c -o game.exe
+gcc -g -m64 *.c engine/**.c model/**.c settings/**.c ui/**.c ui/component/**.c ui/view/**.c utils/**.c -o game.exe

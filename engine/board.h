@@ -21,9 +21,15 @@ typedef struct Board {
 } Board;
 
 Board * createBoard(Scenario * scenario, UserSettings * settings);
-void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y);
-void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h);
-void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h);
+
+Team * getTeam(Board * board, int index);
+Team * getPieceTeam(Board * board, Piece * piece);
+Team * getGamePieceTeam(Board * board, GamePiece * piece);
+
+Tile * getTile(Board * board, int x, int y);
+GamePiece * getBoardGamePiece(Board * board, int x, int y);
+Piece * getTilePiece(Board * board, Tile * tile);
+
 void saveBoard(Board * board, FILE * stream);
 Board * loadBoard(UserSettings * settings, FILE * stream);
 

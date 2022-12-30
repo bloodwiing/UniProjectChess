@@ -53,7 +53,7 @@ void gameLoop(UserSettings * settings, Board * board) {
                         state->sel_y = state->cur_y;
                         state->piece_selected = true;
                     } else {
-                        if (validatePieceAnyMove(board, state->sel_x, state->sel_y, state->cur_x, state->cur_y)) {
+                        if (validatePath(board, state->sel_x, state->sel_y, state->cur_x, state->cur_y)) {
                             GamePiece * game_piece;
                             if ((game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece) != NULL &&
                                     getOriginalPiece(game_piece, board->scenario)->protect) {
@@ -65,7 +65,9 @@ void gameLoop(UserSettings * settings, Board * board) {
                             board->tiles[state->sel_x + board->width * state->sel_y]->game_piece = NULL;
                             board->tiles[state->cur_x + board->width * state->cur_y]->game_piece->moves++;
                             state->piece_selected = false;
-                            if (board->active_turn++ >= board->team_count - 1) board->active_turn = 0;
+                            updateTilePaths(board, state->sel_x, state->sel_y);
+                            updateTilePaths(board, state->cur_x, state->cur_y);
+//                            if (board->active_turn++ >= board->team_count - 1) board->active_turn = 0;
                         } else {
                             state->piece_selected = false;
                         }

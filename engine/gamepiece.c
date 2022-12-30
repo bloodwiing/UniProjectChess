@@ -27,8 +27,7 @@ GamePiece * loadGamePiece(FILE * stream) {
 
 void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, uint8_t x, uint8_t y) {
     game_piece->vulnerable = true;
-    Vector * vul_pos = normaliseCoordinates(x, y, (scenario->teams + game_piece->team)->direction);
-    game_piece->vul_x = (int16_t)x + vul_pos->x;
-    game_piece->vul_x = (int16_t)y + vul_pos->y;
-    free(vul_pos);
+    Vector vul_pos = normaliseCoordinates(x, y, (scenario->teams + game_piece->team)->direction);
+    game_piece->vul_x = (int16_t)x + vul_pos.x;
+    game_piece->vul_x = (int16_t)y + vul_pos.y;
 }

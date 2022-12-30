@@ -4,6 +4,7 @@
 #include "settings/settings.h"
 #include <locale.h>
 #include "ui/view/mainmenu.h"
+#include "ui/view/gamemenu.h"
 #include <string.h>
 
 void setupConsole();
@@ -65,7 +66,8 @@ int main() {
 //    fclose(file);
 
 
-    mainMenuLoop(settings);
+//    mainMenuLoop(settings);
+    gameLoop(settings, createBoard(createDefaultScenario(), settings));
 }
 
 #ifdef _WIN32
