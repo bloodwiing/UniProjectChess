@@ -6,12 +6,12 @@
 void initDefaultPawn(Piece * piece, uint8_t team) {
     // move possibilities
     Move * moves = malloc(sizeof(Move));
-    initMove(moves + 0, 0, 1, false);
+    initMoveRaw(moves + 0, 0, 1, false);
 
     // attack possibilities
     Move * attacks = malloc(sizeof(Move) * 2);
-    initMove(attacks + 0, 1, 1, false);
-    initMove(attacks + 1, -1, 1, false);
+    initMoveRaw(attacks + 0, 1, 1, false);
+    initMoveRaw(attacks + 1, -1, 1, false);
 
     // special possibilities
     SpecialMove * specials = malloc(sizeof(SpecialMove));
@@ -28,10 +28,10 @@ void initDefaultPawn(Piece * piece, uint8_t team) {
 void initDefaultRook(Piece * piece, uint8_t team) {
     // move possibilities
     Move * moves = malloc(sizeof(Move) * 4);
-    initMove(moves + 0, 0, 1, true);
-    initMove(moves + 1, 0, -1, true);
-    initMove(moves + 2, 1, 0, true);
-    initMove(moves + 3, -1, 0, true);
+    initMoveRaw(moves + 0, 0, 1, true);
+    initMoveRaw(moves + 1, 0, -1, true);
+    initMoveRaw(moves + 2, 1, 0, true);
+    initMoveRaw(moves + 3, -1, 0, true);
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
@@ -44,17 +44,17 @@ void initDefaultRook(Piece * piece, uint8_t team) {
 void initDefaultKnight(Piece * piece, uint8_t team) {
     // move possibilities
     Move * moves = malloc(sizeof(Move) * 8);
-    initMove(moves + 0, 1, 2, false);
-    initMove(moves + 1, 1, -2, false);
+    initMoveRaw(moves + 0, 1, 2, false);
+    initMoveRaw(moves + 1, 1, -2, false);
 
-    initMove(moves + 2, -1, 2, false);
-    initMove(moves + 3, -1, -2, false);
+    initMoveRaw(moves + 2, -1, 2, false);
+    initMoveRaw(moves + 3, -1, -2, false);
 
-    initMove(moves + 4, 2, 1, false);
-    initMove(moves + 5, -2, 1, false);
+    initMoveRaw(moves + 4, 2, 1, false);
+    initMoveRaw(moves + 5, -2, 1, false);
 
-    initMove(moves + 6, 2, -1, false);
-    initMove(moves + 7, -2, -1, false);
+    initMoveRaw(moves + 6, 2, -1, false);
+    initMoveRaw(moves + 7, -2, -1, false);
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
@@ -67,10 +67,10 @@ void initDefaultKnight(Piece * piece, uint8_t team) {
 void initDefaultBishop(Piece * piece, uint8_t team) {
     // move possibilities
     Move * moves = malloc(sizeof(Move) * 4);
-    initMove(moves + 0, 1, 1, true);
-    initMove(moves + 1, -1, 1, true);
-    initMove(moves + 2, 1, -1, true);
-    initMove(moves + 3, -1, -1, true);
+    initMoveRaw(moves + 0, 1, 1, true);
+    initMoveRaw(moves + 1, -1, 1, true);
+    initMoveRaw(moves + 2, 1, -1, true);
+    initMoveRaw(moves + 3, -1, -1, true);
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
@@ -83,14 +83,14 @@ void initDefaultBishop(Piece * piece, uint8_t team) {
 void initDefaultQueen(Piece * piece, uint8_t team) {
     // move possibilities
     Move * moves = malloc(sizeof(Move) * 8);
-    initMove(moves + 0, 0, 1, true);
-    initMove(moves + 1, 0, -1, true);
-    initMove(moves + 2, 1, 0, true);
-    initMove(moves + 3, -1, 0, true);
-    initMove(moves + 4, 1, 1, true);
-    initMove(moves + 5, -1, 1, true);
-    initMove(moves + 6, 1, -1, true);
-    initMove(moves + 7, -1, -1, true);
+    initMoveRaw(moves + 0, 0, 1, true);
+    initMoveRaw(moves + 1, 0, -1, true);
+    initMoveRaw(moves + 2, 1, 0, true);
+    initMoveRaw(moves + 3, -1, 0, true);
+    initMoveRaw(moves + 4, 1, 1, true);
+    initMoveRaw(moves + 5, -1, 1, true);
+    initMoveRaw(moves + 6, 1, -1, true);
+    initMoveRaw(moves + 7, -1, -1, true);
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));
@@ -103,14 +103,14 @@ void initDefaultQueen(Piece * piece, uint8_t team) {
 void initDefaultKing(Piece * piece, uint8_t team) {
     // move possibilities
     Move * moves = malloc(sizeof(Move) * 8);
-    initMove(moves + 0, 0, 1, false);
-    initMove(moves + 1, 0, -1, false);
-    initMove(moves + 2, 1, 0, false);
-    initMove(moves + 3, -1, 0, false);
-    initMove(moves + 4, 1, 1, false);
-    initMove(moves + 5, -1, 1, false);
-    initMove(moves + 6, 1, -1, false);
-    initMove(moves + 7, -1, -1, false);
+    initMoveRaw(moves + 0, 0, 1, false);
+    initMoveRaw(moves + 1, 0, -1, false);
+    initMoveRaw(moves + 2, 1, 0, false);
+    initMoveRaw(moves + 3, -1, 0, false);
+    initMoveRaw(moves + 4, 1, 1, false);
+    initMoveRaw(moves + 5, -1, 1, false);
+    initMoveRaw(moves + 6, 1, -1, false);
+    initMoveRaw(moves + 7, -1, -1, false);
 
     // compile move set
     MoveSet * move_set = malloc(sizeof(MoveSet));

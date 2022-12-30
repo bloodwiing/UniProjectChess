@@ -3,13 +3,15 @@
 
 #include <stdint.h>
 #include "defs.h"
+#include "vector.h"
 
 typedef struct Move {
-    int8_t x, y;
+    Vector vector;
     bool_t repeat;
 } Move;
 
-void initMove(Move * move, int8_t x, int8_t y, bool_t repeat);
+void initMove(Move * move, Vector vector, bool_t repeat);
+void initMoveRaw(Move * move, int8_t x, int8_t y, bool_t repeat);
 void printMove(Move move);
 
 #endif
