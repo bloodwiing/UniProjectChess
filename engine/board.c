@@ -34,7 +34,7 @@ Board * createBoard(Scenario * scenario, UserSettings * settings) {
         Spawn * spawn = scenario->spawns + i++;
         Team * team = scenario->teams + spawn->team;
         Piece * piece = team->pieces + spawn->type;
-        out->tiles[spawn->x + spawn->y * scenario->size_x]->game_piece = createGamePiece(piece, spawn->type);
+        getTile(out, spawn->x, spawn->y)->game_piece = createGamePiece(piece, spawn->type);
     }
 
     out->active_turn = 1;
@@ -93,4 +93,22 @@ Board * loadBoard(UserSettings * settings, FILE * stream) {
     fread(&out->active_turn, sizeof(uint8_t), 1, stream);
 
     return out;
+}
+
+void nextBoardTurn(Board * board) {
+    if (board->active_turn++ >= board->team_count - 1) board->active_turn = 0;
+}
+
+void moveBoardGamePiece(Board * board, int from_x, int from_y, int to_x, int to_y) {
+    Tile * from = getTile(board, from_x, from_y),
+         * to = getTile(board, to_x, to_y);
+
+    freeGamePiece(to->game_piece);
+
+    to->game_piece = from->game_piece;
+    to->game_piece->moves++;
+    from->game_piece = NULL;
+
+    updateTilePaths(board, from_x, from_y);
+    updateTilePaths(board, to_x, to_y);
 }

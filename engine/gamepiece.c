@@ -31,3 +31,7 @@ void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, Specia
     game_piece->vul_x = (int16_t)x + vul_pos.x;
     game_piece->vul_x = (int16_t)y + vul_pos.y;
 }
+
+void freeGamePiece(GamePiece * game_piece) {
+    free(game_piece);
+}

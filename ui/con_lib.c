@@ -192,11 +192,12 @@ void con_clear() {
 
 uint32_t con_read_key() {
   HANDLE handle = con_get_stdin();
-  INPUT_RECORD input_record;
+  INPUT_RECORD input_record = {};
   DWORD num_events = 0;
-  DWORD num_events_read;
+  DWORD num_events_read = 0;
 
-  GetNumberOfConsoleInputEvents(handle, &num_events);
+  if (!GetNumberOfConsoleInputEvents(handle, &num_events))
+    return 0;
 
   for (; num_events > 0; num_events--) {
     if (!ReadConsoleInput(handle, &input_record, 1, &num_events_read)) {

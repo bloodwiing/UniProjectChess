@@ -16,4 +16,12 @@ GameState * createGameState(Board * board);
 void saveGameState(GameState * game_state, FILE * stream);
 GameState * loadGameState(UserSettings * settings, FILE * stream);
 
+GamePiece * getGamePieceAtCursor(GameState * state);
+GamePiece * getGamePieceSelected(GameState * state);
+bool_t isGameCursorOnSelected(GameState * state);
+
+void reselectGameAtCursor(GameState * state);
+void executeGameMove(GameState * state);
+bool_t evaluateGameInput(GameState * state, bool_t * game_active);
+
 #endif //CHESS_GAMESTATE_H

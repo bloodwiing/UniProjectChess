@@ -55,7 +55,7 @@ void removePath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat) {
         if (compPath(path, piece, vector, repeat)) {
             tile->paths[i] = tile->paths[--tile->path_count];
             tile->paths = realloc(tile->paths, sizeof(Path) * tile->path_count);
-            break;
+            return;
         }
     }
 }

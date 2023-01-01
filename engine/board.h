@@ -33,4 +33,7 @@ Piece * getTilePiece(Board * board, Tile * tile);
 void saveBoard(Board * board, FILE * stream);
 Board * loadBoard(UserSettings * settings, FILE * stream);
 
+void nextBoardTurn(Board * board);
+void moveBoardGamePiece(Board * board, int from_x, int from_y, int to_x, int to_y);
+
 #endif
