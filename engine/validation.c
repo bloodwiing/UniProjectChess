@@ -40,9 +40,9 @@ void deletePath(Tile * start, Path * path) {
 void trimPath(Tile * start, Path * path) {
     while (path->next_path != NULL) {
         if (start->game_piece != NULL) {
+            deletePath(path->next_tile, path->next_path);
             path->next_path = NULL;
             path->next_tile = NULL;
-            deletePath(path->next_tile, path->next_path);
             break;
         }
         start = path->next_tile;
