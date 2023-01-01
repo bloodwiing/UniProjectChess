@@ -17,71 +17,9 @@ void gameLoop(UserSettings * settings, Board * board) {
     bool_t game_active = true;
     int16_t victor = -1;
 
-    uint32_t key;
     while (game_active) {
-
-        while ((key = con_read_key()) != 0) {
-            switch (key) {
-                case KEY_ARROW_UP:
-                case KEY_W:
-                    if (state->cur_y-- == 0) state->cur_y = state->board->height - 1;
-                    break;
-
-                case KEY_ARROW_DOWN:
-                case KEY_S:
-                    if (state->cur_y++ == state->board->height - 1) state->cur_y = 0;
-                    break;
-
-                case KEY_ARROW_LEFT:
-                case KEY_A:
-                    if (state->cur_x-- == 0) state->cur_x = state->board->width - 1;
-                    break;
-
-                case KEY_ARROW_RIGHT:
-                case KEY_D:
-                    if (state->cur_x++ == state->board->width - 1) state->cur_x = 0;
-                    break;
-
-                case KEY_ENTER:
-                    if (!state->piece_selected) {
-                        GamePiece * game_piece;
-                        if ((game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece) == NULL)
-                            break;
-                        if (game_piece->team != board->active_turn)
-                            break;
-                        state->sel_x = state->cur_x;
-                        state->sel_y = state->cur_y;
-                        state->piece_selected = true;
-                    } else {
-                        if (validatePath(board, state->sel_x, state->sel_y, state->cur_x, state->cur_y)) {
-                            GamePiece * game_piece;
-                            if ((game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece) != NULL &&
-                                    getOriginalPiece(game_piece, board->scenario)->protect) {
-                                victor = board->active_turn;
-                                game_active = false;
-                                break;
-                            }
-                            board->tiles[state->cur_x + board->width * state->cur_y]->game_piece = board->tiles[state->sel_x + board->width * state->sel_y]->game_piece;
-                            board->tiles[state->sel_x + board->width * state->sel_y]->game_piece = NULL;
-                            board->tiles[state->cur_x + board->width * state->cur_y]->game_piece->moves++;
-                            state->piece_selected = false;
-                            updateTilePaths(board, state->sel_x, state->sel_y);
-                            updateTilePaths(board, state->cur_x, state->cur_y);
-//                            if (board->active_turn++ >= board->team_count - 1) board->active_turn = 0;
-                        } else {
-                            state->piece_selected = false;
-                        }
-                    }
-                    break;
-
-                case KEY_Q:
-                    game_active = false;
-                    break;
-            }
-
+        if (evaluateGameInput(state, &game_active))
             renderGameScreen(settings, state, board);
-        }
-
 //        con_sleep(0.08f);
     }
 
