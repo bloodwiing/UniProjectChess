@@ -1,7 +1,7 @@
 #include "validation.h"
 
 void extendPath(Board * board, Path * start, int x, int y) {
-    if (!hasPath(getTile(board, x, y), start->piece, start->vector, start->repeat))
+    if (!hasPath(getTile(board, x, y), start->piece, start->vector, start->repeat, start->type))
         return;
 
     while (start->next_path != NULL) {
@@ -13,7 +13,7 @@ void extendPath(Board * board, Path * start, int x, int y) {
     while (validateInBounds(board, (x += start->vector.x), (y += start->vector.y))) {
         Tile * target = getTile(board, x, y);
 
-        Path * new_path = addPath(target, start->piece, start->vector, start->repeat);
+        Path * new_path = addPath(target, start->piece, start->vector, start->repeat, start->type);
         start->next_tile = target;
         start->next_path = new_path;
         start = new_path;
@@ -31,7 +31,7 @@ void deletePath(Tile * start, Path * path) {
         Path * next = path->next_path;
         path->next_tile = NULL;
         path->next_path = NULL;
-        removePath(previous_tile, path->piece, path->vector, path->repeat);
+        removePath(previous_tile, path->piece, path->vector, path->repeat, path->type);
         free(path);
         path = next;
     }
@@ -50,19 +50,26 @@ void trimPath(Tile * start, Path * path) {
     }
 }
 
-void fillPathsFromPoint(Board * board, Tile * origin, Vector vector, bool_t repeat, int i, int j) {
-    Path * prev_path = addOrigin(origin, vector, repeat);
+void fillPathsFromPoint(Board * board, Tile * origin, Vector vector, bool_t repeat, PathType_t type, int i, int j) {
+    Path * prev_path = addOrigin(origin, vector, repeat, type);
 
     while (validateInBounds(board, i += vector.x, j += vector.y)) {
         Tile * target = getTile(board, i, j);
 
-        Path * new_path = addPath(target, origin->game_piece, vector, repeat);
+        Path * new_path = addPath(target, origin->game_piece, vector, repeat, type);
         prev_path->next_tile = target;
         prev_path->next_path = new_path;
         prev_path = new_path;
 
         if (!repeat || target->game_piece != NULL)
             break;
+    }
+}
+
+void expandPathTypes(Path * start, PathType_t type) {
+    while (start != NULL) {
+        start->type |= type;
+        start = start->next_path;
     }
 }
 
@@ -82,17 +89,21 @@ void createSinglePathing(Board * board, int x, int y) {
         Move move = piece->move_set->moves[move_index++];
         Vector relative = normaliseVector(move.vector, direction);
 
-        fillPathsFromPoint(board, origin, relative, move.repeat, x, y);
+        fillPathsFromPoint(board, origin, relative, move.repeat, PATH_TYPE_MOVE, x, y);
     }
 
     for (int move_index = 0; move_index < piece->move_set->attack_count;) {
         Move move = piece->move_set->attacks[move_index++];
         Vector relative = normaliseVector(move.vector, direction);
 
-        if (hasOrigin(origin, relative, move.repeat))
+        Path * origin_path;
+        if ((origin_path = findOrigin(origin, relative, move.repeat, PATH_TYPE_ANY)) != NULL) {
+            if ((origin_path->type & PATH_TYPE_ATTACK) == 0)
+                expandPathTypes(origin_path, PATH_TYPE_ATTACK);
             continue;
+        }
 
-        fillPathsFromPoint(board, origin, relative, move.repeat, x, y);
+        fillPathsFromPoint(board, origin, relative, move.repeat, PATH_TYPE_ATTACK, x, y);
     }
 }
 
@@ -131,7 +142,7 @@ bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int
             Move move = move_set->attacks[move_index++];
             Vector relative = normaliseVector(move.vector, direction);
 
-            if (hasPath(target, piece, relative, move.repeat))
+            if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_ATTACK))
                 return true;
         }
         return false;
@@ -141,7 +152,7 @@ bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int
             Move move = move_set->moves[move_index++];
             Vector relative = normaliseVector(move.vector, direction);
 
-            if (hasPath(target, piece, relative, move.repeat))
+            if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_MOVE))
                 return true;
         }
         return false;

@@ -26,33 +26,33 @@ Tile * loadTile(FILE * stream) {
     return out;
 }
 
-bool_t compPath(Path * path, GamePiece * piece, Vector vector, bool_t repeat) {
-    return path->piece == piece && path->repeat == repeat && compVectors(path->vector, vector);
+bool_t compPath(Path * path, GamePiece * piece, Vector vector, bool_t repeat, PathType_t type) {
+    return path->piece == piece && path->repeat == repeat && compVectors(path->vector, vector) && (path->type & type) == type;
 }
 
-Path * addPath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat) {
+Path * addPath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat, PathType_t type) {
     tile->paths = realloc(tile->paths, sizeof(Path) * ++tile->path_count);
-    tile->paths[tile->path_count - 1] = createPath(piece, vector, repeat);
+    tile->paths[tile->path_count - 1] = createPath(piece, vector, repeat, type);
     return tile->paths[tile->path_count - 1];
 }
 
-Path * findPath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat) {
+Path * findPath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat, PathType_t type) {
     for (int i = 0; i < tile->path_count;) {
         Path * path = tile->paths[i++];
-        if (compPath(path, piece, vector, repeat))
+        if (compPath(path, piece, vector, repeat, type))
             return path;
     }
     return NULL;
 }
 
-bool_t hasPath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat) {
-    return findPath(tile, piece, vector, repeat) != NULL;
+bool_t hasPath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat, PathType_t type) {
+    return findPath(tile, piece, vector, repeat, type) != NULL;
 }
 
-void removePath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat) {
+void removePath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat, PathType_t type) {
     for (int i = 0; i < tile->path_count; i++) {
         Path * path = tile->paths[i];
-        if (compPath(path, piece, vector, repeat)) {
+        if (compPath(path, piece, vector, repeat, type)) {
             tile->paths[i] = tile->paths[--tile->path_count];
             tile->paths = realloc(tile->paths, sizeof(Path) * tile->path_count);
             return;
@@ -60,23 +60,23 @@ void removePath(Tile * tile, GamePiece * piece, Vector vector, bool_t repeat) {
     }
 }
 
-Path * addOrigin(Tile * tile, Vector vector, bool_t repeat) {
+Path * addOrigin(Tile * tile, Vector vector, bool_t repeat, PathType_t type) {
     tile->origins = realloc(tile->origins, sizeof(Path) * ++tile->origin_count);
-    tile->origins[tile->origin_count - 1] = createPath(tile->game_piece, vector, repeat);
+    tile->origins[tile->origin_count - 1] = createPath(tile->game_piece, vector, repeat, type);
     return tile->origins[tile->origin_count - 1];
 }
 
-Path * findOrigin(Tile * tile, Vector vector, bool_t repeat) {
+Path * findOrigin(Tile * tile, Vector vector, bool_t repeat, PathType_t type) {
     for (int i = 0; i < tile->origin_count;) {
         Path * path = tile->origins[i++];
-        if (compPath(path, tile->game_piece, vector, repeat))
+        if (compPath(path, tile->game_piece, vector, repeat, type))
             return path;
     }
     return NULL;
 }
 
-bool_t hasOrigin(Tile * tile, Vector vector, bool_t repeat) {
-    return findOrigin(tile, vector, repeat) != NULL;
+bool_t hasOrigin(Tile * tile, Vector vector, bool_t repeat, PathType_t type) {
+    return findOrigin(tile, vector, repeat, type) != NULL;
 }
 
 void clearOrigins(Tile * tile) {

@@ -2,7 +2,6 @@
 #include "con_lib.h"
 #include <stdio.h>
 #include <stdarg.h>
-#include "../engine/validation.h"
 
 void renderText(wchar_t * format, ...) {
     va_list argv;
@@ -106,39 +105,21 @@ void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h
 void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y) {
     renderBoard(board, pos_x, pos_y, i, j, w, h);
 
-    FILE * a = fopen("test.txt", "a");
-
     uint8_t top_left_x = pos_x - i + 2,
             top_left_y = pos_y - j + 1;
 
     if (sel_x != -1 && sel_y != -1) {
         Tile * selected = getTile(board, sel_x, sel_y);
 
-        fprintf(a, "Pos:  X: %d  Y: %d\n", sel_x, sel_y);
-        if (selected->game_piece != NULL)
-            fprintf(a, "Tile: %hs\n", getOriginalPiece(selected->game_piece, board->scenario)->name);
-        else
-            fprintf(a, "Tile: None\n");
-
-        fprintf(a, "Top Left:  X: %d  Y: %d\n", top_left_x, top_left_y);
-
         for (int origin_index = 0; origin_index < selected->origin_count;) {
 
             Path * target = selected->origins[origin_index++];
 
-            fprintf(a, "Origin Index: %d\n", origin_index);
-            fprintf(a, "Origin Vector:  X: %d  Y: %d\n", target->vector.x, target->vector.y);
-
             uint8_t target_x = sel_x, target_y = sel_y;
 
             while (target->next_path != NULL) {
-                fprintf(a, "Next PATH\n");
-
                 target_x += target->vector.x;
                 target_y += target->vector.y;
-
-                fprintf(a, "New Target X: %d\n", target_x);
-                fprintf(a, "New Target Y: %d\n", target_y);
 
                 Tile * tile = target->next_tile;
                 target = target->next_path;
@@ -147,18 +128,13 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
 
                 GamePiece * occupant;
 
-                if (((occupant = tile->game_piece) != NULL && occupant->team != selected->game_piece->team))
+                if (((occupant = tile->game_piece) != NULL) && (target->type & PATH_TYPE_ATTACK) && (occupant->team != selected->game_piece->team))
                     renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);
-                else if (occupant == NULL)
+                else if ((occupant == NULL) && (target->type & PATH_TYPE_MOVE))
                     renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
             }
-
-            fprintf(a, "End PATH\n");
         }
     }
-
-    fprintf(a, "\n\n");
-    fclose(a);
 }
 
 void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h) {
