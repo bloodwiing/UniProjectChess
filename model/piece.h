@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "defs.h"
+#include "../abstract/defs.h"
 #include "moveset.h"
 #include "../utils/encoding.h"
 

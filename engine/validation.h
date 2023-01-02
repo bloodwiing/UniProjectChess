@@ -1,7 +1,7 @@
 #ifndef CHESS_VALIDATION_H
 #define CHESS_VALIDATION_H
 
-#include "../model/defs.h"
+#include "../abstract/defs.h"
 #include "board.h"
 
 void extendPath(Board * board, Path * start, int i, int j);

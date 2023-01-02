@@ -5,6 +5,8 @@
 #include "validation.h"
 #include <wchar.h>
 
+#define EXCEPTION_BOARD_MULTIPLE_PROTECT 1, false, "A team cannot have multiple Protect-flagged pieces"
+
 Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
     Board * out = malloc(sizeof(Board));
 
@@ -27,17 +29,61 @@ Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
     return out;
 }
 
-Board * createBoard(Scenario * scenario, UserSettings * settings) {
+Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * exception) {
     Board * out = createEmptyBoard(scenario, settings);
 
     for (int i = 0; i < scenario->spawn_count;) {
         Spawn * spawn = scenario->spawns + i++;
         Team * team = scenario->teams + spawn->team;
         Piece * piece = team->pieces + spawn->type;
-        getTile(out, spawn->x, spawn->y)->game_piece = createGamePiece(piece, spawn->type);
+
+        GamePiece * game_piece = createGamePiece(piece, spawn->type);
+        getTile(out, spawn->x, spawn->y)->game_piece = game_piece;
+
+        if (piece->protect) {
+            if (team->protected_piece == NULL) {
+                updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
+                return NULL;
+            }
+            team->protected_piece = game_piece;
+        }
     }
 
     out->active_turn = 1;
+
+    return out;
+}
+
+void saveBoard(Board * board, FILE * stream) {
+    saveScenario(board->scenario, stream);
+    for (int i = 0; i < board->width * board->height;) {
+        saveTile(board->tiles[i++], stream);
+    }
+    fwrite(&board->active_turn, sizeof(uint8_t), 1, stream);
+}
+
+Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception) {
+    Scenario * scenario = loadScenario(stream);
+    Board * out = createEmptyBoard(scenario, settings);
+
+    for (int i = 0; i < scenario->size_x * scenario->size_y; i++) {
+        Tile * tile = loadTile(stream);
+        if (tile->game_piece != NULL) {
+            Team * team = getGamePieceTeam(out, tile->game_piece);
+            out->tiles[i]->game_piece = tile->game_piece;
+
+            if (getOriginalPiece(tile->game_piece, scenario)->protect) {
+                if (team->protected_piece == NULL) {
+                    updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
+                    return NULL;
+                }
+                team->protected_piece = tile->game_piece;
+            }
+        }
+        free(tile);
+    }
+
+    fread(&out->active_turn, sizeof(uint8_t), 1, stream);
 
     return out;
 }
@@ -46,6 +92,10 @@ Team * getTeam(Board * board, int index) {
     if (index < 0 || index >= board->team_count)
         return NULL;
     return board->teams + index;
+}
+
+Team * getActiveTeam(Board * board) {
+    return getTeam(board, board->active_turn);
 }
 
 Team * getPieceTeam(Board * board, Piece * piece) {
@@ -68,31 +118,6 @@ Piece * getTilePiece(Board * board, Tile * tile) {
     if (tile->game_piece == NULL)
         return NULL;
     return getOriginalPiece(tile->game_piece, board->scenario);
-}
-
-void saveBoard(Board * board, FILE * stream) {
-    saveScenario(board->scenario, stream);
-    for (int i = 0; i < board->width * board->height;) {
-        saveTile(board->tiles[i++], stream);
-    }
-    fwrite(&board->active_turn, sizeof(uint8_t), 1, stream);
-}
-
-Board * loadBoard(UserSettings * settings, FILE * stream) {
-    Scenario * scenario = loadScenario(stream);
-    Board * out = createEmptyBoard(scenario, settings);
-
-    for (int i = 0; i < scenario->size_x * scenario->size_y; i++) {
-        Tile * tile = loadTile(stream);
-        if (tile->game_piece != NULL) {
-            out->tiles[i]->game_piece = tile->game_piece;
-        }
-        free(tile);
-    }
-
-    fread(&out->active_turn, sizeof(uint8_t), 1, stream);
-
-    return out;
 }
 
 void nextBoardTurn(Board * board) {

@@ -138,7 +138,12 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
 }
 
 void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h) {
-    Board * board = createBoard(scenario, settings);
+    Exception exception = {};
+    Board * board = createBoard(scenario, settings, &exception);
+    if (board == NULL && exception.status) {
+        reportExceptionAtPos(exception, pos_x, pos_y);
+        return;
+    }
     renderBoard(board, pos_x, pos_y, i, j, w, h);
     free(board);
 }

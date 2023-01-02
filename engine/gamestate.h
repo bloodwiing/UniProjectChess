@@ -14,7 +14,7 @@ typedef struct GameState {
 
 GameState * createGameState(Board * board);
 void saveGameState(GameState * game_state, FILE * stream);
-GameState * loadGameState(UserSettings * settings, FILE * stream);
+GameState * loadGameState(UserSettings * settings, FILE * stream, Exception * exception);
 
 GamePiece * getGamePieceAtCursor(GameState * state);
 GamePiece * getGamePieceSelected(GameState * state);

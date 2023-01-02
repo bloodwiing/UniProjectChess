@@ -1,6 +1,6 @@
 #include "defaults.h"
 #include <string.h>
-#include "model/defs.h"
+#include "abstract/defs.h"
 #include "ui/con_lib.h"
 
 void initDefaultPawn(Piece * piece, uint8_t team) {

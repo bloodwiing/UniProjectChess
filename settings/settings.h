@@ -2,7 +2,7 @@
 #define CHESS_SETTINGS_H
 
 #include <stdio.h>
-#include "../model/defs.h"
+#include "../abstract/defs.h"
 
 typedef enum InputType {
     InputType_WASD = 0,

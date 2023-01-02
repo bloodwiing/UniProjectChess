@@ -5,6 +5,7 @@
 #include <locale.h>
 #include "ui/view/mainmenu.h"
 #include "ui/view/gamemenu.h"
+#include "ui/render.h"
 #include <string.h>
 
 void setupConsole();
@@ -66,8 +67,29 @@ int main() {
 //    fclose(file);
 
 
-//    mainMenuLoop(settings);
-    gameLoop(settings, createBoard(createDefaultScenario(), settings));
+    mainMenuLoop(settings);
+//    Exception exception;
+//    Board * board = createBoard(createDefaultScenario(), settings, &exception);
+//    if (board == NULL && exception.status)
+//        reportException(exception);
+//    else
+//        gameLoop(settings, board);
+
+//    Scenario * scenario = createDefaultScenario();
+//
+//    renderScenario(scenario, settings, 50, 2, 0, 0, 30, 10);
+//
+//    con_set_pos(50, 14);
+//    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
+//    con_set_pos(50, 15);
+//    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Author: ");
+//    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->author);
+//    con_set_pos(50, 17);
+//    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Size: ");
+//    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d x %d", scenario->size_x, scenario->size_y);
+//    con_set_pos(50, 18);
+//    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Teams: ");
+//    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d", scenario->team_count);
 }
 
 #ifdef _WIN32

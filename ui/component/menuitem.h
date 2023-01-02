@@ -2,7 +2,7 @@
 #define CHESS_MENUITEM_H
 
 #include <wchar.h>
-#include "../../model/defs.h"
+#include "../../abstract/defs.h"
 #include "../../settings/settings.h"
 
 #define MENU_ITEM_MAX_STRING_LEN 40

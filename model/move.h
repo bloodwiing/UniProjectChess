@@ -2,7 +2,7 @@
 #define CHESS_MOVE_H
 
 #include <stdint.h>
-#include "defs.h"
+#include "../abstract/defs.h"
 #include "vector.h"
 
 typedef struct Move {

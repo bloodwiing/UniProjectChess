@@ -16,8 +16,11 @@ void saveGameState(GameState * game_state, FILE * stream) {
     saveBoard(game_state->board, stream);
 }
 
-GameState * loadGameState(UserSettings * settings, FILE * stream) {
-    return createGameState(loadBoard(settings, stream));
+GameState * loadGameState(UserSettings * settings, FILE * stream, Exception * exception) {
+    Board * board = loadBoard(settings, stream, exception);
+    if (board == NULL && exception->status)
+        return NULL;
+    return createGameState(board);
 }
 
 GamePiece * getGamePieceAtCursor(GameState * state) {

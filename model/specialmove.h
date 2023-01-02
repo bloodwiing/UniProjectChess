@@ -1,7 +1,7 @@
 #ifndef CHESS_SPECIALMOVE_H
 #define CHESS_SPECIALMOVE_H
 
-#include "../model/defs.h"
+#include "../abstract/defs.h"
 #include <stdio.h>
 
 typedef struct SpecialMove {

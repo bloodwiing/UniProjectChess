@@ -45,7 +45,13 @@ void onMainMenuResume(UserSettings * settings, char * data) {
     Board * board;
 
     if (file != NULL) {
-        board = loadBoard(settings, file);
+        Exception exception = {};
+        board = loadBoard(settings, file, &exception);
+        if (board == NULL && exception.status) {
+            reportException(exception);
+            fclose(file);
+            return;
+        }
         fclose(file);
     } else {
         mainMenuLoop(settings);

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "defs.h"
+#include "../abstract/defs.h"
 #include "teamdirection.h"
 
 typedef struct Vector {

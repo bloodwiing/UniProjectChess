@@ -3,7 +3,7 @@
 
 #include "menuitem.h"
 #include "../../settings/settings.h"
-#include "../../model/defs.h"
+#include "../../abstract/defs.h"
 
 typedef struct MenuSelector {
     UserSettings * settings;

@@ -76,8 +76,13 @@ void onScenarioMenuSelect(UserSettings * settings, char * data) {
 
     if (file != NULL) {
         scenario = loadScenario(file);
-        board = createBoard(scenario, settings);
+        Exception exception = {};
+        board = createBoard(scenario, settings, &exception);
         fclose(file);
+        if (board == NULL && exception.status) {
+            reportException(exception);
+            return;
+        }
     } else {
         scenarioMenuLoop(settings);
         return;
