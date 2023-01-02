@@ -1,5 +1,6 @@
 #include "render.h"
 #include "con_lib.h"
+#include "../engine/validation.h"
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -127,6 +128,9 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
                 con_set_pos(top_left_x + target_x * 2, top_left_y + target_y);
 
                 GamePiece * occupant;
+
+                if (!isMoveValid(board, sel_x, sel_y, target_x, target_y))
+                    continue;
 
                 if (((occupant = tile->game_piece) != NULL) && (target->type & PATH_TYPE_ATTACK) && (occupant->team != selected->game_piece->team))
                     renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);

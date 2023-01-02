@@ -2,11 +2,14 @@
 #include "../model/vector.h"
 #include <stdlib.h>
 
+#define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS sizeof(GamePiece) - sizeof(struct Tile *)
+
 GamePiece * createGamePiece(Piece * piece, uint8_t piece_index) {
     GamePiece * out = calloc(1, sizeof(GamePiece));
     out->team = piece->team;
     out->piece = piece_index;
     out->vulnerable = false;
+    out->position = NULL;
     return out;
 }
 
@@ -16,12 +19,12 @@ Piece * getOriginalPiece(GamePiece * game_piece, Scenario * scenario) {
 }
 
 void saveGamePiece(GamePiece * game_piece, FILE * stream) {
-    fwrite(game_piece, sizeof(GamePiece), 1, stream);
+    fwrite(game_piece, STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS, 1, stream);
 }
 
 GamePiece * loadGamePiece(FILE * stream) {
     GamePiece * out = malloc(sizeof(GamePiece));
-    fread(out, sizeof(GamePiece), 1, stream);
+    fread(out, STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS, 1, stream);
     return out;
 }
 

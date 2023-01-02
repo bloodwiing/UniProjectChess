@@ -67,13 +67,13 @@ int main() {
 //    fclose(file);
 
 
-    mainMenuLoop(settings);
-//    Exception exception;
-//    Board * board = createBoard(createDefaultScenario(), settings, &exception);
-//    if (board == NULL && exception.status)
-//        reportException(exception);
-//    else
-//        gameLoop(settings, board);
+//    mainMenuLoop(settings);
+    Exception exception;
+    Board * board = createBoard(createDefaultScenario(), settings, &exception);
+    if (board == NULL && exception.status)
+        reportException(exception);
+    else
+        gameLoop(settings, board);
 
 //    Scenario * scenario = createDefaultScenario();
 //

@@ -16,4 +16,8 @@ bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int
 
 void updateTilePaths(Board * board, int x, int y);
 
+bool_t isMoveCheckingSelf(Board * board, int origin_x, int origin_y, int target_x, int target_y);
+bool_t isMoveValid(Board * board, int origin_x, int origin_y, int target_x, int target_y);
+bool_t isTeamChecked(Board * board, Team * team);
+
 #endif //CHESS_VALIDATION_H

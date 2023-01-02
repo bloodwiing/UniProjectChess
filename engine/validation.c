@@ -179,3 +179,88 @@ void updateTilePaths(Board * board, int x, int y) {
         createSinglePathing(board, x, y);
     }
 }
+
+bool_t isMoveCheckingSelf(Board * board, int origin_x, int origin_y, int target_x, int target_y) {
+    Tile * origin = getTile(board, origin_x, origin_y);
+
+    for (int i = 0; i < origin->path_count;) {
+        Path * path = origin->paths[i++];
+        int x = origin_x, y = origin_y;
+
+        while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && !(x == target_x && y == target_y)) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving)
+            GamePiece * obstacle;
+            if ((obstacle = getBoardGamePiece(board, x, y)) != NULL) {
+                if ((getOriginalPiece(obstacle, board->scenario)->protect)  // if the path now ends at a protected piece
+                    && (obstacle->team != path->piece->team)  // if the protected piece is not the end of the same team's path (aka enemy is targeting)
+                    && (obstacle->team == origin->game_piece->team)  // if the protected piece is of own team
+                    && (path->piece != getBoardGamePiece(board, target_x, target_y)))  // if the piece is not being attacked by this move
+                    return true;
+                break;
+            }
+            if (!path->repeat)
+                break;
+        }
+    }
+
+    return false;
+}
+
+bool_t isTeamChecked(Board * board, Team * team) {
+    GamePiece * protected = team->protected_piece;
+    Tile * tile = protected->position;
+
+    for (int i = 0; i < tile->path_count;) {
+        Path * path = tile->paths[i++];
+        if (path->piece->team != protected->team)
+            return true;
+    }
+
+    return false;
+}
+
+bool_t isTeamCheckedAfterMove(Board * board, Team * team, int origin_x, int origin_y, int target_x, int target_y) {
+    GamePiece * protected = team->protected_piece;
+    Tile * tile = protected->position;
+
+    Tile * target_tile = getTile(board, target_x, target_y);
+    if (getTile(board, origin_x, origin_y) == tile) {  // if the move is of a protected piece
+        for (int i = 0; i < target_tile->path_count;) {
+            Path * path = target_tile->paths[i++];
+            if (path->piece->team != protected->team)  // then only check if the target location is not safe
+                return true;
+        }
+        return false;
+    }
+
+    for (int i = 0; i < tile->path_count;) {
+        Path * path = tile->paths[i++];
+        if (path->piece->team != protected->team) {
+            Tile * path_start = path->piece->position;
+            int x = path_start->x, y = path_start->y;
+
+            if (path->piece == getBoardGamePiece(board, target_x, target_y))
+                continue;
+
+            while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && !(x == target_x && y == target_y)) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving)
+                GamePiece * obstacle;
+                if ((obstacle = getBoardGamePiece(board, x, y)) != NULL) {
+                    if (obstacle == protected)
+                        return true;
+                    break;
+                }
+                if (!path->repeat)
+                    break;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool_t isMoveValid(Board * board, int origin_x, int origin_y, int target_x, int target_y) {
+    Team * move_team = getGamePieceTeam(board, getBoardGamePiece(board, origin_x, origin_y));
+    return validatePath(board, origin_x, origin_y, target_x, target_y)  // check if the piece is even able to move there
+           && !isMoveCheckingSelf(board, origin_x, origin_y, target_x, target_y)
+           && (!isTeamChecked(board, move_team)  // either the team needs to not be in check
+               || !isTeamCheckedAfterMove(board, move_team, origin_x, origin_y, target_x, target_y));  // or the active check needs to be resolved / not created
+}

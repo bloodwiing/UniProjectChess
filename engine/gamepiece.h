@@ -5,6 +5,8 @@
 #include "../model/scenario.h"
 #include <stdio.h>
 
+struct Tile;
+
 typedef struct GamePiece {
     uint8_t team;
     uint8_t piece;
@@ -13,6 +15,8 @@ typedef struct GamePiece {
 
     bool_t vulnerable;
     uint8_t vul_x, vul_y;
+
+    struct Tile * position;
 } GamePiece;
 
 GamePiece * createGamePiece(Piece * piece, uint8_t piece_index);
