@@ -22,4 +22,6 @@ void saveMoveSet(MoveSet * move_set, FILE * stream);
 MoveSet * loadMoveSet(FILE * stream);
 void printMoveSet(MoveSet * move_set);
 
+void freeMoveSet(MoveSet * move_set);
+
 #endif

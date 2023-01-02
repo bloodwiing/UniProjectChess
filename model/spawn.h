@@ -15,4 +15,6 @@ void saveSpawn(Spawn * spawn, FILE * stream);
 Spawn * loadSpawn(FILE * stream);
 void printSpawn(Spawn * spawn);
 
+void freeSpawn(Spawn * spawn);
+
 #endif

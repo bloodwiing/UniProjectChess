@@ -14,4 +14,6 @@ void initMove(Move * move, Vector vector, bool_t repeat);
 void initMoveRaw(Move * move, int8_t x, int8_t y, bool_t repeat);
 void printMove(Move move);
 
+void freeMove(Move * move);
+
 #endif

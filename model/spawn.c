@@ -28,3 +28,7 @@ void printSpawn(Spawn * spawn) {
              "\tPiece: %d",
              spawn->x, spawn->y, spawn->team, spawn->type);
 }
+
+void freeSpawn(Spawn * spawn) {
+    free(spawn);
+}

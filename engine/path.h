@@ -25,4 +25,6 @@ typedef struct Path {
 
 Path * createPath(GamePiece * game_piece, Vector vector, bool_t repeat, PathType_t type);
 
+void freePath(Path * path);
+
 #endif //CHESS_PATH_H

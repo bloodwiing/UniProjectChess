@@ -39,3 +39,7 @@ void printSpecialMove(SpecialMove special_move) {
              special_move.x, special_move.y, special_move.first_move ? "YES" : "NO",
              special_move.vulnerable ? "YES" : "NO", special_move.vul_x, special_move.vul_y);
 }
+
+void freeSpecialMove(SpecialMove * special_move) {
+    free(special_move);
+}

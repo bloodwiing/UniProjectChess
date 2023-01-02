@@ -91,3 +91,14 @@ void clearOrigins(Tile * tile) {
     free(tile->origins);
     tile->origins = NULL;
 }
+
+void freeTile(Tile * tile) {
+    freeGamePiece(tile->game_piece);
+    for (int i = 0; i < tile->path_count;)
+        freePath(tile->paths[i++]);
+    free(tile->paths);
+    for (int i = 0; i < tile->origin_count;)
+        freePath(tile->origins[i++]);
+    free(tile->origins);
+    free(tile);
+}

@@ -12,3 +12,7 @@ Path * createPath(GamePiece * game_piece, Vector vector, bool_t repeat, PathType
     out->next_path = NULL;
     return out;
 }
+
+void freePath(Path * path) {
+    free(path);
+}

@@ -27,4 +27,6 @@ void saveTeam(Team * team, FILE * stream);
 Team * loadTeam(FILE * stream);
 void printTeam(Team * team);
 
+void freeTeam(Team * team);
+
 #endif

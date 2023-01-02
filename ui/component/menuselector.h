@@ -17,9 +17,14 @@ typedef struct MenuSelector {
 } MenuSelector;
 
 MenuSelector * createMenuSelector(UserSettings * settings, void (*update_callback)(UserSettings * settings, char * data));
+
 void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * data, void (*callback)(UserSettings *, char *));
+
 void displayMenuSelector(MenuSelector * menu_selector, int x, int y);
-bool_t updateMenuSelector(MenuSelector * menu_selector);
+bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free);
+
 void runMenuSelectorUpdateCallback(MenuSelector * menu_selector);
+
+void freeMenuSelector(MenuSelector * menu_selector);
 
 #endif //CHESS_MENUSELECTOR_H

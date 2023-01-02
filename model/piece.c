@@ -38,3 +38,8 @@ void printPiece(Piece * piece) {
              piece->name, piece->unicode, piece->symbol, piece->upgradable ? "Yes" : "No", piece->protect ? "Yes" : "No", piece->team);
     printMoveSet(piece->move_set);
 }
+
+void freePiece(Piece * piece) {
+    freeMoveSet(piece->move_set);
+    free(piece);
+}

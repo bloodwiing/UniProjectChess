@@ -37,4 +37,6 @@ Piece * getTilePiece(Board * board, Tile * tile);
 void nextBoardTurn(Board * board);
 void moveBoardGamePiece(Board * board, int from_x, int from_y, int to_x, int to_y);
 
+void freeBoard(Board * board);
+
 #endif

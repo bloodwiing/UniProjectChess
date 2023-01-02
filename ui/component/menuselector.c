@@ -33,12 +33,14 @@ void displayMenuSelector(MenuSelector * menu_selector, int x, int y) {
     }
 }
 
-bool_t updateMenuSelector(MenuSelector * menu_selector) {
+bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
     uint32_t key;
 
     while ((key = con_read_key())) {
         if (key == KEY_ENTER) {
             runMenuItem(menu_selector->items[menu_selector->selected]);
+            if (auto_free)
+                freeMenuSelector(menu_selector);
             return false;
         }
 
@@ -63,4 +65,12 @@ bool_t updateMenuSelector(MenuSelector * menu_selector) {
 
 void runMenuSelectorUpdateCallback(MenuSelector * menu_selector) {
     menu_selector->update_callback(menu_selector->settings, menu_selector->items[menu_selector->selected]->data);
+}
+
+void freeMenuSelector(MenuSelector * menu_selector) {
+    for (int i = 0; i < menu_selector->item_count;) {
+        freeMenuItem(menu_selector->items[i++]);
+    }
+    free(menu_selector->items);
+    free(menu_selector);
 }

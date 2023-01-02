@@ -18,4 +18,6 @@ typedef struct MenuItem {
 MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, void (*callback)(UserSettings *, char *));
 void runMenuItem(MenuItem * menu_item);
 
+void freeMenuItem(MenuItem * menu_item);
+
 #endif //CHESS_MENUITEM_H

@@ -80,3 +80,16 @@ void printSpawnResolved(Spawn * spawn, Scenario * scenario) {
              "\tPiece: %hs\n",
              spawn->x, spawn->y, team->name, piece->name);
 }
+
+void freeScenario(Scenario * scenario) {
+    for (int i = 0; i < scenario->team_count;) {
+        Team * team = scenario->teams + i++;
+        for (int j = 0; j < team->piece_count;)
+            freeMoveSet(team->pieces[j++].move_set);
+        free(team->pieces);
+    }
+    free(scenario->teams);
+
+    free(scenario->spawns);
+    free(scenario);
+}

@@ -29,11 +29,9 @@ void mainMenuLoop(UserSettings * settings) {
     addMenuItem(selector, L"New Scenario", "New day, new battle", onMainMenuStart);
     addMenuItem(selector, L"Quit", "Leaving already?", onMainMenuExit);
 
-    while (updateMenuSelector(selector)) {
+    while (updateMenuSelector(selector, true)) {
         displayMenuSelector(selector, 2, 4);
     }
-
-    free(selector);
 }
 
 void updateMainMenu(UserSettings * settings, char * data) {

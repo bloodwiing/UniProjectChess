@@ -48,6 +48,7 @@ Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * ex
         if (piece->protect) {
             if (team->protected_piece != NULL) {
                 updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
+                freeBoard(out);
                 return NULL;
             }
             team->protected_piece = game_piece;
@@ -57,6 +58,7 @@ Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * ex
     for (int i = 0; i < out->team_count;) {
         if (out->teams[i++].protected_piece == NULL) {
             updateException(exception, EXCEPTION_BOARD_NO_PROTECT);
+            freeBoard(out);
             return NULL;
         }
     }
@@ -87,6 +89,9 @@ Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception)
             if (getOriginalPiece(tile->game_piece, scenario)->protect) {
                 if (team->protected_piece != NULL) {
                     updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
+                    free(tile);
+                    freeBoard(out);
+                    freeScenario(scenario);
                     return NULL;
                 }
                 team->protected_piece = tile->game_piece;
@@ -98,6 +103,8 @@ Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception)
     for (int i = 0; i < out->team_count;) {
         if (out->teams[i++].protected_piece == NULL) {
             updateException(exception, EXCEPTION_BOARD_NO_PROTECT);
+            freeBoard(out);
+            freeScenario(scenario);
             return NULL;
         }
     }
@@ -157,4 +164,12 @@ void moveBoardGamePiece(Board * board, int from_x, int from_y, int to_x, int to_
 
     updateTilePaths(board, from_x, from_y);
     updateTilePaths(board, to_x, to_y);
+}
+
+void freeBoard(Board * board) {
+    for (int i = 0; i < board->width * board->height;)
+        freeTile(board->tiles[i++]);
+    free(board->tiles);
+    free(board->teams);
+    free(board);
 }

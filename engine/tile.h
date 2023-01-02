@@ -33,4 +33,6 @@ Path * findOrigin(Tile * tile, Vector vector, bool_t repeat, PathType_t type);
 bool_t hasOrigin(Tile * tile, Vector vector, bool_t repeat, PathType_t type);
 void clearOrigins(Tile * tile);
 
+void freeTile(Tile * tile);
+
 #endif //CHESS_TILE_H

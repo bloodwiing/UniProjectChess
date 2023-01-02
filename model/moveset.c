@@ -63,3 +63,10 @@ void printMoveSet(MoveSet * move_set) {
         printSpecialMove(move_set->specials[i]);
     }
 }
+
+void freeMoveSet(MoveSet * move_set) {
+    free(move_set->moves);
+    free(move_set->attacks);
+    free(move_set->specials);
+    free(move_set);
+}

@@ -51,3 +51,10 @@ void printTeam(Team * team) {
     for (int i = 0; i < team->piece_count; i++)
         printPiece(team->pieces + i);
 }
+
+void freeTeam(Team * team) {
+    for (int i = 0; i < team->piece_count;)
+        freeMoveSet(team->pieces[i++].move_set);
+    free(team->pieces);
+    free(team);
+}

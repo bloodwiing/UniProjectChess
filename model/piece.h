@@ -29,4 +29,6 @@ void savePiece(Piece * piece, FILE * stream);
 void loadPiece(Piece * piece, FILE * stream);
 void printPiece(Piece * piece);
 
+void freePiece(Piece * piece);
+
 #endif

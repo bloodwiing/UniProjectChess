@@ -14,3 +14,7 @@ MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, 
 void runMenuItem(MenuItem * menu_item) {
     menu_item->callback(menu_item->settings, menu_item->data);
 }
+
+void freeMenuItem(MenuItem * menu_item) {
+    free(menu_item);
+}

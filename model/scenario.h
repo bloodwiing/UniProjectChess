@@ -30,4 +30,6 @@ void printScenario(Scenario * scenario);
 Spawn * createSpawnFromPiece(Scenario * scenario, uint8_t x, uint8_t y, Piece * piece);
 void printSpawnResolved(Spawn * spawn, Scenario * scenario);
 
+void freeScenario(Scenario * scenario);
+
 #endif

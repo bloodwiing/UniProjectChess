@@ -18,4 +18,6 @@ void initSpecialMoveSafe(SpecialMove * special_move, int8_t x, int8_t y, bool_t 
 void initSpecialMoveVulnerable(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move, int8_t vul_x, int8_t vul_y);
 void printSpecialMove(SpecialMove special_move);
 
+void freeSpecialMove(SpecialMove * special_move);
+
 #endif //CHESS_SPECIALMOVE_H

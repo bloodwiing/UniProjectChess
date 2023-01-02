@@ -33,7 +33,7 @@ void scenarioMenuLoop(UserSettings * settings) {
     con_set_pos(2, 1);
     renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Scenario select");
 
-    while (updateMenuSelector(selector)) {
+    while (updateMenuSelector(selector, true)) {
         displayMenuSelector(selector, 2, 3);
     }
 
@@ -41,7 +41,6 @@ void scenarioMenuLoop(UserSettings * settings) {
         free(files + i);
     }
     free(files);
-    free(selector);
 }
 
 void updateScenarioMenu(UserSettings * settings, char * data) {
@@ -87,7 +86,7 @@ void updateScenarioMenu(UserSettings * settings, char * data) {
         renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"%30hs", "");
     }
 
-    free(scenario);
+    freeScenario(scenario);
 }
 
 void onScenarioMenuSelect(UserSettings * settings, char * data) {
@@ -100,12 +99,14 @@ void onScenarioMenuSelect(UserSettings * settings, char * data) {
         fclose(file);
         if (scenario->version < getMinSupportedScenarioVersion(BUILD_VERSION)) {
             scenarioMenuLoop(settings);
+            freeScenario(scenario);
             return;
         }
         Exception exception = {};
         board = createBoard(scenario, settings, &exception);
         if (board == NULL && exception.status) {
             reportException(exception);
+            freeScenario(scenario);
             return;
         }
     } else {
@@ -114,8 +115,8 @@ void onScenarioMenuSelect(UserSettings * settings, char * data) {
     }
 
     gameLoop(settings, board);
-    free(scenario);
-    free(board);
+    freeBoard(board);
+    freeScenario(scenario);
 
     scenarioMenuLoop(settings);
 }
