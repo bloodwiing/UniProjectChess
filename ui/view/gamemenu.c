@@ -57,10 +57,10 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
     }
 
     con_set_pos(32, 2);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Current team: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Current team: ");
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", TEAM_NAME_LENGTH, board->teams + board->active_turn);
     con_set_pos(32, 3);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Selected piece: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Selected piece: ");
     if (state->piece_selected)
         renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", PIECE_NAME_LENGTH,
                            getOriginalPiece(board->tiles[state->sel_x + board->width * state->sel_y]->game_piece, board->scenario)->name);

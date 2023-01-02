@@ -7,6 +7,7 @@
 #include "../../utils/files.h"
 #include "../../engine/board.h"
 #include "gamemenu.h"
+#include "../../abstract/version.h"
 
 void updateMainMenu(UserSettings * settings, char * data);
 
@@ -19,7 +20,7 @@ void mainMenuLoop(UserSettings * settings) {
     MenuSelector * selector = createMenuSelector(settings, updateMainMenu);
 
     con_set_pos(2, 1);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"v0.4 beta");
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"%hs", getVersionName(BUILD_VERSION));
     con_set_pos(2, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
 

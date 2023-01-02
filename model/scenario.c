@@ -1,9 +1,13 @@
 #include <string.h>
 #include "scenario.h"
 #include <wchar.h>
+#include "../abstract/version.h"
+
+#define STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS sizeof(Scenario) - sizeof(Team *) - sizeof(Spawn *)
 
 Scenario * createScenario(char * name, char * author, uint8_t size_x, uint8_t size_y, Team * teams, uint8_t team_count, Spawn * spawns, uint16_t spawn_count) {
     Scenario * out = calloc(1, sizeof(Scenario));
+    out->version = BUILD_VERSION;
     strncpy(out->name, name, SCENARIO_MAX_STRING_LEN);
     strncpy(out->author, author, SCENARIO_MAX_STRING_LEN);
     out->size_x = size_x;
@@ -16,7 +20,7 @@ Scenario * createScenario(char * name, char * author, uint8_t size_x, uint8_t si
 }
 
 void saveScenario(Scenario * scenario, FILE * stream) {
-    fwrite(scenario, sizeof(Scenario) - sizeof(Team *) - sizeof(Spawn *), 1, stream);
+    fwrite(scenario, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
     for (int i = 0; i < scenario->team_count; i++)
         saveTeam(scenario->teams + i, stream);
     for (int i = 0; i < scenario->spawn_count; i++)
@@ -25,7 +29,7 @@ void saveScenario(Scenario * scenario, FILE * stream) {
 
 Scenario * loadScenario(FILE * stream) {
     Scenario * out = malloc(sizeof(Scenario));
-    fread(out, sizeof(Scenario) - sizeof(Team *) - sizeof(Spawn *), 1, stream);
+    fread(out, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
 
     out->teams = malloc(sizeof(Team) * out->team_count);
     for (int i = 0; i < out->team_count; i++)
@@ -40,12 +44,13 @@ Scenario * loadScenario(FILE * stream) {
 
 void printScenario(Scenario * scenario) {
     wprintf(L"Scenario: \n"
+             "\tVersion: %hs\n"
              "\tName: %hs\n"
              "\tAuthor: %hs\n"
              "\tSize X: %d\n"
              "\tSize Y: %d\n"
              "\tTeams:\n",
-             scenario->name, scenario->author, scenario->size_x, scenario->size_y);
+             getVersionName(scenario->version), scenario->name, scenario->author, scenario->size_x, scenario->size_y);
     for (int i = 0; i < scenario->team_count; i++)
         printTeam(scenario->teams + i);
 

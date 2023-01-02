@@ -9,6 +9,7 @@
 #include "../render.h"
 #include "../../engine/board.h"
 #include "gamemenu.h"
+#include "../../abstract/version.h"
 
 void updateScenarioMenu(UserSettings * settings, char * data);
 
@@ -45,7 +46,7 @@ void scenarioMenuLoop(UserSettings * settings) {
 
 void updateScenarioMenu(UserSettings * settings, char * data) {
     if (strlen(data) == 0) {
-        clearRect(50, 2, 30, 17);
+        clearRect(50, 2, 30, 22);
         return;
     }
 
@@ -55,16 +56,36 @@ void updateScenarioMenu(UserSettings * settings, char * data) {
     renderScenario(scenario, settings, 50, 2, 0, 0, 30, 10);
 
     con_set_pos(50, 14);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
-    con_set_pos(50, 15);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Author: ");
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->author);
+    if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {
+        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
+        con_set_pos(50, 15);
+        renderTextColoured(settings, COLOR_RESET, COLOR_RED, L"[ %-*hs ]", SCENARIO_MAX_STRING_LEN, getVersionName(scenario->version));
+    } else {
+        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
+        con_set_pos(50, 15);
+        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"[ %-*hs ]", SCENARIO_MAX_STRING_LEN, getVersionName(scenario->version));
+    }
     con_set_pos(50, 17);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Size: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Author: ");
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"@%-*hs", SCENARIO_MAX_STRING_LEN, scenario->author);
+    con_set_pos(50, 19);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Size: ");
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d x %d", scenario->size_x, scenario->size_y);
-    con_set_pos(50, 18);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Teams: ");
+    con_set_pos(50, 20);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Teams: ");
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d", scenario->team_count);
+
+    con_set_pos(50, 22);
+    if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {
+        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_RED, L"Scenario outdated!");
+        con_set_pos(50, 23);
+        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_RED, L"( < %hs )",
+                           getVersionName(getMinSupportedScenarioVersion(BUILD_VERSION)));
+    } else {
+        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"%30hs", "");
+        con_set_pos(50, 23);
+        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"%30hs", "");
+    }
 
     free(scenario);
 }
@@ -76,9 +97,13 @@ void onScenarioMenuSelect(UserSettings * settings, char * data) {
 
     if (file != NULL) {
         scenario = loadScenario(file);
+        fclose(file);
+        if (scenario->version < getMinSupportedScenarioVersion(BUILD_VERSION)) {
+            scenarioMenuLoop(settings);
+            return;
+        }
         Exception exception = {};
         board = createBoard(scenario, settings, &exception);
-        fclose(file);
         if (board == NULL && exception.status) {
             reportException(exception);
             return;

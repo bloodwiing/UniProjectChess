@@ -9,6 +9,8 @@
 #define SCENARIO_MAX_STRING_LEN 20
 
 typedef struct Scenario {
+    uint16_t version;
+
     char name[SCENARIO_MAX_STRING_LEN];
     char author[SCENARIO_MAX_STRING_LEN];
     uint8_t size_x, size_y;
