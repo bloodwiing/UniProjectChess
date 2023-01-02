@@ -32,12 +32,18 @@ Scenario * loadScenario(FILE * stream) {
     fread(out, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
 
     out->teams = malloc(sizeof(Team) * out->team_count);
-    for (int i = 0; i < out->team_count; i++)
-        memcpy(out->teams + i, loadTeam(stream), sizeof(Team));
+    for (int i = 0; i < out->team_count; i++) {
+        Team * team = loadTeam(stream);
+        memcpy(out->teams + i, team, sizeof(Team));
+        free(team);
+    }
 
     out->spawns = malloc(sizeof(Spawn) * out->spawn_count);
-    for (int i = 0; i < out->spawn_count; i++)
-        memcpy(out->spawns + i, loadSpawn(stream), sizeof(Spawn));
+    for (int i = 0; i < out->spawn_count; i++) {
+        Spawn * spawn = loadSpawn(stream);
+        memcpy(out->spawns + i, spawn, sizeof(Spawn));
+        free(spawn);
+    }
 
     return out;
 }
