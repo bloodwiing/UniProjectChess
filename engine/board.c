@@ -6,6 +6,7 @@
 #include <wchar.h>
 
 #define EXCEPTION_BOARD_MULTIPLE_PROTECT 1, false, "A team cannot have multiple Protect-flagged pieces"
+#define EXCEPTION_BOARD_NO_PROTECT 2, false, "A team needs to have at least one Protect-flagged piece"
 
 Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
     Board * out = malloc(sizeof(Board));
@@ -36,18 +37,27 @@ Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * ex
 
     for (int i = 0; i < scenario->spawn_count;) {
         Spawn * spawn = scenario->spawns + i++;
-        Team * team = scenario->teams + spawn->team;
+        Team * team = out->teams + spawn->team;
         Piece * piece = team->pieces + spawn->type;
 
         GamePiece * game_piece = createGamePiece(piece, spawn->type);
-        getTile(out, spawn->x, spawn->y)->game_piece = game_piece;
+        Tile * tile = getTile(out, spawn->x, spawn->y);
+        tile->game_piece = game_piece;
+        game_piece->position = tile;
 
         if (piece->protect) {
-            if (team->protected_piece == NULL) {
+            if (team->protected_piece != NULL) {
                 updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
                 return NULL;
             }
             team->protected_piece = game_piece;
+        }
+    }
+
+    for (int i = 0; i < out->team_count;) {
+        if (out->teams[i++].protected_piece == NULL) {
+            updateException(exception, EXCEPTION_BOARD_NO_PROTECT);
+            return NULL;
         }
     }
 
@@ -75,7 +85,7 @@ Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception)
             out->tiles[i]->game_piece = tile->game_piece;
 
             if (getOriginalPiece(tile->game_piece, scenario)->protect) {
-                if (team->protected_piece == NULL) {
+                if (team->protected_piece != NULL) {
                     updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
                     return NULL;
                 }
@@ -83,6 +93,13 @@ Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception)
             }
         }
         free(tile);
+    }
+
+    for (int i = 0; i < out->team_count;) {
+        if (out->teams[i++].protected_piece == NULL) {
+            updateException(exception, EXCEPTION_BOARD_NO_PROTECT);
+            return NULL;
+        }
     }
 
     fread(&out->active_turn, sizeof(uint8_t), 1, stream);
@@ -135,6 +152,8 @@ void moveBoardGamePiece(Board * board, int from_x, int from_y, int to_x, int to_
     to->game_piece = from->game_piece;
     to->game_piece->moves++;
     from->game_piece = NULL;
+
+    to->game_piece->position = to;
 
     updateTilePaths(board, from_x, from_y);
     updateTilePaths(board, to_x, to_y);
