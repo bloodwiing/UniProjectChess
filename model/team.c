@@ -10,6 +10,7 @@ Team * createTeam(char * name, uint8_t colour, Piece * pieces, uint8_t piece_cou
     out->pieces = pieces;
     out->piece_count = piece_count;
     out->direction = direction;
+    out->protected_piece = NULL;
     return out;
 }
 

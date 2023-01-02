@@ -6,6 +6,8 @@
 #include "piece.h"
 #include "teamdirection.h"
 
+struct GamePiece;
+
 #define TEAM_NAME_LENGTH 20
 
 typedef struct Team {
@@ -16,6 +18,8 @@ typedef struct Team {
     Piece * pieces;
 
     TeamDirection direction;
+
+    struct GamePiece * protected_piece;
 } Team;
 
 Team * createTeam(char * name, uint8_t colour, Piece * pieces, uint8_t piece_count, TeamDirection direction);
