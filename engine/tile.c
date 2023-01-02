@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include "validation.h"
 
-Tile * createTile(GamePiece * game_piece) {
+Tile * createTile(GamePiece * game_piece, uint8_t x, uint8_t y) {
     Tile * out = calloc(1, sizeof(Tile));
     out->game_piece = game_piece;
+    if (game_piece != NULL)
+        game_piece->position = out;
+    out->x = x;
+    out->y = y;
     return out;
 }
 

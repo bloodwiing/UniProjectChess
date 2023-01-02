@@ -13,9 +13,11 @@ typedef struct Tile {
 
     uint16_t origin_count;
     Path ** origins;
+
+    uint8_t x, y;
 } Tile;
 
-Tile * createTile(GamePiece * game_piece);
+Tile * createTile(GamePiece * game_piece, uint8_t x, uint8_t y);
 void saveTile(Tile * tile, FILE * stream);
 Tile * loadTile(FILE * stream);
 

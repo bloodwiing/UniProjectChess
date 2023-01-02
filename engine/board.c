@@ -17,8 +17,10 @@ Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
     out->height = scenario->size_y;
 
     out->tiles = calloc(scenario->size_x * scenario->size_y, sizeof(Tile *));
-    for (int i = 0; i < scenario->size_x * scenario->size_x; ++i) {
+    for (int i = 0; i < scenario->size_x * scenario->size_y; i++) {
         out->tiles[i] = calloc(1, sizeof(Tile));
+        out->tiles[i]->x = i % scenario->size_x;
+        out->tiles[i]->y = i / scenario->size_x;
     }
 
     out->team_count = scenario->team_count;
