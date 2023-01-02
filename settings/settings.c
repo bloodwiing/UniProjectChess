@@ -56,3 +56,7 @@ UserSettings * safeLoadUserSettings() {
     }
     return settings;
 }
+
+void freeSettings(UserSettings * settings) {
+    free(settings);
+}

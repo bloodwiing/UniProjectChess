@@ -90,6 +90,8 @@ int main() {
 //    con_set_pos(50, 18);
 //    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Teams: ");
 //    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d", scenario->team_count);
+
+    freeSettings(settings);
 }
 
 #ifdef _WIN32

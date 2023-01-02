@@ -11,14 +11,16 @@
 #include "gamemenu.h"
 #include "../../abstract/version.h"
 
-void updateScenarioMenu(UserSettings * settings, char * data);
+MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu);
+MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu);
 
-void onScenarioMenuSelect(UserSettings * settings, char * data);
-void onScenarioMenuLeave(UserSettings * settings, char * data);
+MENU_ITEM_CALLBACK(onScenarioMenuSelect);
+MENU_ITEM_CALLBACK(onScenarioMenuLeave);
 
 void scenarioMenuLoop(UserSettings * settings) {
-    con_clear();
-    MenuSelector * selector = createMenuSelector(settings, updateScenarioMenu);
+    initScenarioMenu(settings);
+
+    MenuSelector * selector = createMenuSelector(settings, initScenarioMenu, updateScenarioMenu);
 
     size_t count = 0;
     char ** files = listDirectoryFiles(SCENARIO_FOLDER, &count);
@@ -30,20 +32,23 @@ void scenarioMenuLoop(UserSettings * settings) {
     }
     addMenuItem(selector, L"Back", "", onScenarioMenuLeave);
 
-    con_set_pos(2, 1);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Scenario select");
-
     while (updateMenuSelector(selector, true)) {
         displayMenuSelector(selector, 2, 3);
     }
 
-    for (int i = 0; i < count; i++) {
-        free(files + i);
-    }
+    for (int i = 0; i < count;)
+        free(files[i++]);
     free(files);
 }
 
-void updateScenarioMenu(UserSettings * settings, char * data) {
+MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu) {
+    con_clear();
+
+    con_set_pos(2, 1);
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Scenario select");
+}
+
+MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
     if (strlen(data) == 0) {
         clearRect(50, 2, 30, 22);
         return;
@@ -89,7 +94,7 @@ void updateScenarioMenu(UserSettings * settings, char * data) {
     freeScenario(scenario);
 }
 
-void onScenarioMenuSelect(UserSettings * settings, char * data) {
+MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
     FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
     Scenario * scenario;
     Board * board;
@@ -98,29 +103,27 @@ void onScenarioMenuSelect(UserSettings * settings, char * data) {
         scenario = loadScenario(file);
         fclose(file);
         if (scenario->version < getMinSupportedScenarioVersion(BUILD_VERSION)) {
-            scenarioMenuLoop(settings);
             freeScenario(scenario);
-            return;
+            return false;
         }
         Exception exception = {};
         board = createBoard(scenario, settings, &exception);
         if (board == NULL && exception.status) {
             reportException(exception);
             freeScenario(scenario);
-            return;
+            return false;
         }
     } else {
-        scenarioMenuLoop(settings);
-        return;
+        return false;
     }
 
     gameLoop(settings, board);
     freeBoard(board);
     freeScenario(scenario);
 
-    scenarioMenuLoop(settings);
+    return true;
 }
 
-void onScenarioMenuLeave(UserSettings * settings, char * data) {
-    mainMenuLoop(settings);
+MENU_ITEM_CALLBACK(onScenarioMenuLeave) {
+    return true;
 }

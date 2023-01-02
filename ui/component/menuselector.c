@@ -4,15 +4,16 @@
 #include "../render.h"
 #include "../../enum/key.h"
 
-MenuSelector * createMenuSelector(UserSettings * settings, void (*update_callback)(UserSettings * settings, char * data)) {
+MenuSelector * createMenuSelector(UserSettings * settings, MENU_SELECTOR_INIT_CALLBACK(*init_callback), MENU_SELECTOR_UPDATE_CALLBACK(*update_callback)) {
     MenuSelector * out = calloc(1, sizeof(MenuSelector));
     out->settings = settings;
     out->selected = -1;
+    out->init_callback = init_callback;
     out->update_callback = update_callback;
     return out;
 }
 
-void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * data, void (*callback)(UserSettings *, char *)) {
+void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * data, MENU_ITEM_CALLBACK(*callback)) {
     menu_selector->items = realloc(menu_selector->items, sizeof(MenuItem) * ++(menu_selector->item_count));
     menu_selector->items[menu_selector->item_count - 1] = createMenuItem(menu_selector->settings, name, data, callback);
     if (menu_selector->item_count == 1) {
@@ -38,7 +39,11 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
 
     while ((key = con_read_key())) {
         if (key == KEY_ENTER) {
-            runMenuItem(menu_selector->items[menu_selector->selected]);
+            if (!runMenuItem(menu_selector->items[menu_selector->selected])) {
+                menu_selector->init_callback(menu_selector->settings);
+                runMenuSelectorUpdateCallback(menu_selector);
+                continue;
+            }
             if (auto_free)
                 freeMenuSelector(menu_selector);
             return false;

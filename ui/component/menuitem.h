@@ -6,17 +6,18 @@
 #include "../../settings/settings.h"
 
 #define MENU_ITEM_MAX_STRING_LEN 40
+#define MENU_ITEM_CALLBACK(name) bool_t (name)(UserSettings * settings, char * data)
 
 typedef struct MenuItem {
     UserSettings * settings;
 
     wchar_t text[MENU_ITEM_MAX_STRING_LEN];
     char data[MENU_ITEM_MAX_STRING_LEN];
-    void (*callback)(UserSettings *, char *);
+    MENU_ITEM_CALLBACK(*callback);
 } MenuItem;
 
-MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, void (*callback)(UserSettings *, char *));
-void runMenuItem(MenuItem * menu_item);
+MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, MENU_ITEM_CALLBACK(*callback));
+bool_t runMenuItem(MenuItem * menu_item);
 
 void freeMenuItem(MenuItem * menu_item);
 

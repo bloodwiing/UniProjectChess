@@ -31,4 +31,6 @@ UserSettings * loadUserSettings();
 
 UserSettings * safeLoadUserSettings();
 
+void freeSettings(UserSettings * settings);
+
 #endif //CHESS_SETTINGS_H

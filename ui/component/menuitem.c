@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, void (*callback)(UserSettings *, char *)) {
+MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, MENU_ITEM_CALLBACK(*callback)) {
     MenuItem * out = malloc(sizeof(MenuItem));
     out->settings = settings;
     wcsncpy(out->text, text, MENU_ITEM_MAX_STRING_LEN);
@@ -11,8 +11,8 @@ MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, 
     return out;
 }
 
-void runMenuItem(MenuItem * menu_item) {
-    menu_item->callback(menu_item->settings, menu_item->data);
+bool_t runMenuItem(MenuItem * menu_item) {
+    return menu_item->callback(menu_item->settings, menu_item->data);
 }
 
 void freeMenuItem(MenuItem * menu_item) {

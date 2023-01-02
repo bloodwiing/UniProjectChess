@@ -9,20 +9,17 @@
 #include "gamemenu.h"
 #include "../../abstract/version.h"
 
-void updateMainMenu(UserSettings * settings, char * data);
+MENU_SELECTOR_INIT_CALLBACK(initMainMenu);
+MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu);
 
-void onMainMenuResume(UserSettings * settings, char * data);
-void onMainMenuStart(UserSettings * settings, char * data);
-void onMainMenuExit(UserSettings * settings, char * data);
+MENU_ITEM_CALLBACK(onMainMenuResume);
+MENU_ITEM_CALLBACK(onMainMenuStart);
+MENU_ITEM_CALLBACK(onMainMenuExit);
 
 void mainMenuLoop(UserSettings * settings) {
-    con_clear();
-    MenuSelector * selector = createMenuSelector(settings, updateMainMenu);
+    initMainMenu(settings);
 
-    con_set_pos(2, 1);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"%hs", getVersionName(BUILD_VERSION));
-    con_set_pos(2, 2);
-    renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
+    MenuSelector * selector = createMenuSelector(settings, initMainMenu, updateMainMenu);
 
     if (isPathFile("./data/save.bin"))
         addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
@@ -34,12 +31,21 @@ void mainMenuLoop(UserSettings * settings) {
     }
 }
 
-void updateMainMenu(UserSettings * settings, char * data) {
+MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
+    con_clear();
+
+    con_set_pos(2, 1);
+    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"%hs", getVersionName(BUILD_VERSION));
+    con_set_pos(2, 2);
+    renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
+}
+
+MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
     con_set_pos(5, 8);
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MENU_ITEM_MAX_STRING_LEN, data);
 }
 
-void onMainMenuResume(UserSettings * settings, char * data) {
+MENU_ITEM_CALLBACK(onMainMenuResume) {
     FILE * file = fopen("./data/save.bin", "rb");
     Board * board;
 
@@ -49,23 +55,24 @@ void onMainMenuResume(UserSettings * settings, char * data) {
         if (board == NULL && exception.status) {
             reportException(exception);
             fclose(file);
-            return;
+            return false;
         }
         fclose(file);
     } else {
-        mainMenuLoop(settings);
-        return;
+        return false;
     }
 
     gameLoop(settings, board);
-    mainMenuLoop(settings);
+    return false;
 }
 
-void onMainMenuStart(UserSettings * settings, char * data) {
+MENU_ITEM_CALLBACK(onMainMenuStart) {
     scenarioMenuLoop(settings);
+    return false;
 }
 
-void onMainMenuExit(UserSettings * settings, char * data) {
+MENU_ITEM_CALLBACK(onMainMenuExit) {
     con_clear();
     con_show_cursor(1);
+    return true;
 }
