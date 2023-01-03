@@ -7,7 +7,7 @@ void initMove(Move * move, Vector vector, bool_t repeat) {
     move->repeat = repeat;
 }
 
-void initMoveRaw(Move * move, int8_t x, int8_t y, bool_t repeat) {
+void initMoveRaw(Move * move, vec_t x, vec_t y, bool_t repeat) {
     initMove(move, (Vector){.x = x, .y = y}, repeat);
 }
 

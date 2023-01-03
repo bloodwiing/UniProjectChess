@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+typedef uint8_t colour_t;
+typedef uint32_t key_t;
+
 // Spalvos
 #define COLOR_BLACK       0
 #define COLOR_RED         1
@@ -40,12 +43,12 @@ void con_clear();
 
 // Nuskaito vieną klavišą. 
 // Gražina 0, jei nėra ko daugiau skaityti
-uint32_t con_read_key();
+key_t con_read_key();
 
 // Nustato fono ir teksto spalvą
 // * bg - fono spalva (COLOR_*)
 // * fg - teksto spalva (COLOR_*)
-void con_set_color(int bg, int fg);
+void con_set_color(colour_t bg, colour_t fg);
 
 // Nustato dabartinę išvedimo poziciją. x, y - koordinatės:
 // * viršutinis kairys terminalo kampas yra (0, 0)

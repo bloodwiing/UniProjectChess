@@ -3,15 +3,17 @@
 
 #include <stdint.h>
 
-#define BUILD_VERSION 12
+#define BUILD_VERSION 13
+
+typedef uint16_t version_t;
 
 typedef struct VersionInfo {
     char * name;
-    uint16_t min_scenario_version;
+    version_t min_scenario_version;
 } VersionInfo;
 
-VersionInfo getVersionInfo(uint16_t version);
-char * getVersionName(uint16_t version);
-int getMinSupportedScenarioVersion(uint16_t version);
+VersionInfo getVersionInfo(version_t version);
+char * getVersionName(version_t version);
+version_t getMinSupportedScenarioVersion(version_t version);
 
 #endif //CHESS_VERSION_H

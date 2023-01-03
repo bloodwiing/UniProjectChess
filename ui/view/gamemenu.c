@@ -15,7 +15,7 @@ void gameLoop(UserSettings * settings, Board * board) {
     renderGameScreen(settings, state, board);
 
     bool_t game_active = true;
-    int16_t victor = -1;
+    team_index_t victor = -1;
 
     while (game_active) {
         if (evaluateGameInput(state, &game_active))

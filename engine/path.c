@@ -1,6 +1,6 @@
 #include "path.h"
 
-Path * createPath(GamePiece * game_piece, Vector vector, bool_t repeat, PathType_t type) {
+Path * createPath(GamePiece * game_piece, Vector vector, bool_t repeat, path_type_t type) {
     Path * out = malloc(sizeof(Path));
     out->piece = game_piece;
 

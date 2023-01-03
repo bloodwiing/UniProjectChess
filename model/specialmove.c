@@ -1,7 +1,7 @@
 #include "specialmove.h"
 #include <stdlib.h>
 
-void initSpecialMove(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move, bool_t vulnerable, int8_t vul_x, int8_t vul_y) {
+void initSpecialMove(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, bool_t vulnerable, coord_t vul_x, coord_t vul_y) {
     special_move->x = x;
     special_move->y = y;
     special_move->first_move = first_move;
@@ -10,11 +10,11 @@ void initSpecialMove(SpecialMove * special_move, int8_t x, int8_t y, bool_t firs
     special_move->vul_y = vul_y;
 }
 
-void initSpecialMoveSafe(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move) {
+void initSpecialMoveSafe(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move) {
     return initSpecialMove(special_move, x, y, first_move, false, 0, 0);
 }
 
-void initSpecialMoveVulnerable(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move, int8_t vul_x, int8_t vul_y) {
+void initSpecialMoveVulnerable(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, coord_t vul_x, coord_t vul_y) {
     return initSpecialMove(special_move, x, y, first_move, true, vul_x, vul_y);
 }
 

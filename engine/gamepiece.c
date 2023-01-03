@@ -4,7 +4,7 @@
 
 #define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS sizeof(GamePiece) - sizeof(struct Tile *)
 
-GamePiece * createGamePiece(Piece * piece, uint8_t piece_index) {
+GamePiece * createGamePiece(Piece * piece, piece_index_t piece_index) {
     GamePiece * out = calloc(1, sizeof(GamePiece));
     out->team = piece->team;
     out->piece = piece_index;
@@ -28,11 +28,11 @@ GamePiece * loadGamePiece(FILE * stream) {
     return out;
 }
 
-void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, uint8_t x, uint8_t y) {
+void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, ucoord_t x, ucoord_t y) {
     game_piece->vulnerable = true;
     Vector vul_pos = normaliseCoordinates(x, y, (scenario->teams + game_piece->team)->direction);
-    game_piece->vul_x = (int16_t)x + vul_pos.x;
-    game_piece->vul_x = (int16_t)y + vul_pos.y;
+    game_piece->vul_x = (coord_t)x + vul_pos.x;
+    game_piece->vul_x = (coord_t)y + vul_pos.y;
 }
 
 void freeGamePiece(GamePiece * game_piece) {

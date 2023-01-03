@@ -11,7 +11,7 @@ typedef struct Move {
 } Move;
 
 void initMove(Move * move, Vector vector, bool_t repeat);
-void initMoveRaw(Move * move, int8_t x, int8_t y, bool_t repeat);
+void initMoveRaw(Move * move, vec_t x, vec_t y, bool_t repeat);
 void printMove(Move move);
 
 void freeMove(Move * move);

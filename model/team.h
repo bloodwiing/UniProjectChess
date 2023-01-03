@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "piece.h"
 #include "teamdirection.h"
+#include "../ui/con_lib.h"
 
 struct GamePiece;
 
@@ -12,9 +13,9 @@ struct GamePiece;
 
 typedef struct Team {
     char name[TEAM_NAME_LENGTH];
-    uint8_t colour;
+    colour_t colour;
 
-    uint8_t piece_count;
+    count_t piece_count;
     Piece * pieces;
 
     TeamDirection direction;
@@ -22,7 +23,7 @@ typedef struct Team {
     struct GamePiece * protected_piece;
 } Team;
 
-Team * createTeam(char * name, uint8_t colour, Piece * pieces, uint8_t piece_count, TeamDirection direction);
+Team * createTeam(char * name, colour_t colour, Piece * pieces, count_t piece_count, TeamDirection direction);
 void saveTeam(Team * team, FILE * stream);
 Team * loadTeam(FILE * stream);
 void printTeam(Team * team);

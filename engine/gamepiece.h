@@ -8,24 +8,24 @@
 struct Tile;
 
 typedef struct GamePiece {
-    uint8_t team;
-    uint8_t piece;
+    team_index_t team;
+    piece_index_t piece;
 
-    uint16_t moves;
+    count16_t moves;
 
     bool_t vulnerable;
-    uint8_t vul_x, vul_y;
+    ucoord_t vul_x, vul_y;
 
     struct Tile * position;
 } GamePiece;
 
-GamePiece * createGamePiece(Piece * piece, uint8_t piece_index);
+GamePiece * createGamePiece(Piece * piece, piece_index_t piece_index);
 Piece * getOriginalPiece(GamePiece * game_piece, Scenario * scenario);
 
 void saveGamePiece(GamePiece * game_piece, FILE * stream);
 GamePiece * loadGamePiece(FILE * stream);
 
-void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, uint8_t x, uint8_t y);
+void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, ucoord_t x, ucoord_t y);
 
 void freeGamePiece(GamePiece * game_piece);
 

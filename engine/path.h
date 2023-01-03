@@ -4,7 +4,7 @@
 #include "gamepiece.h"
 #include "../model/vector.h"
 
-typedef uint8_t PathType_t;
+typedef uint8_t path_type_t;
 #define PATH_TYPE_ANY 0
 #define PATH_TYPE_MOVE 1
 #define PATH_TYPE_ATTACK 2
@@ -17,13 +17,13 @@ typedef struct Path {
 
     Vector vector;
     bool_t repeat;
-    PathType_t type;
+    path_type_t type;
 
     struct Tile * next_tile;
     struct Path * next_path;
 } Path;
 
-Path * createPath(GamePiece * game_piece, Vector vector, bool_t repeat, PathType_t type);
+Path * createPath(GamePiece * game_piece, Vector vector, bool_t repeat, path_type_t type);
 
 void freePath(Path * path);
 

@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include "vector.h"
 
-Vector createVector(int16_t x, int16_t y) {
+Vector createVector(vec_t x, vec_t y) {
     return (Vector){.x = x, .y = y};
 }
 
-Vector normaliseCoordinates(int16_t x, int16_t y, TeamDirection direction) {
+Vector normaliseCoordinates(vec_t x, vec_t y, TeamDirection direction) {
     switch (direction) {
         case TeamDirectionUp:
             return createVector(x, y);

@@ -5,17 +5,17 @@
 #include <stdio.h>
 
 typedef struct SpecialMove {
-    int8_t x, y;
+    coord_t x, y;
 
     bool_t first_move;
 
     bool_t vulnerable;
-    int8_t vul_x, vul_y;
+    coord_t vul_x, vul_y;
 } SpecialMove;
 
-void initSpecialMove(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move, bool_t vulnerable, int8_t vul_x, int8_t vul_y);
-void initSpecialMoveSafe(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move);
-void initSpecialMoveVulnerable(SpecialMove * special_move, int8_t x, int8_t y, bool_t first_move, int8_t vul_x, int8_t vul_y);
+void initSpecialMove(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, bool_t vulnerable, coord_t vul_x, coord_t vul_y);
+void initSpecialMoveSafe(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move);
+void initSpecialMoveVulnerable(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, coord_t vul_x, coord_t vul_y);
 void printSpecialMove(SpecialMove special_move);
 
 void freeSpecialMove(SpecialMove * special_move);

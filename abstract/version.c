@@ -1,6 +1,6 @@
 #include "version.h"
 
-VersionInfo getVersionInfo(uint16_t version) {
+VersionInfo getVersionInfo(version_t version) {
     switch (version) {
         case 0:
             return (VersionInfo){.name = "v0.0 Alpha", .min_scenario_version = 0};  // first data storage
@@ -28,15 +28,17 @@ VersionInfo getVersionInfo(uint16_t version) {
             return (VersionInfo){.name = "v0.8 Beta", .min_scenario_version = 11};  // new validation
         case 12:
             return (VersionInfo){.name = "v0.8.1 Beta", .min_scenario_version = 12};  // scenario version check
+        case 13:
+            return (VersionInfo){.name = "v0.8.2 Beta", .min_scenario_version = 12};  // correct memory de-allocation
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = UINT16_MAX};
     }
 }
 
-char * getVersionName(uint16_t version) {
+char * getVersionName(version_t version) {
     return getVersionInfo(version).name;
 }
 
-int getMinSupportedScenarioVersion(uint16_t version) {
+version_t getMinSupportedScenarioVersion(version_t version) {
     return getVersionInfo(version).min_scenario_version;
 }

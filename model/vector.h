@@ -6,13 +6,15 @@
 #include "../abstract/defs.h"
 #include "teamdirection.h"
 
+typedef int16_t vec_t;
+
 typedef struct Vector {
-    int16_t x, y;
+    vec_t x, y;
 } Vector;
 
-Vector createVector(int16_t x, int16_t y);
+Vector createVector(vec_t x, vec_t y);
 
-Vector normaliseCoordinates(int16_t x, int16_t y, TeamDirection direction);
+Vector normaliseCoordinates(vec_t x, vec_t y, TeamDirection direction);
 Vector normaliseVector(Vector vector, TeamDirection direction);
 
 bool_t compVectors(Vector a, Vector b);

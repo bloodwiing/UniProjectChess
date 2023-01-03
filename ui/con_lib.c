@@ -27,14 +27,14 @@ void con_handle_abort() {
   exit(-1);
 }
 
-uint32_t con_read_key() {
+key_t con_read_key() {
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(STDIN_FILENO, &fds);
 
   struct timeval tv = { 0L, 0L };
   if (select(1, &fds, NULL, NULL, &tv)) {
-    uint32_t res = 0;
+    key_t res = 0;
     unsigned char c[4];
     size_t size;
     if ((size = read(0, &c, sizeof(c))) > 0) {
@@ -52,7 +52,7 @@ uint32_t con_read_key() {
   return 0;
 }
 
-void con_set_color(int bg, int fg) {
+void con_set_color(colour_t bg, colour_t fg) {
   if (bg & COLOR_INTENSE) {
     switch (bg & ~COLOR_INTENSE & 0b10111) {
       case COLOR_BLACK:        wprintf(L"\x1B[100m"); break;
@@ -190,7 +190,7 @@ void con_clear() {
   FillConsoleOutputAttribute(handle, 0, dwConSize, coordScreen, &cCharsWritten);
 }
 
-uint32_t con_read_key() {
+key_t con_read_key() {
   HANDLE handle = con_get_stdin();
   INPUT_RECORD input_record = {};
   DWORD num_events = 0;
@@ -205,7 +205,7 @@ uint32_t con_read_key() {
     }
 
     if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown == TRUE) {
-      return input_record.Event.KeyEvent.wVirtualKeyCode;
+      return (key_t)input_record.Event.KeyEvent.wVirtualKeyCode;
     }
   }
 
@@ -218,7 +218,7 @@ WORD * defaultAttr = NULL;
 #define FOREGROUND_BYTES (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY)
 #define BACKGROUND_BYTES (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY)
 
-void con_set_color(int bg, int fg) {
+void con_set_color(colour_t bg, colour_t fg) {
   DWORD attr = 0;
 
   if (defaultAttr == NULL) {

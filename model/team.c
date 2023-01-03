@@ -5,7 +5,7 @@
 
 #define TEAM_STRUCT_SIZE_WITHOUT_POINTERS sizeof(Team) - sizeof(Piece *) - sizeof(TeamDirection) - sizeof(struct GamePiece *)
 
-Team * createTeam(char * name, uint8_t colour, Piece * pieces, uint8_t piece_count, TeamDirection direction) {
+Team * createTeam(char * name, colour_t colour, Piece * pieces, count_t piece_count, TeamDirection direction) {
     Team * out = calloc(1, sizeof(Team));
     strcpy(out->name, name);
     out->colour = colour;
@@ -20,7 +20,7 @@ Team * createTeam(char * name, uint8_t colour, Piece * pieces, uint8_t piece_cou
 void saveTeam(Team * team, FILE * stream) {
     fwrite(team, TEAM_STRUCT_SIZE_WITHOUT_POINTERS, 1,stream);
 
-    for (int i = 0; i < team->piece_count; i++)
+    for (piece_index_t i = 0; i < team->piece_count; i++)
         savePiece(team->pieces + i, stream);
 
     fwrite((uint8_t *) &team->direction, 1, 1, stream);
@@ -31,7 +31,7 @@ Team * loadTeam(FILE * stream) {
     fread(out, TEAM_STRUCT_SIZE_WITHOUT_POINTERS, 1, stream);
 
     out->pieces = malloc(sizeof(Piece) * out->piece_count);
-    for (int i = 0; i < out->piece_count; i++)
+    for (piece_index_t i = 0; i < out->piece_count; i++)
         loadPiece(out->pieces + i, stream);
 
     uint8_t direction;
@@ -53,7 +53,7 @@ void printTeam(Team * team) {
 }
 
 void freeTeam(Team * team) {
-    for (int i = 0; i < team->piece_count;)
+    for (piece_index_t i = 0; i < team->piece_count;)
         freeMoveSet(team->pieces[i++].move_set);
     free(team->pieces);
     free(team);

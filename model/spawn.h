@@ -4,13 +4,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "../abstract/defs.h"
 
 typedef struct Spawn {
-    uint8_t x, y;
-    uint8_t team, type;
+    ucoord_t x, y;
+    team_index_t team;
+    piece_index_t type;
 } Spawn;
 
-Spawn * createSpawn(uint8_t x, uint8_t y, uint8_t team, uint8_t type);
+Spawn * createSpawn(ucoord_t x, ucoord_t y, team_index_t team, piece_index_t type);
 void saveSpawn(Spawn * spawn, FILE * stream);
 Spawn * loadSpawn(FILE * stream);
 void printSpawn(Spawn * spawn);

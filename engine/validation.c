@@ -1,6 +1,6 @@
 #include "validation.h"
 
-void extendPath(Board * board, Path * start, int x, int y) {
+void extendPath(Board * board, Path * start, ucoord_t x, ucoord_t y) {
     if (!hasPath(getTile(board, x, y), start->piece, start->vector, start->repeat, start->type))
         return;
 
@@ -50,7 +50,7 @@ void trimPath(Tile * start, Path * path) {
     }
 }
 
-void fillPathsFromPoint(Board * board, Tile * origin, Vector vector, bool_t repeat, PathType_t type, int i, int j) {
+void fillPathsFromPoint(Board * board, Tile * origin, Vector vector, bool_t repeat, path_type_t type, ucoord_t i, ucoord_t j) {
     Path * prev_path = addOrigin(origin, vector, repeat, type);
 
     while (validateInBounds(board, i += vector.x, j += vector.y)) {
@@ -66,14 +66,14 @@ void fillPathsFromPoint(Board * board, Tile * origin, Vector vector, bool_t repe
     }
 }
 
-void expandPathTypes(Path * start, PathType_t type) {
+void expandPathTypes(Path * start, path_type_t type) {
     while (start != NULL) {
         start->type |= type;
         start = start->next_path;
     }
 }
 
-void createSinglePathing(Board * board, int x, int y) {
+void createSinglePathing(Board * board, ucoord_t x, ucoord_t y) {
     Tile * origin = getTile(board, x, y);
     Piece * piece = getTilePiece(board, origin);
 
@@ -85,14 +85,14 @@ void createSinglePathing(Board * board, int x, int y) {
         return;
     TeamDirection direction = team->direction;
 
-    for (int move_index = 0; move_index < piece->move_set->move_count;) {
+    for (move_index_t move_index = 0; move_index < piece->move_set->move_count;) {
         Move move = piece->move_set->moves[move_index++];
         Vector relative = normaliseVector(move.vector, direction);
 
         fillPathsFromPoint(board, origin, relative, move.repeat, PATH_TYPE_MOVE, x, y);
     }
 
-    for (int move_index = 0; move_index < piece->move_set->attack_count;) {
+    for (move_index_t move_index = 0; move_index < piece->move_set->attack_count;) {
         Move move = piece->move_set->attacks[move_index++];
         Vector relative = normaliseVector(move.vector, direction);
 
@@ -115,11 +115,11 @@ void createBoardPathing(Board * board) {
     }
 }
 
-bool_t validateInBounds(Board * board, int x, int y) {
+bool_t validateInBounds(Board * board, ucoord_t x, ucoord_t y) {
     return x < board->width && x >= 0 && y < board->height && y >= 0;
 }
 
-bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int target_y) {
+bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
     GamePiece * piece = getBoardGamePiece(board, origin_x, origin_y);
 
     if (piece == NULL)
@@ -138,7 +138,7 @@ bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int
         if (target->game_piece->team == piece->team)
             return false;
 
-        for (int move_index = 0; move_index < move_set->attack_count;) {
+        for (move_index_t move_index = 0; move_index < move_set->attack_count;) {
             Move move = move_set->attacks[move_index++];
             Vector relative = normaliseVector(move.vector, direction);
 
@@ -148,7 +148,7 @@ bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int
         return false;
     }
     else {
-        for (int move_index = 0; move_index < move_set->move_count;) {
+        for (move_index_t move_index = 0; move_index < move_set->move_count;) {
             Move move = move_set->moves[move_index++];
             Vector relative = normaliseVector(move.vector, direction);
 
@@ -159,7 +159,7 @@ bool_t validatePath(Board * board, int origin_x, int origin_y, int target_x, int
     }
 }
 
-void updateTilePaths(Board * board, int x, int y) {
+void updateTilePaths(Board * board, ucoord_t x, ucoord_t y) {
     Tile * tile = getTile(board, x, y);
 
     if (tile->game_piece == NULL) {
@@ -170,7 +170,7 @@ void updateTilePaths(Board * board, int x, int y) {
         }
         clearOrigins(tile);
     } else {
-        for (int i = 0; i < tile->path_count;) {
+        for (path_index_t i = 0; i < tile->path_count;) {
             Path * path = tile->paths[i++];
             if (path->repeat)
                 trimPath(tile, path);
@@ -180,10 +180,10 @@ void updateTilePaths(Board * board, int x, int y) {
     }
 }
 
-bool_t isMoveCheckingSelf(Board * board, int origin_x, int origin_y, int target_x, int target_y) {
+bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
     Tile * origin = getTile(board, origin_x, origin_y);
 
-    for (int i = 0; i < origin->path_count;) {
+    for (path_index_t i = 0; i < origin->path_count;) {
         Path * path = origin->paths[i++];
         int x = origin_x, y = origin_y;
 
@@ -209,7 +209,7 @@ bool_t isTeamChecked(Board * board, Team * team) {
     GamePiece * protected = team->protected_piece;
     Tile * tile = protected->position;
 
-    for (int i = 0; i < tile->path_count;) {
+    for (path_index_t i = 0; i < tile->path_count;) {
         Path * path = tile->paths[i++];
         if (path->piece->team != protected->team)
             return true;
@@ -218,13 +218,13 @@ bool_t isTeamChecked(Board * board, Team * team) {
     return false;
 }
 
-bool_t isTeamCheckedAfterMove(Board * board, Team * team, int origin_x, int origin_y, int target_x, int target_y) {
+bool_t isTeamCheckedAfterMove(Board * board, Team * team, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
     GamePiece * protected = team->protected_piece;
     Tile * tile = protected->position;
 
     Tile * target_tile = getTile(board, target_x, target_y);
     if (getTile(board, origin_x, origin_y) == tile) {  // if the move is of a protected piece
-        for (int i = 0; i < target_tile->path_count;) {
+        for (path_index_t i = 0; i < target_tile->path_count;) {
             Path * path = target_tile->paths[i++];
             if (path->piece->team != protected->team)  // then only check if the target location is not safe
                 return true;
@@ -232,11 +232,11 @@ bool_t isTeamCheckedAfterMove(Board * board, Team * team, int origin_x, int orig
         return false;
     }
 
-    for (int i = 0; i < tile->path_count;) {
+    for (path_index_t i = 0; i < tile->path_count;) {
         Path * path = tile->paths[i++];
         if (path->piece->team != protected->team) {
             Tile * path_start = path->piece->position;
-            int x = path_start->x, y = path_start->y;
+            ucoord_t x = path_start->x, y = path_start->y;
 
             if (path->piece == getBoardGamePiece(board, target_x, target_y))
                 continue;
@@ -257,7 +257,7 @@ bool_t isTeamCheckedAfterMove(Board * board, Team * team, int origin_x, int orig
     return false;
 }
 
-bool_t isMoveValid(Board * board, int origin_x, int origin_y, int target_x, int target_y) {
+bool_t isMoveValid(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
     Team * move_team = getGamePieceTeam(board, getBoardGamePiece(board, origin_x, origin_y));
     return validatePath(board, origin_x, origin_y, target_x, target_y)  // check if the piece is even able to move there
            && !isMoveCheckingSelf(board, origin_x, origin_y, target_x, target_y)
