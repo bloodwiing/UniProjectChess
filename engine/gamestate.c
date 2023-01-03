@@ -62,7 +62,7 @@ void executeGameMove(GameState * state) {
 }
 
 bool_t evaluateGameInput(GameState * state, bool_t * game_active) {
-    key_t key;
+    key_code_t key;
     while ((key = con_read_key()) != 0) {
         switch (key) {
             case KEY_ARROW_UP:

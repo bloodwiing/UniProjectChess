@@ -27,17 +27,17 @@ void con_handle_abort() {
   exit(-1);
 }
 
-key_t con_read_key() {
+key_code_t con_read_key() {
   fd_set fds;
   FD_ZERO(&fds);
   FD_SET(STDIN_FILENO, &fds);
 
   struct timeval tv = { 0L, 0L };
   if (select(1, &fds, NULL, NULL, &tv)) {
-    key_t res = 0;
+    key_code_t res = 0;
     unsigned char c[4];
     size_t size;
-    if ((size = read(0, &c, sizeof(c))) > 0) {
+    if ((size = read(0, c, sizeof(c))) > 0) {
       for (int i = 0; i < size; i++) {
         unsigned char single = c[i];
         if (single >= 65 && single <= 90)  // turn uppercase to lowercase
@@ -164,6 +164,10 @@ struct ConSize con_get_size() {
     return result;
 }
 
+void con_flush() {
+    fflush(stdout);
+}
+
 #elif _WIN32
 
 #include <stdio.h>
@@ -190,7 +194,7 @@ void con_clear() {
   FillConsoleOutputAttribute(handle, 0, dwConSize, coordScreen, &cCharsWritten);
 }
 
-key_t con_read_key() {
+key_code_t con_read_key() {
   HANDLE handle = con_get_stdin();
   INPUT_RECORD input_record = {};
   DWORD num_events = 0;
@@ -205,7 +209,7 @@ key_t con_read_key() {
     }
 
     if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown == TRUE) {
-      return (key_t)input_record.Event.KeyEvent.wVirtualKeyCode;
+      return (key_code_t)input_record.Event.KeyEvent.wVirtualKeyCode;
     }
   }
 
@@ -361,6 +365,10 @@ struct ConSize con_get_size() {
     size.height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 
     return size;
+}
+
+void con_flush() {
+    fflush(stdout);
 }
 
 #endif // _WIN32

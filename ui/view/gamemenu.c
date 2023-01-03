@@ -66,4 +66,6 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
                            getOriginalPiece(board->tiles[state->sel_x + board->width * state->sel_y]->game_piece, board->scenario)->name);
     else
         renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%-*ls", PIECE_NAME_LENGTH, L"None");
+
+    con_flush();
 }

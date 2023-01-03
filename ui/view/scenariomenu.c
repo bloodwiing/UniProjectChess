@@ -46,6 +46,8 @@ MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu) {
 
     con_set_pos(2, 1);
     renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Scenario select");
+
+    con_flush();
 }
 
 MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
@@ -99,6 +101,7 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
     }
 
     freeScenario(scenario);
+    con_flush();
 }
 
 MENU_ITEM_CALLBACK(onScenarioMenuSelect) {

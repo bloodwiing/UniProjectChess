@@ -38,11 +38,14 @@ MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
     renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"%hs", getVersionName(BUILD_VERSION));
     con_set_pos(2, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
+
+    con_flush();
 }
 
 MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
     con_set_pos(5, 8);
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MENU_ITEM_MAX_STRING_LEN, data);
+    con_flush();
 }
 
 MENU_ITEM_CALLBACK(onMainMenuResume) {

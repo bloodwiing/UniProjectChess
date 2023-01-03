@@ -47,6 +47,7 @@ void reportExceptionAtPos(Exception exception, int x, int y) {
 void reportException(Exception exception) {
     con_clear();
     reportExceptionAtPos(exception, 2, 2);
+    con_flush();
     con_sleep(10);
     con_clear();
 }

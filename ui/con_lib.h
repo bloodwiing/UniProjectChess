@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef uint8_t colour_t;
-typedef uint32_t key_t;
+typedef uint32_t key_code_t;
 
 // Spalvos
 #define COLOR_BLACK       0
@@ -43,7 +43,7 @@ void con_clear();
 
 // Nuskaito vieną klavišą. 
 // Gražina 0, jei nėra ko daugiau skaityti
-key_t con_read_key();
+key_code_t con_read_key();
 
 // Nustato fono ir teksto spalvą
 // * bg - fono spalva (COLOR_*)
@@ -73,5 +73,8 @@ void con_sleep(float seconds);
 
 // Grąžina ekrano dydį
 struct ConSize con_get_size();
+
+// Užbaigia ekrano rašymo darbą
+void con_flush();
 
 #endif // CON_LIB_H
