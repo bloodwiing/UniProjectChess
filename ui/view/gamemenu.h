@@ -3,7 +3,9 @@
 
 #include "../../settings/settings.h"
 #include "../../engine/board.h"
+#include "../../engine/gamestate.h"
 
-void gameLoop(UserSettings * settings, Board * board);
+void resumeGameLoop(UserSettings * settings, GameState * game_state, bool_t save_state);
+void beginNewGameLoop(UserSettings * settings, Board * board, bool_t save_state);
 
 #endif //CHESS_GAMEMENU_H

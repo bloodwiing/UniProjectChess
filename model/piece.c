@@ -4,31 +4,46 @@
 
 #define STRUCT_PIECE_SIZE_WITHOUT_POINTERS sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * PIECE_UNICODE_LENGTH
 
-void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet * move_set) {
-    strcpy(piece->name, name);
-    wcscpy(piece->unicode, unicode);
-    piece->symbol = symbol;
-    piece->upgradable = upgradable;
-    piece->protect = protect;
-    piece->team = team;
-    piece->move_set = move_set;
+Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet move_set) {
+    Piece out = {
+        .symbol = symbol,
+        .upgradable = upgradable,
+        .protect = protect,
+        .team = team,
+        .move_set = move_set
+    };
+    strcpy(out.name, name);
+    wcscpy(out.unicode, unicode);
+    return out;
 }
 
-void savePiece(Piece * piece, FILE * stream) {
-    fwrite(piece, STRUCT_PIECE_SIZE_WITHOUT_POINTERS, 1, stream);
-    fwrite(createU16(piece->unicode, PIECE_UNICODE_LENGTH), sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
-    saveMoveSet(piece->move_set, stream);
+void savePiece(Piece piece, FILE * stream) {
+    fwrite(&piece, STRUCT_PIECE_SIZE_WITHOUT_POINTERS, 1, stream);
+
+    wchar16_t * converted = createU16(piece.unicode, PIECE_UNICODE_LENGTH);
+    fwrite(converted, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
+    free(converted);
+
+    saveMoveSet(piece.move_set, stream);
 }
 
-void loadPiece(Piece * piece, FILE * stream) {
-    fread(piece, STRUCT_PIECE_SIZE_WITHOUT_POINTERS, 1, stream);
+Piece loadPiece(FILE * stream) {
+    Piece out = {};
+    fread(&out, STRUCT_PIECE_SIZE_WITHOUT_POINTERS, 1, stream);
+
     wchar16_t name[PIECE_UNICODE_LENGTH];
     fread(name, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
-    memcpy(piece->unicode, createWStr(name, PIECE_UNICODE_LENGTH), sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
-    piece->move_set = loadMoveSet(stream);
+
+    wchar_t * converted = createWStr(name, PIECE_UNICODE_LENGTH);
+    memcpy(out.unicode, converted, sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
+    free(converted);
+
+    out.move_set = loadMoveSet(stream);
+
+    return out;
 }
 
-void printPiece(Piece * piece) {
+void printPiece(Piece piece) {
     wprintf(L"Piece: \n"
              "\tName: %s\n"
              "\tUnicode: %ls\n"
@@ -37,11 +52,11 @@ void printPiece(Piece * piece) {
              "\tProtect: %s\n"
              "\tTeam: %d\n"
              "\tMove Set:\n",
-             piece->name, piece->unicode, piece->symbol, piece->upgradable ? "Yes" : "No", piece->protect ? "Yes" : "No", piece->team);
-    printMoveSet(piece->move_set);
+             piece.name, piece.unicode, piece.symbol, piece.upgradable ? "Yes" : "No",
+             piece.protect ? "Yes" : "No", piece.team);
+    printMoveSet(piece.move_set);
 }
 
 void freePiece(Piece * piece) {
-    freeMoveSet(piece->move_set);
-    free(piece);
+    freeMoveSet(&piece->move_set);
 }

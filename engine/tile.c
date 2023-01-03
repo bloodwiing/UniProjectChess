@@ -23,10 +23,7 @@ Tile * loadTile(FILE * stream) {
     Tile * out = malloc(sizeof(Tile));
     bool_t filled = 0;
     fread(&filled, sizeof(bool_t), 1, stream);
-    if (filled)
-        out->game_piece = loadGamePiece(stream);
-    else
-        out->game_piece = NULL;
+    out->game_piece = filled ? loadGamePiece(stream) : NULL;
     return out;
 }
 

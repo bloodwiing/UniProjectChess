@@ -3,173 +3,182 @@
 #include "abstract/defs.h"
 #include "ui/con_lib.h"
 
-void initDefaultPawn(Piece * piece, uint8_t team) {
+Piece createDefaultPawn(uint8_t team) {
+    MoveSet move_set = createMoveSet();
+
     // move possibilities
-    Move * moves = malloc(sizeof(Move));
-    initMoveRaw(moves + 0, 0, 1, false);
+    addBasicMove(&move_set, createMoveRaw(0, 1, false));
 
     // attack possibilities
-    Move * attacks = malloc(sizeof(Move) * 2);
-    initMoveRaw(attacks + 0, 1, 1, false);
-    initMoveRaw(attacks + 1, -1, 1, false);
+    addAttackMove(&move_set, createMoveRaw(1, 1, false));
+    addAttackMove(&move_set, createMoveRaw(-1, 1, false));
 
     // special possibilities
-    SpecialMove * specials = malloc(sizeof(SpecialMove));
-    initSpecialMoveVulnerable(specials + 0, 0, 2, true, 0, -1);
-
-    // compile move set
-    MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 1, attacks, 2, specials, 1);
+    addSpecialMove(&move_set, createSpecialMoveVulnerableRaw(0, 2, true, 0, -1));
 
     // create the piece
-    initPiece(piece, "Pawn", team == 1 ? L"♟" : L"♙", team == 1 ? 'p' : 'P', true, false, team, move_set);
+    return createPiece("Pawn", team == 1 ? L"♟" : L"♙", team == 1 ? 'p' : 'P', true, false, team, move_set);
 }
 
-void initDefaultRook(Piece * piece, uint8_t team) {
+Piece createDefaultRook(uint8_t team) {
+    MoveSet move_set = createMoveSet();
+
     // move possibilities
-    Move * moves = malloc(sizeof(Move) * 4);
-    initMoveRaw(moves + 0, 0, 1, true);
-    initMoveRaw(moves + 1, 0, -1, true);
-    initMoveRaw(moves + 2, 1, 0, true);
-    initMoveRaw(moves + 3, -1, 0, true);
+    Move moves[4] = {
+        createMoveRaw(0, 1, true),  // bottom
+        createMoveRaw(0, -1, true),  // top
+        createMoveRaw(1, 0, true),  // right
+        createMoveRaw(-1, 0, true)  // left
+    };
 
     // compile move set
-    MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 4, moves, 4, NULL, 0);
+    appendBasicAttackMoves(&move_set, moves, 4);
 
     // create the piece
-    initPiece(piece, "Rook", team == 1 ? L"♜" : L"♖", team == 1 ? 'r' : 'R', false, false, team, move_set);
+    return createPiece("Rook", team == 1 ? L"♜" : L"♖", team == 1 ? 'r' : 'R', false, false, team, move_set);
 }
 
-void initDefaultKnight(Piece * piece, uint8_t team) {
+Piece createDefaultKnight(uint8_t team) {
+    MoveSet move_set = createMoveSet();
+
     // move possibilities
-    Move * moves = malloc(sizeof(Move) * 8);
-    initMoveRaw(moves + 0, 1, 2, false);
-    initMoveRaw(moves + 1, 1, -2, false);
+    Move moves[8] = {
+        createMoveRaw(1, 2, false),  // right 2*bottom
+        createMoveRaw(1, -2, false),  // right 2*top
 
-    initMoveRaw(moves + 2, -1, 2, false);
-    initMoveRaw(moves + 3, -1, -2, false);
+        createMoveRaw(-1, 2, false),  // left 2*bottom
+        createMoveRaw(-1, -2, false),  // left 2*top
 
-    initMoveRaw(moves + 4, 2, 1, false);
-    initMoveRaw(moves + 5, -2, 1, false);
+        createMoveRaw(2, 1, false),  // bottom 2*right
+        createMoveRaw(-2, 1, false),  // bottom 2*left
 
-    initMoveRaw(moves + 6, 2, -1, false);
-    initMoveRaw(moves + 7, -2, -1, false);
+        createMoveRaw(2, -1, false),  // top 2*right
+        createMoveRaw(-2, -1, false)  // top 2*left
+    };
 
     // compile move set
-    MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 8, moves, 8, NULL, 0);
+    appendBasicAttackMoves(&move_set, moves, 8);
 
     // create the piece
-    initPiece(piece, "Knight", team == 1 ? L"♞" : L"♘", team == 1 ? 'n' : 'N', false, false, team, move_set);
+    return createPiece("Knight", team == 1 ? L"♞" : L"♘", team == 1 ? 'n' : 'N', false, false, team, move_set);
 }
 
-void initDefaultBishop(Piece * piece, uint8_t team) {
+Piece createDefaultBishop(uint8_t team) {
+    MoveSet move_set = createMoveSet();
+
     // move possibilities
-    Move * moves = malloc(sizeof(Move) * 4);
-    initMoveRaw(moves + 0, 1, 1, true);
-    initMoveRaw(moves + 1, -1, 1, true);
-    initMoveRaw(moves + 2, 1, -1, true);
-    initMoveRaw(moves + 3, -1, -1, true);
+    Move moves[4] = {
+        createMoveRaw(1, 1, true),  // bottom right
+        createMoveRaw(-1, 1, true),  // bottom left
+        createMoveRaw(1, -1, true),  // top right
+        createMoveRaw(-1, -1, true)  // top left
+    };
 
     // compile move set
-    MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 4, moves, 4, NULL, 0);
+    appendBasicAttackMoves(&move_set, moves, 4);
 
     // create the piece
-    initPiece(piece, "Bishop", team == 1 ? L"♝" : L"♗", team == 1 ? 'b' : 'B', false, false, team, move_set);
+    return createPiece("Bishop", team == 1 ? L"♝" : L"♗", team == 1 ? 'b' : 'B', false, false, team, move_set);
 }
 
-void initDefaultQueen(Piece * piece, uint8_t team) {
+Piece createDefaultQueen(uint8_t team) {
+    MoveSet move_set = createMoveSet();
+
     // move possibilities
-    Move * moves = malloc(sizeof(Move) * 8);
-    initMoveRaw(moves + 0, 0, 1, true);
-    initMoveRaw(moves + 1, 0, -1, true);
-    initMoveRaw(moves + 2, 1, 0, true);
-    initMoveRaw(moves + 3, -1, 0, true);
-    initMoveRaw(moves + 4, 1, 1, true);
-    initMoveRaw(moves + 5, -1, 1, true);
-    initMoveRaw(moves + 6, 1, -1, true);
-    initMoveRaw(moves + 7, -1, -1, true);
+    Move moves[8] = {
+        createMoveRaw(0, 1, true),  // bottom
+        createMoveRaw(0, -1, true),  // top
+        createMoveRaw(1, 0, true),  // right
+        createMoveRaw(-1, 0, true),  // left
+
+        createMoveRaw(1, 1, true),  // bottom right
+        createMoveRaw(-1, 1, true),  // bottom left
+        createMoveRaw(1, -1, true),  // top right
+        createMoveRaw(-1, -1, true)  // top left
+    };
 
     // compile move set
-    MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 8, moves, 8, NULL, 0);
+    appendBasicAttackMoves(&move_set, moves, 8);
 
     // create the piece
-    initPiece(piece, "Queen", team == 1 ? L"♛" : L"♕", team == 1 ? 'q' : 'Q', false, false, team, move_set);
+    return createPiece("Queen", team == 1 ? L"♛" : L"♕", team == 1 ? 'q' : 'Q', false, false, team, move_set);
 }
 
-void initDefaultKing(Piece * piece, uint8_t team) {
+Piece createDefaultKing(uint8_t team) {
+    MoveSet move_set = createMoveSet();
+
     // move possibilities
-    Move * moves = malloc(sizeof(Move) * 8);
-    initMoveRaw(moves + 0, 0, 1, false);
-    initMoveRaw(moves + 1, 0, -1, false);
-    initMoveRaw(moves + 2, 1, 0, false);
-    initMoveRaw(moves + 3, -1, 0, false);
-    initMoveRaw(moves + 4, 1, 1, false);
-    initMoveRaw(moves + 5, -1, 1, false);
-    initMoveRaw(moves + 6, 1, -1, false);
-    initMoveRaw(moves + 7, -1, -1, false);
+    Move moves[8] = {
+        createMoveRaw(0, 1, false),  // bottom
+        createMoveRaw(0, -1, false),  // top
+        createMoveRaw(1, 0, false),  // right
+        createMoveRaw(-1, 0, false),  // left
+
+        createMoveRaw(1, 1, false),  // bottom right
+        createMoveRaw(-1, 1, false),  // bottom left
+        createMoveRaw(1, -1, false),  // top right
+        createMoveRaw(-1, -1, false)  // top left
+    };
 
     // compile move set
-    MoveSet * move_set = malloc(sizeof(MoveSet));
-    initMoveSet(move_set, moves, 8, moves, 8, NULL, 0);
+    appendBasicAttackMoves(&move_set, moves, 8);
 
     // create the piece
-    initPiece(piece, "King", team == 1 ? L"♚" : L"♔", team == 1 ? 'k' : 'K', false, true, team, move_set);
+    return createPiece("King", team == 1 ? L"♚" : L"♔", team == 1 ? 'k' : 'K', false, true, team, move_set);
 }
 
-Team * createDefaultTeamWhite() {
-    Piece * pieces = calloc(6, sizeof(Piece));
-    initDefaultPawn(pieces + 0, 1);
-    initDefaultRook(pieces + 1, 1);
-    initDefaultKnight(pieces + 2, 1);
-    initDefaultBishop(pieces + 3, 1);
-    initDefaultQueen(pieces + 4, 1);
-    initDefaultKing(pieces + 5, 1);
+Team createDefaultTeamWhite() {
+    Team team = createTeam("White", COLOR_LIGHT_ORANGE, TeamDirectionDown);
 
-    return createTeam("White", COLOR_LIGHT_ORANGE, pieces, 6, TeamDirectionDown);
+    addPiece(&team, createDefaultPawn(1));
+    addPiece(&team, createDefaultRook(1));
+    addPiece(&team, createDefaultKnight(1));
+    addPiece(&team, createDefaultBishop(1));
+    addPiece(&team, createDefaultQueen(1));
+    addPiece(&team, createDefaultKing(1));
+
+    return team;
 }
 
-Team * createDefaultTeamBlack() {
-    Piece * pieces = calloc(6, sizeof(Piece));
-    initDefaultPawn(pieces + 0, 0);
-    initDefaultRook(pieces + 1, 0);
-    initDefaultKnight(pieces + 2, 0);
-    initDefaultBishop(pieces + 3, 0);
-    initDefaultQueen(pieces + 4, 0);
-    initDefaultKing(pieces + 5, 0);
+Team createDefaultTeamBlack() {
+    Team team = createTeam("Black", COLOR_RED, TeamDirectionUp);
 
-    return createTeam("Black", COLOR_RED, pieces, 6, TeamDirectionUp);
+    addPiece(&team, createDefaultPawn(0));
+    addPiece(&team, createDefaultRook(0));
+    addPiece(&team, createDefaultKnight(0));
+    addPiece(&team, createDefaultBishop(0));
+    addPiece(&team, createDefaultQueen(0));
+    addPiece(&team, createDefaultKing(0));
+
+    return team;
 }
 
 Scenario * createDefaultScenario() {
-    Team * teams = calloc(2, sizeof(Team));
-    memcpy(teams + 0, createDefaultTeamBlack(), sizeof(Team));
-    memcpy(teams + 1, createDefaultTeamWhite(), sizeof(Team));
+    Scenario * scenario = createScenario("Classic", "BLOODWIING", 8, 8);
 
-    Spawn * spawns = calloc(32, sizeof(Spawn));
-    spawns[0] = *createSpawn(0, 0, 0, 1);  // black rook
-    spawns[1] = *createSpawn(1, 0, 0, 2);  // black knight
-    spawns[2] = *createSpawn(2, 0, 0, 3);  // black bishop
-    spawns[3] = *createSpawn(3, 0, 0, 4);  // black queen
-    spawns[4] = *createSpawn(4, 0, 0, 5);  // black king
-    spawns[5] = *createSpawn(5, 0, 0, 3);  // black bishop
-    spawns[6] = *createSpawn(6, 0, 0, 2);  // black knight
-    spawns[7] = *createSpawn(7, 0, 0, 1);  // black rook
+    addTeam(scenario, createDefaultTeamBlack());
+    addTeam(scenario, createDefaultTeamWhite());
+
+    addSpawn(scenario, createSpawn(0, 0, 0, 1));  // black rook
+    addSpawn(scenario, createSpawn(1, 0, 0, 2));  // black knight
+    addSpawn(scenario, createSpawn(2, 0, 0, 3));  // black bishop
+    addSpawn(scenario, createSpawn(3, 0, 0, 4));  // black queen
+    addSpawn(scenario, createSpawn(4, 0, 0, 5));  // black king
+    addSpawn(scenario, createSpawn(5, 0, 0, 3));  // black bishop
+    addSpawn(scenario, createSpawn(6, 0, 0, 2));  // black knight
+    addSpawn(scenario, createSpawn(7, 0, 0, 1));  // black rook
     for (int i = 0; i < 8; i++) {
-        spawns[8+i] = *createSpawn(i, 1, 0, 0);  // black pawn
-        spawns[16+i] = *createSpawn(i, 6, 1, 0);  // white pawn
+        addSpawn(scenario, createSpawn(i, 1, 0, 0));  // black pawn
+        addSpawn(scenario, createSpawn(i, 6, 1, 0));  // white pawn
     }
-    spawns[24] = *createSpawn(0, 7, 1, 1);  // white rook
-    spawns[25] = *createSpawn(1, 7, 1, 2);  // white knight
-    spawns[26] = *createSpawn(2, 7, 1, 3);  // white bishop
-    spawns[27] = *createSpawn(3, 7, 1, 4);  // white queen
-    spawns[28] = *createSpawn(4, 7, 1, 5);  // white king
-    spawns[29] = *createSpawn(5, 7, 1, 3);  // white bishop
-    spawns[30] = *createSpawn(6, 7, 1, 2);  // white knight
-    spawns[31] = *createSpawn(7, 7, 1, 1);  // white rook
+    addSpawn(scenario, createSpawn(0, 7, 1, 1));  // white rook
+    addSpawn(scenario, createSpawn(1, 7, 1, 2));  // white knight
+    addSpawn(scenario, createSpawn(2, 7, 1, 3));  // white bishop
+    addSpawn(scenario, createSpawn(3, 7, 1, 4));  // white queen
+    addSpawn(scenario, createSpawn(4, 7, 1, 5));  // white king
+    addSpawn(scenario, createSpawn(5, 7, 1, 3));  // white bishop
+    addSpawn(scenario, createSpawn(6, 7, 1, 2));  // white knight
+    addSpawn(scenario, createSpawn(7, 7, 1, 1));  // white rook
 
-    return createScenario("Classic", "BLOODWIING", 8, 8, teams, 2, spawns, 32);
+    return scenario;
 }

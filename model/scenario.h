@@ -24,13 +24,15 @@ typedef struct Scenario {
     Spawn * spawns;
 } Scenario;
 
-Scenario * createScenario(char * name, char * author, ucoord_t size_x, ucoord_t size_y, Team * teams, team_index_t team_count, Spawn * spawns, spawn_index_t spawn_count);
+Scenario * createScenario(char * name, char * author, ucoord_t size_x, ucoord_t size_y);
 void saveScenario(Scenario * scenario, FILE * stream, bool_t with_header);
 Scenario * loadScenario(FILE * stream, bool_t with_header, Exception * exception);
 void printScenario(Scenario * scenario);
 
-Spawn * createSpawnFromPiece(Scenario * scenario, ucoord_t x, ucoord_t y, Piece * piece);
 void printSpawnResolved(Spawn * spawn, Scenario * scenario);
+
+void addTeam(Scenario * scenario, Team team);
+void addSpawn(Scenario * scenario, Spawn spawn);
 
 void freeScenario(Scenario * scenario);
 

@@ -6,15 +6,15 @@
 #include "model/team.h"
 #include "model/scenario.h"
 
-void initDefaultPawn(Piece * piece, uint8_t team);
-void initDefaultRook(Piece * piece, uint8_t team);
-void initDefaultKnight(Piece * piece, uint8_t team);
-void initDefaultBishop(Piece * piece, uint8_t team);
-void initDefaultQueen(Piece * piece, uint8_t team);
-void initDefaultKing(Piece * piece, uint8_t team);
+Piece createDefaultPawn(uint8_t team);
+Piece createDefaultRook(uint8_t team);
+Piece createDefaultKnight(uint8_t team);
+Piece createDefaultBishop(uint8_t team);
+Piece createDefaultQueen(uint8_t team);
+Piece createDefaultKing(uint8_t team);
 
-Team * createDefaultTeamWhite();
-Team * createDefaultTeamBlack();
+Team createDefaultTeamWhite();
+Team createDefaultTeamBlack();
 
 Scenario * createDefaultScenario();
 

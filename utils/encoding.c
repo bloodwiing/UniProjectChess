@@ -1,5 +1,6 @@
 #include "encoding.h"
 #include <stdlib.h>
+#include <string.h>
 
 size_t strU16len(uint16_t * string) {
     size_t size = 0;
@@ -20,10 +21,14 @@ size_t strU16lenAsU32(uint16_t * string) {
 }
 
 uint32_t * convertU16toU32(uint16_t * string, size_t size) {
-    uint32_t * out = calloc(strU16lenAsU32(string) + 1, sizeof(uint32_t));
+    uint32_t * out = calloc(size, sizeof(uint32_t));
     uint32_t * cursor = out;
 
-    const uint16_t * end = string + size;
+    size_t str_len = strU16lenAsU32(string);
+    if (str_len > size - 1)
+        str_len = size - 1;
+
+    const uint16_t * end = string + str_len;
     while (string < end) {
         if (*string >= 0xDC00 && *string < 0xE000) {  // low surrogate
             *cursor++ |= (uint32_t)((*string++ - 0xDC00) & 0x3FF) + 0x10000;
@@ -56,10 +61,14 @@ size_t strU32lenAsU16(uint32_t * string) {
 }
 
 uint16_t * convertU32toU16(uint32_t * string, size_t size) {
-    uint16_t * out = calloc(strU32lenAsU16(string) + 1, sizeof(uint16_t));
+    uint16_t * out = calloc(size, sizeof(uint16_t));
     uint16_t * cursor = out;
 
-    const uint32_t * end = string + size;
+    size_t str_len = strU32lenAsU16(string);
+    if (str_len > size - 1)
+        str_len = size - 1;
+
+    const uint32_t * end = string + str_len;
     while (string < end) {
         if (*string >= 0x10000) {  // surrogate pair
             uint32_t pair = (*string++ - 0x10000) & 0xFFFF;
@@ -85,11 +94,15 @@ uint16_t * createU16(wchar_t * string, size_t size) {
 }
 #elif __SIZEOF_WCHAR_T__ == 2
 wchar_t * createWStr(wchar16_t * string, size_t size) {
-    return (wchar_t *)string;
+    wchar_t * temp = calloc(size, sizeof(wchar_t));
+    memcpy(temp, string, size - 1);
+    return temp;
 }
 
 wchar16_t * createU16(wchar_t * string, size_t size) {
-    return (wchar16_t *)string;
+    wchar16_t * temp = calloc(size, sizeof(wchar16_t));
+    memcpy(temp, string, size - 1);
+    return temp;
 }
 #endif // __SIZEOF_WCHAR_T__
 #endif // defined(__SIZEOF_WCHAR_T__)

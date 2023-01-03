@@ -25,6 +25,10 @@ Vector normaliseVector(Vector vector, TeamDirection direction) {
     return normaliseCoordinates(vector.x, vector.y, direction);
 }
 
+Vector normaliseVector8(Vector8 vector, TeamDirection direction) {
+    return normaliseCoordinates(vector.x, vector.y, direction);
+}
+
 bool_t compVectors(Vector a, Vector b) {
     return a.x == b.x && a.y == b.y;
 }

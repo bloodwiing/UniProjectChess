@@ -1,30 +1,48 @@
 #include "specialmove.h"
 #include <stdlib.h>
 
-void initSpecialMove(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, bool_t vulnerable, coord_t vul_x, coord_t vul_y) {
-    special_move->x = x;
-    special_move->y = y;
-    special_move->first_move = first_move;
-    special_move->vulnerable = vulnerable;
-    special_move->vul_x = vul_x;
-    special_move->vul_y = vul_y;
+SpecialMove createSpecialMove(Vector8 vector, bool_t is_first_move, bool_t is_vulnerable, Vector8 vulnerable) {
+    return (SpecialMove){
+        .vector = vector,
+        .is_first_move = is_first_move,
+        .is_vulnerable = is_vulnerable,
+        .vulnerable = vulnerable
+    };
 }
 
-void initSpecialMoveSafe(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move) {
-    return initSpecialMove(special_move, x, y, first_move, false, 0, 0);
+SpecialMove createSpecialMoveSafe(Vector8 vector, bool_t is_first_move) {
+    return createSpecialMove(vector, is_first_move, false, VECTOR8_ZERO);
 }
 
-void initSpecialMoveVulnerable(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, coord_t vul_x, coord_t vul_y) {
-    return initSpecialMove(special_move, x, y, first_move, true, vul_x, vul_y);
+SpecialMove createSpecialMoveVulnerable(Vector8 vector, bool_t is_first_move, Vector8 vulnerable) {
+    return createSpecialMove(vector, is_first_move, true, vulnerable);
 }
 
-void saveSpecialMove(SpecialMove * special_move, FILE * stream) {
-    fwrite(special_move, sizeof(SpecialMove), 1, stream);
+SpecialMove createSpecialMoveRaw(coord_t x, coord_t y, bool_t is_first_move, bool_t is_vulnerable, coord_t vul_x, coord_t vul_y) {
+    return createSpecialMove(createVector8(x, y), is_first_move, is_vulnerable, createVector8(vul_x, vul_y));
 }
 
-SpecialMove * loadSpecialMove(FILE * stream) {
-    SpecialMove * out = malloc(sizeof(SpecialMove));
-    fread(out, sizeof(SpecialMove), 1, stream);
+SpecialMove createSpecialMoveSafeRaw(coord_t x, coord_t y, bool_t is_first_move) {
+    return createSpecialMove(createVector8(x, y), is_first_move, false, VECTOR8_ZERO);
+}
+
+SpecialMove createSpecialMoveVulnerableRaw(coord_t x, coord_t y, bool_t is_first_move, coord_t vul_x, coord_t vul_y) {
+    return createSpecialMove(createVector8(x, y), is_first_move, true, createVector8(vul_x, vul_y));
+}
+
+void saveSpecialMove(SpecialMove move, FILE * stream) {
+    fwrite(&move.vector, sizeof(Vector8), 1, stream);
+    fwrite(&move.is_first_move, sizeof(bool_t), 1, stream);
+    fwrite(&move.is_vulnerable, sizeof(bool_t), 1, stream);
+    fwrite(&move.vulnerable, sizeof(Vector8), 1, stream);
+}
+
+SpecialMove loadSpecialMove(FILE * stream) {
+    SpecialMove out = {};
+    fread(&out.vector, sizeof(Vector8), 1, stream);
+    fread(&out.is_first_move, sizeof(bool_t), 1, stream);
+    fread(&out.is_vulnerable, sizeof(bool_t), 1, stream);
+    fread(&out.vulnerable, sizeof(Vector8), 1, stream);
     return out;
 }
 
@@ -36,10 +54,6 @@ void printSpecialMove(SpecialMove special_move) {
              "\tVulnerable: %hs\n"
              "\tVulnerable X: %d\n"
              "\tVulnerable Y: %d\n",
-             special_move.x, special_move.y, special_move.first_move ? "YES" : "NO",
-             special_move.vulnerable ? "YES" : "NO", special_move.vul_x, special_move.vul_y);
-}
-
-void freeSpecialMove(SpecialMove * special_move) {
-    free(special_move);
+             special_move.vector.x, special_move.vector.y, special_move.is_first_move ? "YES" : "NO",
+             special_move.is_vulnerable ? "YES" : "NO", special_move.vulnerable.x, special_move.vulnerable.y);
 }

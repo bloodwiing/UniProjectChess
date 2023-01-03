@@ -23,10 +23,12 @@ typedef struct Team {
     struct GamePiece * protected_piece;
 } Team;
 
-Team * createTeam(char * name, colour_t colour, Piece * pieces, count_t piece_count, TeamDirection direction);
-void saveTeam(Team * team, FILE * stream);
-Team * loadTeam(FILE * stream);
-void printTeam(Team * team);
+Team createTeam(char * name, colour_t colour, TeamDirection direction);
+void saveTeam(Team team, FILE * stream);
+Team loadTeam(FILE * stream);
+void printTeam(Team team);
+
+void addPiece(Team * team, Piece piece);
 
 void freeTeam(Team * team);
 

@@ -2,18 +2,21 @@
 #define CHESS_MOVE_H
 
 #include <stdint.h>
+#include <stdio.h>
 #include "../abstract/defs.h"
-#include "vector.h"
+#include "vector8.h"
 
 typedef struct Move {
-    Vector vector;
+    Vector8 vector;
     bool_t repeat;
 } Move;
 
-void initMove(Move * move, Vector vector, bool_t repeat);
-void initMoveRaw(Move * move, vec_t x, vec_t y, bool_t repeat);
-void printMove(Move move);
+Move createMove(Vector8 vector, bool_t repeat);
+Move createMoveRaw(coord_t x, coord_t y, bool_t repeat);
 
-void freeMove(Move * move);
+void saveMove(Move move, FILE * stream);
+Move loadMove(FILE * stream);
+
+void printMove(Move move);
 
 #endif

@@ -21,13 +21,13 @@ typedef struct Piece {
     char symbol;
     wchar_t unicode[PIECE_UNICODE_LENGTH];
 
-    MoveSet * move_set;
+    MoveSet move_set;
 } Piece;
 
-void initPiece(Piece * piece, char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet * move_set);
-void savePiece(Piece * piece, FILE * stream);
-void loadPiece(Piece * piece, FILE * stream);
-void printPiece(Piece * piece);
+Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet move_set);
+void savePiece(Piece piece, FILE * stream);
+Piece loadPiece(FILE * stream);
+void printPiece(Piece piece);
 
 void freePiece(Piece * piece);
 

@@ -85,16 +85,16 @@ void createSinglePathing(Board * board, ucoord_t x, ucoord_t y) {
         return;
     TeamDirection direction = team->direction;
 
-    for (move_index_t move_index = 0; move_index < piece->move_set->move_count;) {
-        Move move = piece->move_set->moves[move_index++];
-        Vector relative = normaliseVector(move.vector, direction);
+    for (move_index_t move_index = 0; move_index < piece->move_set.move_count;) {
+        Move move = piece->move_set.moves[move_index++];
+        Vector relative = normaliseVector8(move.vector, direction);
 
         fillPathsFromPoint(board, origin, relative, move.repeat, PATH_TYPE_MOVE, x, y);
     }
 
-    for (move_index_t move_index = 0; move_index < piece->move_set->attack_count;) {
-        Move move = piece->move_set->attacks[move_index++];
-        Vector relative = normaliseVector(move.vector, direction);
+    for (move_index_t move_index = 0; move_index < piece->move_set.attack_count;) {
+        Move move = piece->move_set.attacks[move_index++];
+        Vector relative = normaliseVector8(move.vector, direction);
 
         Path * origin_path;
         if ((origin_path = findOrigin(origin, relative, move.repeat, PATH_TYPE_ANY)) != NULL) {
@@ -125,7 +125,7 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
     if (piece == NULL)
         return false;
 
-    MoveSet * move_set = getOriginalPiece(piece, board->scenario)->move_set;
+    MoveSet move_set = getOriginalPiece(piece, board->scenario)->move_set;
 
     Team * team;
     if ((team = getTeam(board, piece->team)) == NULL)
@@ -138,9 +138,9 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
         if (target->game_piece->team == piece->team)
             return false;
 
-        for (move_index_t move_index = 0; move_index < move_set->attack_count;) {
-            Move move = move_set->attacks[move_index++];
-            Vector relative = normaliseVector(move.vector, direction);
+        for (move_index_t move_index = 0; move_index < move_set.attack_count;) {
+            Move move = move_set.attacks[move_index++];
+            Vector relative = normaliseVector8(move.vector, direction);
 
             if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_ATTACK))
                 return true;
@@ -148,9 +148,9 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
         return false;
     }
     else {
-        for (move_index_t move_index = 0; move_index < move_set->move_count;) {
-            Move move = move_set->moves[move_index++];
-            Vector relative = normaliseVector(move.vector, direction);
+        for (move_index_t move_index = 0; move_index < move_set.move_count;) {
+            Move move = move_set.moves[move_index++];
+            Vector relative = normaliseVector8(move.vector, direction);
 
             if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_MOVE))
                 return true;

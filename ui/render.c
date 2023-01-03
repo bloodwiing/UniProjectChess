@@ -149,7 +149,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int
         return;
     }
     renderBoard(board, pos_x, pos_y, i, j, w, h);
-    freeBoard(board);
+    freeBoard(board, false);
 }
 
 void clearRect(int x, int y, int w, int h) {

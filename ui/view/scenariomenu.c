@@ -56,10 +56,14 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
         return;
     }
 
-    FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
+    char * path = combinePath(SCENARIO_FOLDER, data);
+    FILE * file = fopen(path, "rb");
+
     Exception exception = {};
     Scenario * scenario = loadScenario(file, true, &exception);
+
     fclose(file);
+    free(path);
 
     if (scenario == NULL && exception.status) {
         clearRect(50, 2, 30, 22);
@@ -105,7 +109,9 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
 }
 
 MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
-    FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
+    char * path = combinePath(SCENARIO_FOLDER, data);
+    FILE * file = fopen(path, "rb");
+
     Scenario * scenario;
     Board * board;
 
@@ -113,6 +119,7 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
         Exception exception = {};
         scenario = loadScenario(file, true, &exception);
         fclose(file);
+        free(path);
         if (scenario == NULL && exception.status) {
             reportException(exception);
             return false;
@@ -133,9 +140,8 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
         return false;
     }
 
-    gameLoop(settings, board);
-    freeBoard(board);
-    freeScenario(scenario);
+    beginNewGameLoop(settings, board, true);
+    freeBoard(board, true);
 
     return true;
 }

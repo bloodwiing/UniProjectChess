@@ -4,10 +4,8 @@
 #include "../enum/key.h"
 
 GameState * createGameState(Board * board) {
-    GameState * out = malloc(sizeof(GameState));
+    GameState * out = calloc(1, sizeof(GameState));
     out->board = board;
-    out->piece_selected = false;
-    out->cur_x = out->cur_y = out->sel_x = out->sel_y = 0;
     createBoardPathing(board);
     return out;
 }
@@ -21,6 +19,23 @@ GameState * loadGameState(UserSettings * settings, FILE * stream, Exception * ex
     if (board == NULL && exception->status)
         return NULL;
     return createGameState(board);
+}
+
+void saveGameStateDefault(GameState * game_state) {
+    FILE * file = fopen(GAME_STATE_SAVE_FILE, "wb");
+    if (file == NULL)
+        return;
+    saveGameState(game_state, file);
+    fclose(file);
+}
+
+GameState * loadGameStateDefault(UserSettings * settings, Exception * exception) {
+    FILE * file = fopen(GAME_STATE_SAVE_FILE, "rb");
+    if (file == NULL)
+        return NULL;
+    GameState * out = loadGameState(settings, file, exception);
+    fclose(file);
+    return out;
 }
 
 GamePiece * getGamePieceAtCursor(GameState * state) {
@@ -63,7 +78,7 @@ void executeGameMove(GameState * state) {
 
 bool_t evaluateGameInput(GameState * state, bool_t * game_active) {
     key_code_t key;
-    while ((key = con_read_key()) != 0) {
+    if ((key = con_read_key()) != 0) {
         switch (key) {
             case KEY_ARROW_UP:
             case KEY_W:
@@ -92,7 +107,11 @@ bool_t evaluateGameInput(GameState * state, bool_t * game_active) {
             case KEY_Q:
                 *game_active = false;
                 break;
+
+            default:
+                break;
         }
+
         return true;
     }
     return false;

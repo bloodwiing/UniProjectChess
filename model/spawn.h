@@ -12,10 +12,10 @@ typedef struct Spawn {
     piece_index_t type;
 } Spawn;
 
-Spawn * createSpawn(ucoord_t x, ucoord_t y, team_index_t team, piece_index_t type);
-void saveSpawn(Spawn * spawn, FILE * stream);
-Spawn * loadSpawn(FILE * stream);
-void printSpawn(Spawn * spawn);
+Spawn createSpawn(ucoord_t x, ucoord_t y, team_index_t team, piece_index_t type);
+void saveSpawn(Spawn spawn, FILE * stream);
+Spawn loadSpawn(FILE * stream);
+void printSpawn(Spawn spawn);
 
 void freeSpawn(Spawn * spawn);
 

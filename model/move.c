@@ -2,20 +2,27 @@
 #include <wchar.h>
 #include <stdlib.h>
 
-void initMove(Move * move, Vector vector, bool_t repeat) {
-    move->vector = vector;
-    move->repeat = repeat;
+Move createMove(Vector8 vector, bool_t repeat) {
+    return (Move){.vector = vector, .repeat = repeat};
 }
 
-void initMoveRaw(Move * move, vec_t x, vec_t y, bool_t repeat) {
-    initMove(move, (Vector){.x = x, .y = y}, repeat);
+Move createMoveRaw(coord_t x, coord_t y, bool_t repeat) {
+    return createMove(createVector8(x, y), repeat);
+}
+
+void saveMove(Move move, FILE * stream) {
+    fwrite(&move.vector, sizeof(Vector8), 1, stream);
+    fwrite(&move.repeat, sizeof(bool_t), 1, stream);
+}
+
+Move loadMove(FILE * stream) {
+    Move out = {};
+    fread(&out.vector, sizeof(Vector8), 1, stream);
+    fread(&out.repeat, sizeof(bool_t), 1, stream);
+    return out;
 }
 
 void printMove(Move move) {
     wprintf(L"x %d, y %d, repeat %s\n",
              move.vector.x, move.vector.y, move.repeat == true ? "YES" : "NO");
-}
-
-void freeMove(Move * move) {
-    free(move);
 }

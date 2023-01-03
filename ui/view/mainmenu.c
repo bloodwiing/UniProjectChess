@@ -49,23 +49,18 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
 }
 
 MENU_ITEM_CALLBACK(onMainMenuResume) {
-    FILE * file = fopen("./data/save.bin", "rb");
-    Board * board;
-
-    if (file != NULL) {
-        Exception exception = {};
-        board = loadBoard(settings, file, &exception);
-        if (board == NULL && exception.status) {
-            reportException(exception);
-            fclose(file);
-            return false;
-        }
-        fclose(file);
-    } else {
+    Exception exception = {};
+    GameState * state = loadGameStateDefault(settings, &exception);
+    if (state == NULL && exception.status) {
+        reportException(exception);
+        freeBoard(state->board, true);
+        free(state);
         return false;
     }
 
-    gameLoop(settings, board);
+    resumeGameLoop(settings, state, true);
+    freeBoard(state->board, true);
+    free(state);
     return false;
 }
 

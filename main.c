@@ -6,6 +6,7 @@
 #include "ui/view/mainmenu.h"
 #include "ui/view/gamemenu.h"
 #include "ui/render.h"
+#include "engine/validation.h"
 #include <string.h>
 
 void setupConsole();
@@ -19,11 +20,40 @@ int main() {
     con_show_echo(false);
     con_show_cursor(false);
 
+//    wchar_t * original = L"♝";
+//    wchar_t * u32cursor = original;
+//    while (*u32cursor) {
+//        wprintf(L"%ld ", (uint32_t) *u32cursor++);
+//    }
+//    wprintf(L"\n%ls\n", original);
+//
+//    size_t original_size = strU32len((uint32_t *)original);
+//    size_t convert_size = strU32lenAsU16((uint32_t *)original);
+//
+//    wchar16_t * converted = createU16(L"♝", PIECE_UNICODE_LENGTH);
+//    wchar16_t * u16cursor = converted;
+//    while (*u16cursor) {
+//        wprintf(L"%d ", *u16cursor++);
+//    }
+//    wprintf(L"\n%ls\n", converted);
+//
+//    size_t convert_back_size = strU16lenAsU32(converted);
+//
+//    wchar_t * returned = createWStr(converted, PIECE_UNICODE_LENGTH);
+//    u32cursor = returned;
+//    while (*u32cursor) {
+//        wprintf(L"%ld ", (uint32_t) *u32cursor++);
+//    }
+//    wprintf(L"\n%ls\n", original);
+//
+//    free(converted);
+//    free(returned);
 
-    FILE * f = fopen("scenario/classic.chess", "wb");
+    FILE * f = fopen("./scenario/classic.chess", "wb");
     Scenario * s = createDefaultScenario();
     saveScenario(s, f, true);
     fclose(f);
+    freeScenario(s);
 //
 //
 //    Piece * pieces = calloc(2, sizeof(Piece));
@@ -68,12 +98,26 @@ int main() {
 
 
     mainMenuLoop(settings);
+//    Scenario * scenario = createDefaultScenario();
 //    Exception exception;
-//    Board * board = createBoard(createDefaultScenario(), settings, &exception);
-//    if (board == NULL && exception.status)
+//    Board * board = createBoard(scenario, settings, &exception);
+//    if (board == NULL && exception.status) {
 //        reportException(exception);
-//    else
-//        gameLoop(settings, board);
+//        freeScenario(scenario);
+//    } else {
+//        FILE * file = fopen("./data/save.bin", "wb");
+//        saveBoard(board, file);
+//        fclose(file);
+//        freeBoard(board, true);
+//    }
+//    Exception exception;
+//    GameState * state = loadGameStateDefault(settings, &exception);
+//    if (state == NULL && exception.status) {
+//        reportException(exception);
+//    }
+//    isMoveValid(state->board, 3, 6, 3, 5);
+//    freeBoard(state->board, true);
+//    free(state);
 
 //    Scenario * scenario = createDefaultScenario();
 //

@@ -8,36 +8,25 @@
 
 void renderGameScreen(UserSettings * settings, GameState * state, Board * board);
 
-void gameLoop(UserSettings * settings, Board * board) {
+void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_state) {
     con_clear();
-    GameState * state = createGameState(board);
-
-    renderGameScreen(settings, state, board);
+    renderGameScreen(settings, state, state->board);
 
     bool_t game_active = true;
-    team_index_t victor = -1;
 
     while (game_active) {
         if (evaluateGameInput(state, &game_active))
-            renderGameScreen(settings, state, board);
+            renderGameScreen(settings, state, state->board);
 //        con_sleep(0.08f);
     }
 
-    if (victor == -1) {
-        FILE * file = fopen("./data/save.bin", "wb");
+    if (save_state)
+        saveGameStateDefault(state);
+}
 
-        if (file != NULL) {
-            saveGameState(state, file);
-            fclose(file);
-        }
-    } else {
-        con_set_pos(2, 12);
-        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%hs ", (board->teams + victor)->name);
-        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"wins!");
-        con_sleep(3.0f);
-    }
-
-
+void beginNewGameLoop(UserSettings * settings, Board * board, bool_t save_state) {
+    GameState * state = createGameState(board);
+    resumeGameLoop(settings, state, save_state);
     free(state);
 }
 

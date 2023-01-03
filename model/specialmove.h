@@ -2,22 +2,28 @@
 #define CHESS_SPECIALMOVE_H
 
 #include "../abstract/defs.h"
+#include "vector8.h"
 #include <stdio.h>
 
 typedef struct SpecialMove {
-    coord_t x, y;
+    Vector8 vector;
+    bool_t is_first_move;
 
-    bool_t first_move;
-
-    bool_t vulnerable;
-    coord_t vul_x, vul_y;
+    bool_t is_vulnerable;
+    Vector8 vulnerable;
 } SpecialMove;
 
-void initSpecialMove(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, bool_t vulnerable, coord_t vul_x, coord_t vul_y);
-void initSpecialMoveSafe(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move);
-void initSpecialMoveVulnerable(SpecialMove * special_move, coord_t x, coord_t y, bool_t first_move, coord_t vul_x, coord_t vul_y);
-void printSpecialMove(SpecialMove special_move);
+SpecialMove createSpecialMove(Vector8 vector, bool_t is_first_move, bool_t is_vulnerable, Vector8 vulnerable);
+SpecialMove createSpecialMoveSafe(Vector8 vector, bool_t is_first_move);
+SpecialMove createSpecialMoveVulnerable(Vector8 vector, bool_t is_first_move, Vector8 vulnerable);
 
-void freeSpecialMove(SpecialMove * special_move);
+SpecialMove createSpecialMoveRaw(coord_t x, coord_t y, bool_t is_first_move, bool_t is_vulnerable, coord_t vul_x, coord_t vul_y);
+SpecialMove createSpecialMoveSafeRaw(coord_t x, coord_t y, bool_t is_first_move);
+SpecialMove createSpecialMoveVulnerableRaw(coord_t x, coord_t y, bool_t is_first_move, coord_t vul_x, coord_t vul_y);
+
+void saveSpecialMove(SpecialMove move, FILE * stream);
+SpecialMove loadSpecialMove(FILE * stream);
+
+void printSpecialMove(SpecialMove special_move);
 
 #endif //CHESS_SPECIALMOVE_H
