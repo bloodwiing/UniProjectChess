@@ -20,10 +20,10 @@ int main() {
     con_show_cursor(false);
 
 
-//    FILE * f = fopen("scenario/original.chess", "wb");
-//    Scenario * s = createDefaultScenario();
-//    saveScenario(s, f);
-//    fclose(f);
+    FILE * f = fopen("scenario/classic.chess", "wb");
+    Scenario * s = createDefaultScenario();
+    saveScenario(s, f, true);
+    fclose(f);
 //
 //
 //    Piece * pieces = calloc(2, sizeof(Piece));

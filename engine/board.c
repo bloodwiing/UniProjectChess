@@ -5,8 +5,8 @@
 #include "validation.h"
 #include <wchar.h>
 
-#define EXCEPTION_BOARD_MULTIPLE_PROTECT 1, false, "A team cannot have multiple Protect-flagged pieces"
-#define EXCEPTION_BOARD_NO_PROTECT 2, false, "A team needs to have at least one Protect-flagged piece"
+#define EXCEPTION_BOARD_MULTIPLE_PROTECT 0x10001, false, "A team cannot have multiple Protect-flagged pieces"
+#define EXCEPTION_BOARD_NO_PROTECT 0x10002, false, "A team needs to have at least one Protect-flagged piece"
 
 Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
     Board * out = malloc(sizeof(Board));
@@ -69,7 +69,7 @@ Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * ex
 }
 
 void saveBoard(Board * board, FILE * stream) {
-    saveScenario(board->scenario, stream);
+    saveScenario(board->scenario, stream, false);
     for (tile_index_t i = 0; i < board->width * board->height;) {
         saveTile(board->tiles[i++], stream);
     }
@@ -77,7 +77,10 @@ void saveBoard(Board * board, FILE * stream) {
 }
 
 Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception) {
-    Scenario * scenario = loadScenario(stream);
+    Scenario * scenario = loadScenario(stream, false, exception);
+    if (scenario == NULL && exception->status) {
+        return NULL;
+    }
     Board * out = createEmptyBoard(scenario, settings);
 
     for (tile_index_t i = 0; i < scenario->size_x * scenario->size_y; i++) {

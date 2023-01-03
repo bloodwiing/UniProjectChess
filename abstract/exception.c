@@ -4,6 +4,12 @@
 #include <string.h>
 #include <stdarg.h>
 
+void clearException(Exception * exception) {
+    exception->status = 0;
+    exception->fatal = false;
+    exception->message[0] = 0;
+}
+
 void updateException(Exception * exception, int status, bool_t fatal, char * message) {
     exception->status = status;
     exception->fatal = fatal;

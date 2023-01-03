@@ -3,9 +3,11 @@
 
 #include <stdint.h>
 
-#define BUILD_VERSION 13
+#define BUILD_VERSION 14
 
 typedef uint16_t version_t;
+
+#define VERSION_UNKNOWN UINT16_MAX
 
 typedef struct VersionInfo {
     char * name;

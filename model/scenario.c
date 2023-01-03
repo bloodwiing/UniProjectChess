@@ -4,6 +4,11 @@
 
 #define STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS sizeof(Scenario) - sizeof(Team *) - sizeof(Spawn *)
 
+#define SCENARIO_HEADER_SIZE 4
+#define SCENARIO_HEADER_STRING "CHSS"
+
+#define EXCEPTION_SCENARIO_NO_HEADER 0x20001, false, "The Scenario file is not supported"
+
 Scenario * createScenario(char * name, char * author, ucoord_t size_x, ucoord_t size_y, Team * teams, team_index_t team_count, Spawn * spawns, spawn_index_t spawn_count) {
     Scenario * out = calloc(1, sizeof(Scenario));
     out->version = BUILD_VERSION;
@@ -18,17 +23,38 @@ Scenario * createScenario(char * name, char * author, ucoord_t size_x, ucoord_t 
     return out;
 }
 
-void saveScenario(Scenario * scenario, FILE * stream) {
-    fwrite(scenario, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
+void saveScenario(Scenario * scenario, FILE * stream, bool_t with_header) {
+    if (with_header) {
+        fwrite(SCENARIO_HEADER_STRING, sizeof(char), SCENARIO_HEADER_SIZE, stream);
+        fwrite(scenario, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
+    } else {
+        fwrite(scenario + sizeof(version_t), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - sizeof(version_t), 1, stream);
+    }
+
     for (team_index_t i = 0; i < scenario->team_count; i++)
         saveTeam(scenario->teams + i, stream);
     for (spawn_index_t i = 0; i < scenario->spawn_count; i++)
         saveSpawn(scenario->spawns + i, stream);
 }
 
-Scenario * loadScenario(FILE * stream) {
+Scenario * loadScenario(FILE * stream, bool_t with_header, Exception * exception) {
     Scenario * out = malloc(sizeof(Scenario));
-    fread(out, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
+
+    if (with_header) {  // if the header should be looked for
+        long prev = ftell(stream);
+        char start[SCENARIO_HEADER_SIZE];
+        if ((prev == 0L) && (fread(start, sizeof(char), SCENARIO_HEADER_SIZE, stream) == SCENARIO_HEADER_SIZE) && (strncmp(start, SCENARIO_HEADER_STRING, SCENARIO_HEADER_SIZE) == 0)) {  // if the file starts with 'CHSS'
+            fread(out, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
+        } else {  // header failed: return error
+            fseek(stream, prev, SEEK_SET);
+            free(out);
+            updateException(exception, EXCEPTION_SCENARIO_NO_HEADER);
+            return NULL;
+        }
+    } else {
+        out->version = VERSION_UNKNOWN;
+        fread(out + sizeof(version_t), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - sizeof(version_t), 1, stream);
+    }
 
     out->teams = malloc(sizeof(Team) * out->team_count);
     for (team_index_t i = 0; i < out->team_count; i++) {

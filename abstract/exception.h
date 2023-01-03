@@ -12,6 +12,8 @@ typedef struct Exception {
     char message[EXCEPTION_MESSAGE_LENGTH];
 } Exception;
 
+void clearException(Exception * exception);
+
 void updateException(Exception * exception, int status, bool_t fatal, char * message);
 void reportExceptionAtPos(Exception exception, int x, int y);
 void reportException(Exception exception);

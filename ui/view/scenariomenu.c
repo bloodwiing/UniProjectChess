@@ -55,8 +55,15 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
     }
 
     FILE * file = fopen(combinePath(SCENARIO_FOLDER, data), "rb");
-    Scenario * scenario = loadScenario(file);
+    Exception exception = {};
+    Scenario * scenario = loadScenario(file, true, &exception);
     fclose(file);
+
+    if (scenario == NULL && exception.status) {
+        clearRect(50, 2, 30, 22);
+        reportExceptionAtPos(exception, 50, 2);
+        return;
+    }
     renderScenario(scenario, settings, 50, 2, 0, 0, 30, 10);
 
     con_set_pos(50, 14);
@@ -100,13 +107,19 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
     Board * board;
 
     if (file != NULL) {
-        scenario = loadScenario(file);
+        Exception exception = {};
+        scenario = loadScenario(file, true, &exception);
         fclose(file);
+        if (scenario == NULL && exception.status) {
+            reportException(exception);
+            return false;
+        }
         if (scenario->version < getMinSupportedScenarioVersion(BUILD_VERSION)) {
             freeScenario(scenario);
             return false;
         }
-        Exception exception = {};
+
+        clearException(&exception);
         board = createBoard(scenario, settings, &exception);
         if (board == NULL && exception.status) {
             reportException(exception);

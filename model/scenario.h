@@ -5,6 +5,7 @@
 #include "team.h"
 #include "spawn.h"
 #include "../abstract/version.h"
+#include "../abstract/exception.h"
 
 #define SCENARIO_FOLDER "./scenario"
 #define SCENARIO_MAX_STRING_LEN 20
@@ -24,8 +25,8 @@ typedef struct Scenario {
 } Scenario;
 
 Scenario * createScenario(char * name, char * author, ucoord_t size_x, ucoord_t size_y, Team * teams, team_index_t team_count, Spawn * spawns, spawn_index_t spawn_count);
-void saveScenario(Scenario * scenario, FILE * stream);
-Scenario * loadScenario(FILE * stream);
+void saveScenario(Scenario * scenario, FILE * stream, bool_t with_header);
+Scenario * loadScenario(FILE * stream, bool_t with_header, Exception * exception);
 void printScenario(Scenario * scenario);
 
 Spawn * createSpawnFromPiece(Scenario * scenario, ucoord_t x, ucoord_t y, Piece * piece);

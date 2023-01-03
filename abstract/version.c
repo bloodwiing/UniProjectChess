@@ -30,8 +30,10 @@ VersionInfo getVersionInfo(version_t version) {
             return (VersionInfo){.name = "v0.8.1 Beta", .min_scenario_version = 12};  // scenario version check
         case 13:
             return (VersionInfo){.name = "v0.8.2 Beta", .min_scenario_version = 12};  // correct memory de-allocation
+        case 14:
+            return (VersionInfo){.name = "v0.8.3 Beta", .min_scenario_version = 14};  // CHSS header
         default:
-            return (VersionInfo){.name = "Unknown", .min_scenario_version = UINT16_MAX};
+            return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }
 }
 
