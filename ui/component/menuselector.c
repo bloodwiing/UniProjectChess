@@ -1,8 +1,11 @@
 #include "menuselector.h"
+
 #include <stdlib.h>
-#include "../con_lib.h"
-#include "../render.h"
-#include "../../enum/key.h"
+
+#include "enum/key.h"
+
+#include "ui/con_lib.h"
+#include "ui/render.h"
 
 MenuSelector * createMenuSelector(UserSettings * settings, MENU_SELECTOR_INIT_CALLBACK(*init_callback), MENU_SELECTOR_UPDATE_CALLBACK(*update_callback)) {
     MenuSelector * out = calloc(1, sizeof(MenuSelector));

@@ -1,9 +1,10 @@
 #ifndef CHESS_GAMEPIECE_H
 #define CHESS_GAMEPIECE_H
 
-#include "../model/piece.h"
-#include "../model/scenario.h"
 #include <stdio.h>
+
+#include "model/piece.h"
+#include "model/scenario.h"
 
 struct Tile;
 

@@ -3,8 +3,9 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "move.h"
-#include "specialmove.h"
+
+#include "./move.h"
+#include "./specialmove.h"
 
 typedef struct MoveSet {
     Move * moves;

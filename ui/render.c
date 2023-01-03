@@ -1,8 +1,10 @@
 #include "render.h"
-#include "con_lib.h"
-#include "../engine/validation.h"
+
+#include "./con_lib.h"
+
 #include <stdio.h>
-#include <stdarg.h>
+
+#include "engine/validation.h"
 
 void renderText(wchar_t * format, ...) {
     va_list argv;

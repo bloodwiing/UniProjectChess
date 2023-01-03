@@ -1,8 +1,11 @@
 #ifndef CHESS_VALIDATION_H
 #define CHESS_VALIDATION_H
 
-#include "../abstract/defs.h"
-#include "board.h"
+#include "./board.h"
+#include "./tile.h"
+#include "./path.h"
+
+#include "abstract/defs.h"
 
 void extendPath(Board * board, Path * start, ucoord_t i, ucoord_t j);
 void deletePath(Tile * start, Path * path);

@@ -1,4 +1,5 @@
 #include "specialmove.h"
+
 #include <stdlib.h>
 
 SpecialMove createSpecialMove(Vector8 vector, bool_t is_first_move, bool_t is_vulnerable, Vector8 vulnerable) {

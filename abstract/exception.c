@@ -1,8 +1,10 @@
 #include "exception.h"
-#include "../ui/con_lib.h"
-#include <stdlib.h>
-#include <string.h>
+
 #include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "ui/con_lib.h"
 
 void clearException(Exception * exception) {
     exception->status = 0;

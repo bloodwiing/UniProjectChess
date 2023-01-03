@@ -2,6 +2,7 @@
 #define CHESS_GAMESTATE_H
 
 #include "board.h"
+
 #include <stdio.h>
 
 #define GAME_STATE_SAVE_FILE "./data/save.bin"

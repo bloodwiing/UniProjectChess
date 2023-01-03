@@ -1,9 +1,10 @@
 #ifndef CHESS_TILE_H
 #define CHESS_TILE_H
 
-#include "gamepiece.h"
-#include "path.h"
 #include <stdio.h>
+
+#include "./gamepiece.h"
+#include "./path.h"
 
 typedef count16_t path_index_t;
 

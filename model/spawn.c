@@ -1,4 +1,5 @@
 #include "spawn.h"
+
 #include <wchar.h>
 
 Spawn createSpawn(ucoord_t x, ucoord_t y, team_index_t team, piece_index_t type) {

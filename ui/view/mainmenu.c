@@ -1,13 +1,14 @@
-#include <malloc.h>
 #include "mainmenu.h"
-#include "../component/menuselector.h"
-#include "../con_lib.h"
-#include "../render.h"
-#include "scenariomenu.h"
-#include "../../utils/files.h"
-#include "../../engine/board.h"
-#include "gamemenu.h"
-#include "../../abstract/version.h"
+
+#include <malloc.h>
+
+#include "./gamemenu.h"
+#include "./scenariomenu.h"
+
+#include "ui/component/menuselector.h"
+#include "ui/render.h"
+
+#include "utils/files.h"
 
 MENU_SELECTOR_INIT_CALLBACK(initMainMenu);
 MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu);

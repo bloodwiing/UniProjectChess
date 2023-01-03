@@ -3,9 +3,11 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "../abstract/defs.h"
-#include "teamdirection.h"
-#include "vector8.h"
+
+#include "./teamdirection.h"
+#include "./vector8.h"
+
+#include "abstract/defs.h"
 
 #define VECTOR_ZERO createVector(0, 0)
 

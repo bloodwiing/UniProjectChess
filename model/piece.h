@@ -3,9 +3,11 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "../abstract/defs.h"
-#include "moveset.h"
-#include "../utils/encoding.h"
+
+#include "./moveset.h"
+
+#include "abstract/defs.h"
+#include "utils/encoding.h"
 
 #define PIECE_UNICODE_LENGTH 4
 #define PIECE_NAME_LENGTH 20

@@ -1,9 +1,11 @@
 #ifndef CHESS_SPECIALMOVE_H
 #define CHESS_SPECIALMOVE_H
 
-#include "../abstract/defs.h"
-#include "vector8.h"
 #include <stdio.h>
+
+#include "./vector8.h"
+
+#include "abstract/defs.h"
 
 typedef struct SpecialMove {
     Vector8 vector;

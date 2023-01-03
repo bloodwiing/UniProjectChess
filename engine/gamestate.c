@@ -1,7 +1,10 @@
 #include "gamestate.h"
-#include "validation.h"
-#include "../ui/con_lib.h"
-#include "../enum/key.h"
+
+#include "./validation.h"
+
+#include "enum/key.h"
+
+#include "ui/con_lib.h"
 
 GameState * createGameState(Board * board) {
     GameState * out = calloc(1, sizeof(GameState));

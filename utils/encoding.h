@@ -1,6 +1,7 @@
 #ifndef CHESS_ENCODING_H
 #define CHESS_ENCODING_H
 
+#include <wchar.h>
 #include <stdint.h>
 #include <stddef.h>
 

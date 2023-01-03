@@ -1,5 +1,6 @@
-#include <string.h>
 #include "scenario.h"
+
+#include <string.h>
 #include <wchar.h>
 #include <assert.h>
 

@@ -1,6 +1,8 @@
 #include "tile.h"
+
 #include <stdlib.h>
-#include "validation.h"
+
+#include "./validation.h"
 
 Tile * createTile(GamePiece * game_piece, ucoord_t x, ucoord_t y) {
     Tile * out = calloc(1, sizeof(Tile));

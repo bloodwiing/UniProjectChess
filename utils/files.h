@@ -1,7 +1,7 @@
 #ifndef CHESS_FILES_H
 #define CHESS_FILES_H
 
-#include "../abstract/defs.h"
+#include "abstract/defs.h"
 
 void createDirectory(char * path);
 void createDirectoryIfMissing(char * path);

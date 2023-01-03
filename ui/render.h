@@ -1,10 +1,17 @@
 #ifndef CHESS_RENDER_H
 #define CHESS_RENDER_H
 
-#include "../settings/settings.h"
-#include "../model/piece.h"
-#include "../model/team.h"
-#include "../engine/board.h"
+#include <stdarg.h>
+#include <wchar.h>
+
+#include "engine/board.h"
+#include "engine/gamepiece.h"
+
+#include "settings/settings.h"
+
+#include "model/piece.h"
+#include "model/scenario.h"
+#include "model/team.h"
 
 void renderText(wchar_t * format, ...);
 void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * format, ...);

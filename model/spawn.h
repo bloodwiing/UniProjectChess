@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "../abstract/defs.h"
+
+#include "abstract/defs.h"
 
 typedef struct Spawn {
     ucoord_t x, y;

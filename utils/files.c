@@ -1,10 +1,11 @@
 #include "files.h"
-#include <sys/stat.h>
-#include <sys/types.h>
+
 #include <dirent.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #ifdef __linux__
 void createDirectory(char * name) {
@@ -12,8 +13,6 @@ void createDirectory(char * name) {
 }
 #elif defined(_WIN32)
 #include <direct.h>
-#include <stdio.h>
-
 void createDirectory(char * name) {
     _mkdir(name);
 }

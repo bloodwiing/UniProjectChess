@@ -1,7 +1,7 @@
 #ifndef CHESS_SCENARIOMENU_H
 #define CHESS_SCENARIOMENU_H
 
-#include "../../settings/settings.h"
+#include "settings/settings.h"
 
 void scenarioMenuLoop(UserSettings * settings);
 

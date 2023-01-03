@@ -1,9 +1,11 @@
 #ifndef CHESS_MENUSELECTOR_H
 #define CHESS_MENUSELECTOR_H
 
-#include "menuitem.h"
-#include "../../settings/settings.h"
-#include "../../abstract/defs.h"
+#include "./menuitem.h"
+
+#include "abstract/defs.h"
+
+#include "settings/settings.h"
 
 #define MENU_SELECTOR_INIT_CALLBACK(name) void (name)(UserSettings * settings)
 #define MENU_SELECTOR_UPDATE_CALLBACK(name) void (name)(UserSettings * settings, char * data)

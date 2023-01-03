@@ -1,6 +1,8 @@
 #include "gamepiece.h"
-#include "../model/vector.h"
+
 #include <stdlib.h>
+
+#include "model/vector.h"
 
 #define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS offsetof(GamePiece, vul_y) + sizeof(ucoord_t)
 

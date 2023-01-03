@@ -3,8 +3,10 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "../abstract/defs.h"
-#include "vector8.h"
+
+#include "./vector8.h"
+
+#include "abstract/defs.h"
 
 typedef struct Move {
     Vector8 vector;

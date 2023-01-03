@@ -1,6 +1,11 @@
 #include "defaults.h"
-#include <string.h>
+
 #include "abstract/defs.h"
+
+#include "model/move.h"
+#include "model/moveset.h"
+#include "model/spawn.h"
+
 #include "ui/con_lib.h"
 
 Piece createDefaultPawn(uint8_t team) {

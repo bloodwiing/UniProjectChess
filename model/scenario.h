@@ -2,10 +2,12 @@
 #define CHESS_SCENARIO_H
 
 #include <stdint.h>
-#include "team.h"
-#include "spawn.h"
-#include "../abstract/version.h"
-#include "../abstract/exception.h"
+
+#include "./team.h"
+#include "./spawn.h"
+
+#include "abstract/version.h"
+#include "abstract/exception.h"
 
 #define SCENARIO_FOLDER "./scenario"
 #define SCENARIO_MAX_STRING_LEN 20

@@ -1,12 +1,16 @@
 #ifndef CHESS_BOARD_H
 #define CHESS_BOARD_H
 
-#include "../model/scenario.h"
-#include "../settings/settings.h"
-#include "tile.h"
-#include "../abstract/exception.h"
 #include <stdint.h>
 #include <stdio.h>
+
+#include "./tile.h"
+
+#include "abstract/exception.h"
+
+#include "model/scenario.h"
+
+#include "settings/settings.h"
 
 typedef uint16_t tile_index_t;
 

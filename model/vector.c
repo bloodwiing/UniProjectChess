@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include "vector.h"
+
+#include <stdlib.h>
 
 Vector createVector(vec_t x, vec_t y) {
     return (Vector){.x = x, .y = y};

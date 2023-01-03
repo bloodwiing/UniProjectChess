@@ -3,9 +3,11 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "piece.h"
-#include "teamdirection.h"
-#include "../ui/con_lib.h"
+
+#include "./piece.h"
+#include "./teamdirection.h"
+
+#include "ui/con_lib.h"
 
 struct GamePiece;
 

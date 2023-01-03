@@ -1,8 +1,9 @@
 #ifndef CHESS_PATH_H
 #define CHESS_PATH_H
 
-#include "gamepiece.h"
-#include "../model/vector.h"
+#include "./gamepiece.h"
+
+#include "model/vector.h"
 
 typedef uint8_t path_type_t;
 #define PATH_TYPE_ANY 0

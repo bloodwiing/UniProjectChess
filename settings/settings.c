@@ -1,6 +1,8 @@
 #include "settings.h"
+
 #include <stdlib.h>
-#include "../utils/files.h"
+
+#include "utils/files.h"
 
 const char user_setting_string[] = "# ROOK'S GAMBIT Settings\n"
                                    "input=%d\n"

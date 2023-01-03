@@ -1,10 +1,6 @@
 #include "gamemenu.h"
-#include "../../engine/board.h"
-#include "../con_lib.h"
-#include "../../enum/key.h"
-#include "../../engine/gamestate.h"
-#include "../render.h"
-#include "../../engine/validation.h"
+
+#include "ui/render.h"
 
 void renderGameScreen(UserSettings * settings, GameState * state, Board * board);
 

@@ -2,7 +2,8 @@
 #define CHESS_VECTOR8_H
 
 #include <stdint.h>
-#include "../abstract/defs.h"
+
+#include "abstract/defs.h"
 
 #define VECTOR8_ZERO createVector8(0, 0)
 

@@ -2,8 +2,10 @@
 #define CHESS_MENUITEM_H
 
 #include <wchar.h>
-#include "../../abstract/defs.h"
-#include "../../settings/settings.h"
+
+#include "abstract/defs.h"
+
+#include "settings/settings.h"
 
 #define MENU_ITEM_MAX_STRING_LEN 40
 #define MENU_ITEM_CALLBACK(name) bool_t (name)(UserSettings * settings, char * data)

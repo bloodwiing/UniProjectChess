@@ -1,15 +1,14 @@
+#include "scenariomenu.h"
+
 #include <stdlib.h>
 #include <string.h>
-#include "scenariomenu.h"
-#include "../component/menuselector.h"
-#include "../con_lib.h"
-#include "../../utils/files.h"
-#include "mainmenu.h"
-#include "../../model/scenario.h"
-#include "../render.h"
-#include "../../engine/board.h"
-#include "gamemenu.h"
-#include "../../abstract/version.h"
+
+#include "./gamemenu.h"
+
+#include "ui/component/menuselector.h"
+#include "ui/render.h"
+
+#include "utils/files.h"
 
 MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu);
 MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu);
