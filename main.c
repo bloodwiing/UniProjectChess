@@ -110,6 +110,25 @@ int main() {
 //        fclose(file);
 //        freeBoard(board, true);
 //    }
+//
+//    FILE * s_file = fopen("./scenario/classic.chess", "rb");
+//    clearException(&exception);
+//    scenario = loadScenario(s_file, true, &exception);
+//    if (scenario == NULL && exception.status) {
+//        reportException(exception);
+//        return 0;
+//    }
+//    clearException(&exception);
+//    board = createBoard(scenario, settings, &exception);
+//    if (board == NULL && exception.status) {
+//        reportException(exception);
+//        freeScenario(scenario);
+//    } else {
+//        FILE * file = fopen("./data/save.bin", "wb");
+//        saveBoard(board, file);
+//        fclose(file);
+//        freeBoard(board, true);
+//    }
 //    Exception exception;
 //    GameState * state = loadGameStateDefault(settings, &exception);
 //    if (state == NULL && exception.status) {

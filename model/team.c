@@ -3,7 +3,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#define TEAM_STRUCT_SIZE_WITHOUT_POINTERS sizeof(Team) - sizeof(Piece *) - sizeof(TeamDirection) - sizeof(struct GamePiece *)
+#define TEAM_STRUCT_SIZE_WITHOUT_POINTERS offsetof(Team, piece_count) + sizeof(count_t)
 
 Team createTeam(char * name, colour_t colour, TeamDirection direction) {
     Team out = {
@@ -17,23 +17,24 @@ Team createTeam(char * name, colour_t colour, TeamDirection direction) {
 void saveTeam(Team team, FILE * stream) {
     fwrite(&team, TEAM_STRUCT_SIZE_WITHOUT_POINTERS, 1,stream);
 
+    uint8_t direction = team.direction;
+    fwrite(&direction, sizeof(uint8_t), 1, stream);
+
     for (piece_index_t i = 0; i < team.piece_count;)
         savePiece(team.pieces[i++], stream);
-
-    fwrite((uint8_t *) &team.direction, 1, 1, stream);
 }
 
 Team loadTeam(FILE * stream) {
     Team out = {};
     fread(&out, TEAM_STRUCT_SIZE_WITHOUT_POINTERS, 1, stream);
 
+    uint8_t direction;
+    fread(&direction, sizeof(uint8_t), 1, stream);
+    out.direction = direction;
+
     out.pieces = calloc(out.piece_count, sizeof(Piece));
     for (piece_index_t i = 0; i < out.piece_count;)
         out.pieces[i++] = loadPiece(stream);
-
-    uint8_t direction;
-    fread(&direction, 1, 1, stream);
-    out.direction = direction;
 
     return out;
 }

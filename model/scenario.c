@@ -3,7 +3,7 @@
 #include <wchar.h>
 #include <assert.h>
 
-#define STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS sizeof(Scenario) - sizeof(Team *) - sizeof(Spawn *)
+#define STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS offsetof(Scenario, spawn_count) + sizeof(spawn_index_t)
 
 #define SCENARIO_HEADER_SIZE 4
 #define SCENARIO_HEADER_STRING "CHSS"
@@ -25,7 +25,7 @@ void saveScenario(Scenario * scenario, FILE * stream, bool_t with_header) {
         fwrite(SCENARIO_HEADER_STRING, sizeof(char), SCENARIO_HEADER_SIZE, stream);
         fwrite(scenario, STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS, 1, stream);
     } else {
-        fwrite((uint8_t *)scenario + sizeof(version_t), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - sizeof(version_t), 1, stream);
+        fwrite((uint8_t *)scenario + offsetof(Scenario, name), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - offsetof(Scenario, name), 1, stream);
     }
 
     for (team_index_t i = 0; i < scenario->team_count;)
@@ -35,7 +35,7 @@ void saveScenario(Scenario * scenario, FILE * stream, bool_t with_header) {
 }
 
 Scenario * loadScenario(FILE * stream, bool_t with_header, Exception * exception) {
-    Scenario * out = malloc(sizeof(Scenario));
+    Scenario * out = calloc(1, sizeof(Scenario));
 
     if (with_header) {  // if the header should be looked for
         long prev = ftell(stream);
@@ -50,14 +50,14 @@ Scenario * loadScenario(FILE * stream, bool_t with_header, Exception * exception
         }
     } else {
         out->version = VERSION_UNKNOWN;
-        fread((uint8_t *)out + sizeof(version_t), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - sizeof(version_t), 1, stream);
+        fread((uint8_t *)out + offsetof(Scenario, name), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - offsetof(Scenario, name), 1, stream);
     }
 
-    out->teams = malloc(sizeof(Team) * out->team_count);
+    out->teams = calloc(out->team_count, sizeof(Team));
     for (team_index_t i = 0; i < out->team_count;)
         out->teams[i++] = loadTeam(stream);
 
-    out->spawns = malloc(sizeof(Spawn) * out->spawn_count);
+    out->spawns = calloc(out->spawn_count, sizeof(Spawn));
     for (spawn_index_t i = 0; i < out->spawn_count;)
         out->spawns[i++] = loadSpawn(stream);
 

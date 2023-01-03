@@ -145,6 +145,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int
     Exception exception = {};
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
+        clearRect(pos_x, pos_y, w, h);
         reportExceptionAtPos(exception, pos_x, pos_y);
         return;
     }

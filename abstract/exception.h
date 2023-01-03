@@ -3,7 +3,7 @@
 
 #include "defs.h"
 
-#define EXCEPTION_MESSAGE_LENGTH 50
+#define EXCEPTION_MESSAGE_LENGTH 100
 
 typedef struct Exception {
     int status;

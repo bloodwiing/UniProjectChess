@@ -2,7 +2,7 @@
 #include "../model/vector.h"
 #include <stdlib.h>
 
-#define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS sizeof(GamePiece) - sizeof(struct Tile *)
+#define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS offsetof(GamePiece, vul_y) + sizeof(ucoord_t)
 
 GamePiece * createGamePiece(Piece * piece, piece_index_t piece_index) {
     GamePiece * out = calloc(1, sizeof(GamePiece));

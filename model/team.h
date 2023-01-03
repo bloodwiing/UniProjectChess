@@ -16,10 +16,10 @@ typedef struct Team {
     colour_t colour;
 
     count_t piece_count;
-    Piece * pieces;
 
     TeamDirection direction;
 
+    Piece * pieces;
     struct GamePiece * protected_piece;
 } Team;
 

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define STRUCT_PIECE_SIZE_WITHOUT_POINTERS sizeof(Piece) - sizeof(MoveSet *) - sizeof(wchar_t) * PIECE_UNICODE_LENGTH
+#define STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET offsetof(Piece, symbol) + sizeof(char)
 
 Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet move_set) {
     Piece out = {
@@ -18,7 +18,7 @@ Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t upgradable
 }
 
 void savePiece(Piece piece, FILE * stream) {
-    fwrite(&piece, STRUCT_PIECE_SIZE_WITHOUT_POINTERS, 1, stream);
+    fwrite(&piece, STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET, 1, stream);
 
     wchar16_t * converted = createU16(piece.unicode, PIECE_UNICODE_LENGTH);
     fwrite(converted, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
@@ -29,12 +29,12 @@ void savePiece(Piece piece, FILE * stream) {
 
 Piece loadPiece(FILE * stream) {
     Piece out = {};
-    fread(&out, STRUCT_PIECE_SIZE_WITHOUT_POINTERS, 1, stream);
+    fread(&out, STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET, 1, stream);
 
-    wchar16_t name[PIECE_UNICODE_LENGTH];
-    fread(name, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
+    wchar16_t unicode[PIECE_UNICODE_LENGTH];
+    fread(unicode, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
 
-    wchar_t * converted = createWStr(name, PIECE_UNICODE_LENGTH);
+    wchar_t * converted = createWStr(unicode, PIECE_UNICODE_LENGTH);
     memcpy(out.unicode, converted, sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
     free(converted);
 
