@@ -43,6 +43,7 @@ Piece * getTilePiece(Board * board, Tile * tile);
 void nextBoardTurn(Board * board);
 void moveBoardGamePiece(Board * board, ucoord_t from_x, ucoord_t from_y, ucoord_t to_x, ucoord_t to_y);
 
+Board * cloneBoard(Board * board);
 void freeBoard(Board * board, bool_t free_scenario);
 
 #endif

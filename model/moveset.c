@@ -107,8 +107,19 @@ void appendBasicAttackMoves(MoveSet * move_set, Move * moves, size_t n) {
         addBasicAttackMove(move_set, moves[i++]);
 }
 
+void normaliseMoveSet(MoveSet * move_set, TeamDirection direction) {
+    for (move_index_t i = 0; i < move_set->move_count;)
+        normaliseMove(move_set->moves + i++, direction);
+    for (move_index_t i = 0; i < move_set->attack_count;)
+        normaliseMove(move_set->attacks + i++, direction);
+    for (move_index_t i = 0; i < move_set->special_count;)
+        normaliseSpecialMove(move_set->specials + i++, direction);
+}
+
 void freeMoveSet(MoveSet * move_set) {
     free(move_set->moves);
     free(move_set->attacks);
+    for (move_index_t i = 0; i < move_set->special_count;)
+        freeSpecialMove(&move_set->specials[i++]);
     free(move_set->specials);
 }

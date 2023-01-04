@@ -8,18 +8,23 @@
 
 #include "ui/con_lib.h"
 
+#include "utils/files.h"
+
 Piece createDefaultPawn(uint8_t team) {
     MoveSet move_set = createMoveSet();
 
     // move possibilities
-    addBasicMove(&move_set, createMoveRaw(0, 1, false));
+    addBasicMove(&move_set, createMoveRaw(0, 1, false, false));
 
     // attack possibilities
-    addAttackMove(&move_set, createMoveRaw(1, 1, false));
-    addAttackMove(&move_set, createMoveRaw(-1, 1, false));
+    addAttackMove(&move_set, createMoveRaw(1, 1, false, false));
+    addAttackMove(&move_set, createMoveRaw(-1, 1, false, false));
 
     // special possibilities
-    addSpecialMove(&move_set, createSpecialMoveVulnerableRaw(0, 2, true, 0, -1));
+    SpecialMove double_move = createSpecialMove(createSpecialDataRaw(0, 2, true, true, false));
+    addSpecialDataConditionRaw(&double_move.data, 0, 1);
+    updateSpecialDataPhantomRaw(&double_move.data, 0, -1);
+    addSpecialMove(&move_set, double_move);
 
     // create the piece
     return createPiece("Pawn", team == 1 ? L"♟" : L"♙", team == 1 ? 'p' : 'P', true, false, team, move_set);
@@ -30,10 +35,10 @@ Piece createDefaultRook(uint8_t team) {
 
     // move possibilities
     Move moves[4] = {
-        createMoveRaw(0, 1, true),  // bottom
-        createMoveRaw(0, -1, true),  // top
-        createMoveRaw(1, 0, true),  // right
-        createMoveRaw(-1, 0, true)  // left
+        createMoveRaw(0, 1, true, false),  // bottom
+        createMoveRaw(0, -1, true, false),  // top
+        createMoveRaw(1, 0, true, false),  // right
+        createMoveRaw(-1, 0, true, false)  // left
     };
 
     // compile move set
@@ -48,17 +53,17 @@ Piece createDefaultKnight(uint8_t team) {
 
     // move possibilities
     Move moves[8] = {
-        createMoveRaw(1, 2, false),  // right 2*bottom
-        createMoveRaw(1, -2, false),  // right 2*top
+        createMoveRaw(1, 2, false, false),  // right 2*bottom
+        createMoveRaw(1, -2, false, false),  // right 2*top
 
-        createMoveRaw(-1, 2, false),  // left 2*bottom
-        createMoveRaw(-1, -2, false),  // left 2*top
+        createMoveRaw(-1, 2, false, false),  // left 2*bottom
+        createMoveRaw(-1, -2, false, false),  // left 2*top
 
-        createMoveRaw(2, 1, false),  // bottom 2*right
-        createMoveRaw(-2, 1, false),  // bottom 2*left
+        createMoveRaw(2, 1, false, false),  // bottom 2*right
+        createMoveRaw(-2, 1, false, false),  // bottom 2*left
 
-        createMoveRaw(2, -1, false),  // top 2*right
-        createMoveRaw(-2, -1, false)  // top 2*left
+        createMoveRaw(2, -1, false, false),  // top 2*right
+        createMoveRaw(-2, -1, false, false)  // top 2*left
     };
 
     // compile move set
@@ -73,10 +78,10 @@ Piece createDefaultBishop(uint8_t team) {
 
     // move possibilities
     Move moves[4] = {
-        createMoveRaw(1, 1, true),  // bottom right
-        createMoveRaw(-1, 1, true),  // bottom left
-        createMoveRaw(1, -1, true),  // top right
-        createMoveRaw(-1, -1, true)  // top left
+        createMoveRaw(1, 1, true, false),  // bottom right
+        createMoveRaw(-1, 1, true, false),  // bottom left
+        createMoveRaw(1, -1, true, false),  // top right
+        createMoveRaw(-1, -1, true, false)  // top left
     };
 
     // compile move set
@@ -91,15 +96,15 @@ Piece createDefaultQueen(uint8_t team) {
 
     // move possibilities
     Move moves[8] = {
-        createMoveRaw(0, 1, true),  // bottom
-        createMoveRaw(0, -1, true),  // top
-        createMoveRaw(1, 0, true),  // right
-        createMoveRaw(-1, 0, true),  // left
+        createMoveRaw(0, 1, true, false),  // bottom
+        createMoveRaw(0, -1, true, false),  // top
+        createMoveRaw(1, 0, true, false),  // right
+        createMoveRaw(-1, 0, true, false),  // left
 
-        createMoveRaw(1, 1, true),  // bottom right
-        createMoveRaw(-1, 1, true),  // bottom left
-        createMoveRaw(1, -1, true),  // top right
-        createMoveRaw(-1, -1, true)  // top left
+        createMoveRaw(1, 1, true, false),  // bottom right
+        createMoveRaw(-1, 1, true, false),  // bottom left
+        createMoveRaw(1, -1, true, false),  // top right
+        createMoveRaw(-1, -1, true, false)  // top left
     };
 
     // compile move set
@@ -114,16 +119,29 @@ Piece createDefaultKing(uint8_t team) {
 
     // move possibilities
     Move moves[8] = {
-        createMoveRaw(0, 1, false),  // bottom
-        createMoveRaw(0, -1, false),  // top
-        createMoveRaw(1, 0, false),  // right
-        createMoveRaw(-1, 0, false),  // left
+        createMoveRaw(0, 1, false, false),  // bottom
+        createMoveRaw(0, -1, false, false),  // top
+        createMoveRaw(1, 0, false, false),  // right
+        createMoveRaw(-1, 0, false, false),  // left
 
-        createMoveRaw(1, 1, false),  // bottom right
-        createMoveRaw(-1, 1, false),  // bottom left
-        createMoveRaw(1, -1, false),  // top right
-        createMoveRaw(-1, -1, false)  // top left
+        createMoveRaw(1, 1, false, false),  // bottom right
+        createMoveRaw(-1, 1, false, false),  // bottom left
+        createMoveRaw(1, -1, false, false),  // top right
+        createMoveRaw(-1, -1, false, false)  // top left
     };
+
+    // special possibilities
+    SpecialMove castle_king_side = createSpecialMove(createSpecialDataRaw(2, 0, true, false, true));
+    addSpecialDataConditionRaw(&castle_king_side.data, 1, 0);
+    addSpecialMoveExtra(&castle_king_side, createVector8(3, 0), createSpecialDataRaw(-2, 0, true, false, true));
+    addSpecialMove(&move_set, castle_king_side);
+
+    SpecialMove castle_queen_side = createSpecialMove(createSpecialDataRaw(-2, 0, true, false, true));
+    addSpecialDataConditionRaw(&castle_queen_side.data, -1, 0);
+    addSpecialDataConditionRaw(&castle_queen_side.data, -3, 0);
+    addSpecialMoveExtra(&castle_queen_side, createVector8(-4, 0), createSpecialDataRaw(3, 0, true, false, true));
+    addSpecialDataConditionRaw(&castle_queen_side.extra[0].data, 1, 0);
+    addSpecialMove(&move_set, castle_queen_side);
 
     // compile move set
     appendBasicAttackMoves(&move_set, moves, 8);
@@ -133,7 +151,7 @@ Piece createDefaultKing(uint8_t team) {
 }
 
 Team createDefaultTeamWhite() {
-    Team team = createTeam("White", COLOR_LIGHT_ORANGE, TeamDirectionDown);
+    Team team = createTeam("White", COLOR_LIGHT_ORANGE, TeamDirectionUp);
 
     addPiece(&team, createDefaultPawn(1));
     addPiece(&team, createDefaultRook(1));
@@ -146,7 +164,7 @@ Team createDefaultTeamWhite() {
 }
 
 Team createDefaultTeamBlack() {
-    Team team = createTeam("Black", COLOR_RED, TeamDirectionUp);
+    Team team = createTeam("Black", COLOR_RED, TeamDirectionDown);
 
     addPiece(&team, createDefaultPawn(0));
     addPiece(&team, createDefaultRook(0));
@@ -186,4 +204,21 @@ Scenario * createDefaultScenario() {
     addSpawn(scenario, createSpawn(7, 7, 1, 1));  // white rook
 
     return scenario;
+}
+
+void saveDefaultScenario() {
+    char * path = combinePath(SCENARIO_FOLDER, "classic.chess");
+    FILE * file = fopen(path, "wb");
+
+    if (file == NULL) {
+        free(path);
+        return;
+    }
+
+    Scenario * scenario = createDefaultScenario();
+    saveScenario(scenario, file, true);
+    freeScenario(scenario);
+
+    fclose(file);
+    free(path);
 }

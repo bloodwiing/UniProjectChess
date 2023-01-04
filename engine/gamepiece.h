@@ -28,6 +28,7 @@ GamePiece * loadGamePiece(FILE * stream);
 
 void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, ucoord_t x, ucoord_t y);
 
+GamePiece * cloneGamePiece(GamePiece * game_piece);
 void freeGamePiece(GamePiece * game_piece);
 
 #endif //CHESS_GAMEPIECE_H

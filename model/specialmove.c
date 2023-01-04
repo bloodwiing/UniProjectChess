@@ -1,60 +1,72 @@
 #include "specialmove.h"
 
 #include <stdlib.h>
+#include <string.h>
 
-SpecialMove createSpecialMove(Vector8 vector, bool_t is_first_move, bool_t is_vulnerable, Vector8 vulnerable) {
+SpecialMove createSpecialMove(SpecialData data) {
     return (SpecialMove){
-        .vector = vector,
-        .is_first_move = is_first_move,
-        .is_vulnerable = is_vulnerable,
-        .vulnerable = vulnerable
+        .data = data,
+        .extra_count = 0
     };
 }
 
-SpecialMove createSpecialMoveSafe(Vector8 vector, bool_t is_first_move) {
-    return createSpecialMove(vector, is_first_move, false, VECTOR8_ZERO);
-}
-
-SpecialMove createSpecialMoveVulnerable(Vector8 vector, bool_t is_first_move, Vector8 vulnerable) {
-    return createSpecialMove(vector, is_first_move, true, vulnerable);
-}
-
-SpecialMove createSpecialMoveRaw(coord_t x, coord_t y, bool_t is_first_move, bool_t is_vulnerable, coord_t vul_x, coord_t vul_y) {
-    return createSpecialMove(createVector8(x, y), is_first_move, is_vulnerable, createVector8(vul_x, vul_y));
-}
-
-SpecialMove createSpecialMoveSafeRaw(coord_t x, coord_t y, bool_t is_first_move) {
-    return createSpecialMove(createVector8(x, y), is_first_move, false, VECTOR8_ZERO);
-}
-
-SpecialMove createSpecialMoveVulnerableRaw(coord_t x, coord_t y, bool_t is_first_move, coord_t vul_x, coord_t vul_y) {
-    return createSpecialMove(createVector8(x, y), is_first_move, true, createVector8(vul_x, vul_y));
-}
-
 void saveSpecialMove(SpecialMove move, FILE * stream) {
-    fwrite(&move.vector, sizeof(Vector8), 1, stream);
-    fwrite(&move.is_first_move, sizeof(bool_t), 1, stream);
-    fwrite(&move.is_vulnerable, sizeof(bool_t), 1, stream);
-    fwrite(&move.vulnerable, sizeof(Vector8), 1, stream);
+    saveSpecialData(move.data, stream);
+    fwrite(&move.extra_count, sizeof(special_extra_index_t), 1, stream);
+    for (special_extra_index_t i = 0; i < move.extra_count; i++) {
+        fwrite(&move.extra[i].piece_location, sizeof(Vector8), 1, stream);
+        saveSpecialData(move.extra[i].data, stream);
+    }
 }
 
 SpecialMove loadSpecialMove(FILE * stream) {
     SpecialMove out = {};
-    fread(&out.vector, sizeof(Vector8), 1, stream);
-    fread(&out.is_first_move, sizeof(bool_t), 1, stream);
-    fread(&out.is_vulnerable, sizeof(bool_t), 1, stream);
-    fread(&out.vulnerable, sizeof(Vector8), 1, stream);
+
+    out.data = loadSpecialData(stream);
+
+    fread(&out.extra_count, sizeof(special_extra_index_t), 1, stream);
+
+    out.extra = calloc(out.extra_count, sizeof(SpecialMoveExtra));
+    for (special_extra_index_t i = 0; i < out.extra_count; i++) {
+        fread(&out.extra[i].piece_location, sizeof(Vector8), 1, stream);
+        out.extra[i].data = loadSpecialData(stream);
+    }
+
     return out;
 }
 
 void printSpecialMove(SpecialMove special_move) {
     wprintf(L"SpecialMove: \n"
-             "\tX: %d\n"
-             "\tY: %d\n"
-             "\tFirst move: %hs\n"
-             "\tVulnerable: %hs\n"
-             "\tVulnerable X: %d\n"
-             "\tVulnerable Y: %d\n",
-             special_move.vector.x, special_move.vector.y, special_move.is_first_move ? "YES" : "NO",
-             special_move.is_vulnerable ? "YES" : "NO", special_move.vulnerable.x, special_move.vulnerable.y);
+              "\tData:\n");
+    printSpecialData(special_move.data);
+    wprintf(L"\tExtra count: %d\n"
+              "\tExtras:\n",
+              special_move.extra_count);
+    for (special_extra_index_t i = 0; i < special_move.extra_count; i++) {
+        SpecialMoveExtra extra = special_move.extra[i];
+        wprintf(L"\t\tX: %d\n"
+                 "\t\tY: %d\n",
+                extra.piece_location.x, extra.piece_location.y);
+        printSpecialData(extra.data);
+    }
+}
+
+void addSpecialMoveExtra(SpecialMove * special_move, Vector8 piece_location, SpecialData data) {
+    special_move->extra = realloc(special_move->extra, sizeof(SpecialMoveExtra) * ++special_move->extra_count);
+    SpecialMoveExtra * extra = &special_move->extra[special_move->extra_count - 1];
+    memset(extra, 0, sizeof(SpecialMoveExtra));
+    extra->piece_location = piece_location;
+    extra->data = data;
+}
+
+void normaliseSpecialMove(SpecialMove * special_move, TeamDirection direction) {
+    normaliseSpecialData(&special_move->data, direction);
+    for (special_extra_index_t i = 0; i < special_move->extra_count; i++)
+        normaliseSpecialData(&special_move->extra[i].data, direction);
+}
+
+void freeSpecialMove(SpecialMove * special_move) {
+    for (special_extra_index_t i = 0; i < special_move->extra_count;)
+        freeSpecialData(&special_move->extra[i++].data);
+    free(special_move->extra);
 }

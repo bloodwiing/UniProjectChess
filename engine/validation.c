@@ -80,21 +80,16 @@ void createSinglePathing(Board * board, ucoord_t x, ucoord_t y) {
     if (piece == NULL)
         return;
 
-    Team * team;
-    if ((team = getTeam(board, piece->team)) == NULL)
-        return;
-    TeamDirection direction = team->direction;
-
     for (move_index_t move_index = 0; move_index < piece->move_set.move_count;) {
         Move move = piece->move_set.moves[move_index++];
-        Vector relative = normaliseVector8(move.vector, direction);
+        Vector relative = toVector(move.vector);
 
         fillPathsFromPoint(board, origin, relative, move.repeat, PATH_TYPE_MOVE, x, y);
     }
 
     for (move_index_t move_index = 0; move_index < piece->move_set.attack_count;) {
         Move move = piece->move_set.attacks[move_index++];
-        Vector relative = normaliseVector8(move.vector, direction);
+        Vector relative = toVector(move.vector);
 
         Path * origin_path;
         if ((origin_path = findOrigin(origin, relative, move.repeat, PATH_TYPE_ANY)) != NULL) {
@@ -127,11 +122,6 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
 
     MoveSet move_set = getOriginalPiece(piece, board->scenario)->move_set;
 
-    Team * team;
-    if ((team = getTeam(board, piece->team)) == NULL)
-        return false;
-    TeamDirection direction = team->direction;
-
     Tile * target = getTile(board, target_x, target_y);
 
     if (target->game_piece != NULL) {
@@ -140,7 +130,7 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
 
         for (move_index_t move_index = 0; move_index < move_set.attack_count;) {
             Move move = move_set.attacks[move_index++];
-            Vector relative = normaliseVector8(move.vector, direction);
+            Vector relative = toVector(move.vector);
 
             if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_ATTACK))
                 return true;
@@ -150,7 +140,7 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
     else {
         for (move_index_t move_index = 0; move_index < move_set.move_count;) {
             Move move = move_set.moves[move_index++];
-            Vector relative = normaliseVector8(move.vector, direction);
+            Vector relative = toVector(move.vector);
 
             if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_MOVE))
                 return true;
@@ -180,19 +170,45 @@ void updateTilePaths(Board * board, ucoord_t x, ucoord_t y) {
     }
 }
 
+bool_t isTileDangerous(Tile * tile, team_index_t team) {
+    for (path_index_t i = 0; i < tile->path_count;) {
+        Path * path = tile->paths[i++];
+        if (path->piece->team != team)
+            return true;
+    }
+    return false;
+}
+
 bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
-    Tile * origin = getTile(board, origin_x, origin_y);
+    GamePiece * origin_gp = getTile(board, origin_x, origin_y)->game_piece;
+    Piece * origin = getOriginalPiece(origin_gp, board->scenario);
+    if (origin == NULL)
+        return false;
+    Team * team = getPieceTeam(board, origin);
 
-    for (path_index_t i = 0; i < origin->path_count;) {
-        Path * path = origin->paths[i++];
-        int x = origin_x, y = origin_y;
+    bool_t protected_moved = false;  // if the origin is a protected tile, then read the protected tile as a target
+    Tile * protected_tile = team->protected_piece->position;
+    if (origin_gp == team->protected_piece) {
+        protected_tile = getTile(board, target_x, target_y);
+        protected_moved = true;
+    }
 
-        while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && !(x == target_x && y == target_y)) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving)
+    for (path_index_t i = 0; i < protected_tile->path_count;) {  // loop over everything that is attacking the protected piece
+        Path * path = protected_tile->paths[i++];
+        if (path->piece->team == origin->team)  // if path of same team <=> not an enemy and continue
+            continue;
+
+        Tile * tile_start = path->piece->position;  // the starting point of the enemy path
+
+        int x = tile_start->x, y = tile_start->y;
+
+        while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && (!(x == target_x && y == target_y)) || protected_moved) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving, unless intersection is with a protected piece)
             GamePiece * obstacle;
             if ((obstacle = getBoardGamePiece(board, x, y)) != NULL) {
-                if ((getOriginalPiece(obstacle, board->scenario)->protect)  // if the path now ends at a protected piece
-                    && (obstacle->team != path->piece->team)  // if the protected piece is not the end of the same team's path (aka enemy is targeting)
-                    && (obstacle->team == origin->game_piece->team)  // if the protected piece is of own team
+                if (x == origin_x && y == origin_y)  // if the piece moved from this location, continue the path
+                    continue;
+                if ((getTile(board, x, y) == protected_tile)  // if the path now ends at the protected tile
+                    && (obstacle->team == origin->team)  // if the protected piece is of own team
                     && (path->piece != getBoardGamePiece(board, target_x, target_y)))  // if the piece is not being attacked by this move
                     return true;
                 break;
@@ -205,7 +221,7 @@ bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, u
     return false;
 }
 
-bool_t isTeamChecked(Board * board, Team * team) {
+bool_t isTeamChecked(Team * team) {
     GamePiece * protected = team->protected_piece;
     Tile * tile = protected->position;
 
@@ -223,14 +239,8 @@ bool_t isTeamCheckedAfterMove(Board * board, Team * team, ucoord_t origin_x, uco
     Tile * tile = protected->position;
 
     Tile * target_tile = getTile(board, target_x, target_y);
-    if (getTile(board, origin_x, origin_y) == tile) {  // if the move is of a protected piece
-        for (path_index_t i = 0; i < target_tile->path_count;) {
-            Path * path = target_tile->paths[i++];
-            if (path->piece->team != protected->team)  // then only check if the target location is not safe
-                return true;
-        }
-        return false;
-    }
+    if (getTile(board, origin_x, origin_y) == tile)  // if the move is of a protected piece
+        return isTileDangerous(target_tile, protected->team);  // then only check if the target location is not safe
 
     for (path_index_t i = 0; i < tile->path_count;) {
         Path * path = tile->paths[i++];
@@ -238,8 +248,8 @@ bool_t isTeamCheckedAfterMove(Board * board, Team * team, ucoord_t origin_x, uco
             Tile * path_start = path->piece->position;
             ucoord_t x = path_start->x, y = path_start->y;
 
-            if (path->piece == getBoardGamePiece(board, target_x, target_y))
-                continue;
+            if (path->piece == getBoardGamePiece(board, target_x, target_y))  // if the move is going to capture this piece
+                continue;  // then it is safe
 
             while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && !(x == target_x && y == target_y)) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving)
                 GamePiece * obstacle;
@@ -257,10 +267,87 @@ bool_t isTeamCheckedAfterMove(Board * board, Team * team, ucoord_t origin_x, uco
     return false;
 }
 
-bool_t isMoveValid(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
+bool_t isMoveValid(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y, bool_t validate_path) {
     Team * move_team = getGamePieceTeam(board, getBoardGamePiece(board, origin_x, origin_y));
-    return validatePath(board, origin_x, origin_y, target_x, target_y)  // check if the piece is even able to move there
-           && !isMoveCheckingSelf(board, origin_x, origin_y, target_x, target_y)
-           && (!isTeamChecked(board, move_team)  // either the team needs to not be in check
-               || !isTeamCheckedAfterMove(board, move_team, origin_x, origin_y, target_x, target_y));  // or the active check needs to be resolved / not created
+    return (
+        (
+            (!validate_path || validatePath(board, origin_x, origin_y, target_x, target_y))  // check if the piece is even able to move there
+            && !isMoveCheckingSelf(board, origin_x, origin_y, target_x, target_y)  // AND move must not cause a check
+        ) && (  // AND
+            !isTeamChecked(move_team)  // either the team needs to not be in check
+            || !isTeamCheckedAfterMove(board, move_team, origin_x, origin_y, target_x, target_y)  // OR the active check needs to be resolved / not created
+        )
+   );
+}
+
+bool_t checkSpecialDataRequirements(Board * board, ucoord_t origin_x, ucoord_t origin_y, SpecialData * special_data) {
+    GamePiece * game_piece = getBoardGamePiece(board, origin_x, origin_y);
+    if (game_piece == NULL)
+        return false;
+    Piece * piece = getOriginalPiece(game_piece, board->scenario);
+
+    if (special_data->is_first_move && game_piece->moves > 0)  // first move check
+        return false;
+
+    Vector normalised = toVector(special_data->vector);
+    if (!validateInBounds(board, origin_x + normalised.x, origin_y + normalised.y))  // the special move must not go out of bounds
+        return false;
+
+    for (count_t i = 0; i < special_data->condition_count;) {
+        Vector condition = toVector(special_data->conditions[i++]);
+        Tile * tile = getTile(board, origin_x + condition.x, origin_y + condition.y);
+        if (tile->game_piece != NULL)  // the passing tile must be emtpy
+            return false;
+        if (piece->protect && !special_data->is_check_safe && isTileDangerous(tile, piece->team))  // if the passing tile would cause a check, it fails
+            return false;
+    }
+
+    if (isTeamChecked(getTeam(board, piece->team)) && !special_data->is_check_safe)  // move cannot be run while in check and being non-check-safe
+        return false;
+
+    return true;  // requirements passed (does not mean that the move is fully valid, just that it can be evaluated)
+}
+
+bool_t isSpecialMoveValid(Board * board, ucoord_t origin_x, ucoord_t origin_y, SpecialMove * special_move) {
+    GamePiece * game_piece = getBoardGamePiece(board, origin_x, origin_y);
+    if (game_piece == NULL)
+        return false;
+    Piece * piece = getOriginalPiece(game_piece, board->scenario);
+
+    if (special_move < piece->move_set.specials || special_move > piece->move_set.specials + sizeof(SpecialMove) * (piece->move_set.special_count - 1))  // special move must be from the piece itself
+        return false;
+
+    if (!checkSpecialDataRequirements(board, origin_x, origin_y, &special_move->data))  // initial test
+        return false;
+
+    for (special_extra_index_t i = 0; i < special_move->extra_count;) {
+        SpecialMoveExtra * extra = special_move->extra + i++;
+        Vector normalised = toVector(extra->piece_location);
+        ucoord_t from_x = origin_x + normalised.x,
+                 from_y = origin_y + normalised.y;
+        if (!checkSpecialDataRequirements(board, from_x, from_y, &extra->data))  // extra tests
+            return false;
+    }
+
+    Board * prediction = cloneBoard(board);  // create a scenario for all the moved pieces
+
+    Vector offset = toVector(special_move->data.vector);
+    moveBoardGamePiece(prediction, origin_x, origin_y, origin_x + offset.x, origin_y + offset.y);
+    for (special_extra_index_t i = 0; i < special_move->extra_count;) {
+        SpecialMoveExtra extra = special_move->extra[i++];
+
+        Vector location = toVector(extra.piece_location),
+               vector = toVector(extra.data.vector);
+
+        ucoord_t from_x = origin_x + location.x,
+                 from_y = origin_y + location.y,
+                 to_x = from_x + vector.x,
+                 to_y = from_y + vector.y;
+        moveBoardGamePiece(prediction, from_x, from_y, to_x, to_y);
+    }
+
+    bool_t valid = isTeamChecked(getTeam(prediction, board->active_turn));  // and check if the scenario is checked
+
+    freeBoard(prediction, false);
+    return !valid;
 }

@@ -9,10 +9,10 @@ Vector createVector(vec_t x, vec_t y) {
 Vector normaliseCoordinates(vec_t x, vec_t y, TeamDirection direction) {
     switch (direction) {
         case TeamDirectionUp:
-            return createVector(x, y);
+            return createVector(-x, -y);
 
         case TeamDirectionDown:
-            return createVector(-x, -y);
+            return createVector(x, y);
 
         case TeamDirectionLeft:
             return createVector(-y, x);
@@ -23,10 +23,6 @@ Vector normaliseCoordinates(vec_t x, vec_t y, TeamDirection direction) {
 }
 
 Vector normaliseVector(Vector vector, TeamDirection direction) {
-    return normaliseCoordinates(vector.x, vector.y, direction);
-}
-
-Vector normaliseVector8(Vector8 vector, TeamDirection direction) {
     return normaliseCoordinates(vector.x, vector.y, direction);
 }
 

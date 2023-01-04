@@ -36,6 +36,8 @@ void appendSpecialMoves(MoveSet * move_set, SpecialMove * moves, size_t n);
 
 void appendBasicAttackMoves(MoveSet * move_set, Move * moves, size_t n);
 
+void normaliseMoveSet(MoveSet * move_set, TeamDirection direction);
+
 void freeMoveSet(MoveSet * move_set);
 
 #endif

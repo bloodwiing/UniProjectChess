@@ -69,7 +69,7 @@ void executeGameMove(GameState * state) {
     if (!state->piece_selected)
         reselectGameAtCursor(state);
     else {
-        if (isMoveValid(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y)) {
+        if (isMoveValid(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y, true)) {
             moveBoardGamePiece(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y);
             nextBoardTurn(state->board);
             state->piece_selected = false;

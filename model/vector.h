@@ -5,14 +5,13 @@
 #include <stdio.h>
 
 #include "./teamdirection.h"
-#include "./vector8.h"
 
 #include "abstract/defs.h"
 
 #define VECTOR_ZERO createVector(0, 0)
 
-#define VECTOR_UP createVector(0, 1)
-#define VECTOR_DOWN createVector(0, -1)
+#define VECTOR_UP createVector(0, -1)
+#define VECTOR_DOWN createVector(0, 1)
 #define VECTOR_RIGHT createVector(1, 0)
 #define VECTOR_LEFT createVector(-1, 0)
 
@@ -26,7 +25,6 @@ Vector createVector(vec_t x, vec_t y);
 
 Vector normaliseCoordinates(vec_t x, vec_t y, TeamDirection direction);
 Vector normaliseVector(Vector vector, TeamDirection direction);
-Vector normaliseVector8(Vector8 vector, TeamDirection direction);
 
 bool_t compVectors(Vector a, Vector b);
 

@@ -3,29 +3,34 @@
 
 #include <stdio.h>
 
+#include "./specialdata.h"
+#include "./teamdirection.h"
 #include "./vector8.h"
 
 #include "abstract/defs.h"
 
-typedef struct SpecialMove {
-    Vector8 vector;
-    bool_t is_first_move;
+typedef struct SpecialMoveExtra {
+    Vector8 piece_location;
+    SpecialData data;
+} SpecialMoveExtra;
 
-    bool_t is_vulnerable;
-    Vector8 vulnerable;
+typedef struct SpecialMove {
+    SpecialData data;
+
+    special_extra_index_t extra_count;
+    SpecialMoveExtra * extra;
 } SpecialMove;
 
-SpecialMove createSpecialMove(Vector8 vector, bool_t is_first_move, bool_t is_vulnerable, Vector8 vulnerable);
-SpecialMove createSpecialMoveSafe(Vector8 vector, bool_t is_first_move);
-SpecialMove createSpecialMoveVulnerable(Vector8 vector, bool_t is_first_move, Vector8 vulnerable);
-
-SpecialMove createSpecialMoveRaw(coord_t x, coord_t y, bool_t is_first_move, bool_t is_vulnerable, coord_t vul_x, coord_t vul_y);
-SpecialMove createSpecialMoveSafeRaw(coord_t x, coord_t y, bool_t is_first_move);
-SpecialMove createSpecialMoveVulnerableRaw(coord_t x, coord_t y, bool_t is_first_move, coord_t vul_x, coord_t vul_y);
+SpecialMove createSpecialMove(SpecialData data);
 
 void saveSpecialMove(SpecialMove move, FILE * stream);
 SpecialMove loadSpecialMove(FILE * stream);
-
 void printSpecialMove(SpecialMove special_move);
+
+void addSpecialMoveExtra(SpecialMove * special_move, Vector8 piece_location, SpecialData data);
+
+void normaliseSpecialMove(SpecialMove * special_move, TeamDirection direction);
+
+void freeSpecialMove(SpecialMove * special_move);
 
 #endif //CHESS_SPECIALMOVE_H

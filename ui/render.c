@@ -131,7 +131,7 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
 
                 GamePiece * occupant;
 
-                if (!isMoveValid(board, sel_x, sel_y, target_x, target_y))
+                if (!isMoveValid(board, sel_x, sel_y, target_x, target_y, true))
                     continue;
 
                 if (((occupant = tile->game_piece) != NULL) && (target->type & PATH_TYPE_ATTACK) && (occupant->team != selected->game_piece->team))
@@ -139,6 +139,28 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
                 else if ((occupant == NULL) && (target->type & PATH_TYPE_MOVE))
                     renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
             }
+        }
+
+        Piece * piece = getOriginalPiece(selected->game_piece, board->scenario);
+
+        for (move_index_t move_index = 0; move_index < piece->move_set.special_count;) {
+            SpecialMove * special = piece->move_set.specials + move_index++;
+            if (!isSpecialMoveValid(board, sel_x, sel_y, special))
+                continue;
+
+            Vector normalised = toVector(special->data.vector);
+            ucoord_t target_x = sel_x + normalised.x,
+                     target_y = sel_y + normalised.y;
+
+            con_set_pos(top_left_x + target_x * 2, top_left_y + target_y);
+
+            Tile * target = getTile(board, target_x, target_y);
+            GamePiece * occupant;
+
+            if (((occupant = target->game_piece) != NULL) && (occupant->team != selected->game_piece->team))
+                renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);
+            else if (occupant == NULL)
+                renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
         }
     }
 }

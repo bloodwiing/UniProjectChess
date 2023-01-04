@@ -106,10 +106,8 @@ void addSpawn(Scenario * scenario, Spawn spawn) {
 }
 
 void freeScenario(Scenario * scenario) {
-    for (team_index_t i = 0; i < scenario->team_count;) {
-        Team * team = &scenario->teams[i++];
-        freeTeam(team);
-    }
+    for (team_index_t i = 0; i < scenario->team_count;)
+        freeTeam(&scenario->teams[i++]);
     free(scenario->teams);
     free(scenario->spawns);
     free(scenario);

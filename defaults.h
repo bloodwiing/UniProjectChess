@@ -19,4 +19,6 @@ Team createDefaultTeamBlack();
 
 Scenario * createDefaultScenario();
 
+void saveDefaultScenario();
+
 #endif

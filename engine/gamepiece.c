@@ -16,6 +16,8 @@ GamePiece * createGamePiece(Piece * piece, piece_index_t piece_index) {
 }
 
 Piece * getOriginalPiece(GamePiece * game_piece, Scenario * scenario) {
+    if (game_piece == NULL)
+        return NULL;
     Team * team = scenario->teams + game_piece->team;
     return team->pieces + game_piece->piece;
 }
@@ -31,10 +33,15 @@ GamePiece * loadGamePiece(FILE * stream) {
 }
 
 void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, ucoord_t x, ucoord_t y) {
-    game_piece->vulnerable = true;
-    Vector vul_pos = normaliseCoordinates(x, y, (scenario->teams + game_piece->team)->direction);
-    game_piece->vul_x = (coord_t)x + vul_pos.x;
-    game_piece->vul_x = (coord_t)y + vul_pos.y;
+    // To-Do
+}
+
+GamePiece * cloneGamePiece(GamePiece * game_piece) {
+    if (game_piece == NULL)
+        return NULL;
+    GamePiece * out = calloc(1, sizeof(GamePiece));
+    memcpy(out, game_piece, sizeof(GamePiece));
+    return out;
 }
 
 void freeGamePiece(GamePiece * game_piece) {

@@ -54,6 +54,8 @@ void addPiece(Team * team, Piece piece) {
     team->pieces = realloc(team->pieces, sizeof(Piece) * ++team->piece_count);
     memset(&team->pieces[team->piece_count - 1], 0, sizeof(Piece));
     team->pieces[team->piece_count - 1] = piece;
+
+    normaliseMoveSet(&team->pieces[team->piece_count - 1].move_set, team->direction);
 }
 
 void freeTeam(Team * team) {

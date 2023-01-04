@@ -169,6 +169,29 @@ void moveBoardGamePiece(Board * board, ucoord_t from_x, ucoord_t from_y, ucoord_
     updateTilePaths(board, to_x, to_y);
 }
 
+Board * cloneBoard(Board * board) {
+    Board * out = createEmptyBoard(board->scenario, board->user_settings);
+
+    for (tile_index_t i = 0; i < board->width * board->height; i++) {
+        out->tiles[i]->game_piece = cloneGamePiece(board->tiles[i]->game_piece);
+
+        GamePiece * game_piece = out->tiles[i]->game_piece;
+        if (game_piece == NULL)
+            continue;
+
+        Piece * piece = getOriginalPiece(game_piece, board->scenario);
+        if (piece->protect) {
+            Team *team = getTeam(out, piece->team);
+            team->protected_piece = game_piece;
+        }
+    }
+
+    createBoardPathing(out);
+
+    out->active_turn = board->active_turn;
+    return out;
+}
+
 void freeBoard(Board * board, bool_t free_scenario) {
     for (tile_index_t i = 0; i < board->width * board->height;)
         freeTile(board->tiles[i++]);

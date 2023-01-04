@@ -34,6 +34,8 @@ VersionInfo getVersionInfo(version_t version) {
             return (VersionInfo){.name = "v0.8.3 Beta", .min_scenario_version = 14};  // CHSS header
         case 15:
             return (VersionInfo){.name = "v0.9 Beta", .min_scenario_version = 15};  // reworked scenario creation and structs
+        case 16:
+            return (VersionInfo){.name = "v0.10 Beta", .min_scenario_version = 16};  // special moves
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }

@@ -8,6 +8,7 @@
 
 #include "abstract/defs.h"
 #include "utils/encoding.h"
+#include "teamdirection.h"
 
 #define PIECE_UNICODE_LENGTH 4
 #define PIECE_NAME_LENGTH 20
