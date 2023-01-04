@@ -308,6 +308,9 @@ bool_t checkSpecialDataRequirements(Board * board, ucoord_t origin_x, ucoord_t o
     if (!validateInBounds(board, origin_x + normalised.x, origin_y + normalised.y))  // the special move must not go out of bounds
         return false;
 
+    if (getTile(board, origin_x + normalised.x, origin_y + normalised.y)->game_piece != NULL)  // the end needs to be not occupied
+        return false;
+
     for (count_t i = 0; i < special_data->condition_count;) {
         Vector condition = toVector(special_data->conditions[i++]);
         Tile * tile = getTile(board, origin_x + condition.x, origin_y + condition.y);
