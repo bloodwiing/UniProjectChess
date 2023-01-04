@@ -209,7 +209,12 @@ bool_t canPromoteGamePiece(Board * board, GamePiece * game_piece) {
     if (game_piece == NULL)
         return false;
 
+    Piece * piece = getOriginalPiece(game_piece, board->scenario);
     Team * team = getGamePieceTeam(board, game_piece);
+
+    if (!piece->promotable)
+        return false;
+
     switch (team->direction) {
         case TeamDirectionUp:
             return game_piece->position->y == 0;
