@@ -135,7 +135,8 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
             freeScenario(scenario);
             return false;
         }
-    } else {
+    }
+    else {
         return false;
     }
 

@@ -134,9 +134,14 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
                 if (!isMoveValid(board, sel_x, sel_y, target_x, target_y, true))
                     continue;
 
-                if (((occupant = tile->game_piece) != NULL) && (target->type & PATH_TYPE_ATTACK) && (occupant->team != selected->game_piece->team))
+                if ((occupant = tile->game_piece) != NULL  // tile has a piece
+                        && (occupant->team != selected->game_piece->team)  // AND piece is an enemy
+                        && (target->type & PATH_TYPE_ATTACK))  // AND the path supports attacking
                     renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);
-                else if ((occupant == NULL) && (target->type & PATH_TYPE_MOVE))
+                else if (((occupant == NULL)  // ELSE tile is free
+                            && (target->type & PATH_TYPE_MOVE))  // AND path supports moving
+                        || (tile->phantom_count)  // OR tile has phantom pieces
+                            && (target->type & PATH_TYPE_ATTACK))  // AND the path supports attacking
                     renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
             }
         }

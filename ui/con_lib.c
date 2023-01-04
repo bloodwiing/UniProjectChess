@@ -65,7 +65,8 @@ void con_set_color(colour_t bg, colour_t fg) {
       case COLOR_LIGHT_GRAY:   wprintf(L"\x1B[107m"); break;
       case COLOR_RESET:        wprintf(L"\x1B[49m"); break;
     }
-  } else {
+  }
+  else {
     switch (bg) {
       case COLOR_BLACK:        wprintf(L"\x1B[40m"); break;
       case COLOR_RED:          wprintf(L"\x1B[41m"); break;
@@ -91,7 +92,8 @@ void con_set_color(colour_t bg, colour_t fg) {
       case COLOR_LIGHT_GRAY:   wprintf(L"\x1B[97m"); break;
       case COLOR_RESET:        wprintf(L"\x1B[39m"); break;
     }
-  } else {
+  }
+  else {
     switch (fg) {
       case COLOR_BLACK:        wprintf(L"\x1B[30m"); break;
       case COLOR_RED:          wprintf(L"\x1B[31m"); break;

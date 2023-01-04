@@ -5,13 +5,12 @@
 
 #include "model/vector.h"
 
-#define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS offsetof(GamePiece, vul_y) + sizeof(ucoord_t)
+#define STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS offsetof(GamePiece, moves) + sizeof(count16_t)
 
 GamePiece * createGamePiece(Piece * piece, piece_index_t piece_index) {
     GamePiece * out = calloc(1, sizeof(GamePiece));
     out->team = piece->team;
     out->piece = piece_index;
-    out->vulnerable = false;
     out->position = NULL;
     return out;
 }
@@ -31,10 +30,6 @@ GamePiece * loadGamePiece(FILE * stream) {
     GamePiece * out = malloc(sizeof(GamePiece));
     fread(out, STRUCT_GAMEPIECE_SIZE_WITHOUT_POINTERS, 1, stream);
     return out;
-}
-
-void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, ucoord_t x, ucoord_t y) {
-    // To-Do
 }
 
 GamePiece * cloneGamePiece(GamePiece * game_piece) {

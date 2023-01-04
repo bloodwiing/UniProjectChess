@@ -19,13 +19,23 @@ void saveTile(Tile * tile, FILE * stream) {
     fwrite(&filled, sizeof(bool_t), 1, stream);
     if (filled)
         saveGamePiece(tile->game_piece, stream);
+
+    fwrite(&tile->phantom_count, sizeof(count_t), 1, stream);
+    fwrite(tile->phantoms, sizeof(uint16_t), tile->phantom_count, stream);
 }
 
 Tile * loadTile(FILE * stream) {
-    Tile * out = malloc(sizeof(Tile));
+    Tile * out = calloc(1, sizeof(Tile));
     bool_t filled = 0;
     fread(&filled, sizeof(bool_t), 1, stream);
     out->game_piece = filled ? loadGamePiece(stream) : NULL;
+
+    fread(&out->phantom_count, sizeof(count_t), 1, stream);
+    out->phantoms = malloc(sizeof(uint16_t) * out->phantom_count);
+    fread(out->phantoms, sizeof(uint16_t), out->phantom_count, stream);
+    if (out->phantom_count) {
+        int a = 0;
+    }
     return out;
 }
 
@@ -91,7 +101,34 @@ void clearOrigins(Tile * tile) {
     tile->origins = NULL;
 }
 
+void addPhantom(Board * board, Tile * tile, GamePiece * game_piece) {
+    tile->new_phantoms = realloc(tile->new_phantoms, sizeof(Vector8) * ++tile->new_phantom_count);
+    tile->new_phantoms[tile->new_phantom_count - 1] = game_piece->position->x + game_piece->position->y * board->width;
+}
+
+void updatePhantoms(Tile * tile) {
+    free(tile->phantoms);
+    tile->phantoms = tile->new_phantoms;
+    tile->phantom_count = tile->new_phantom_count;
+    tile->new_phantoms = NULL;
+    tile->new_phantom_count = 0;
+}
+
+void capturePhantoms(Board * board, Tile * tile) {
+    for (count_t i = 0; i < tile->phantom_count;) {
+        Tile * piece_tile = board->tiles[tile->phantoms[i++]];
+        GamePiece * game_piece = piece_tile->game_piece;
+
+        piece_tile->game_piece = NULL;
+        free(game_piece);
+        clearOrigins(piece_tile);
+    }
+    clearOrigins(tile);
+}
+
 void freeTile(Tile * tile) {
+    if (tile == NULL)
+        return;
     freeGamePiece(tile->game_piece);
     for (path_index_t i = 0; i < tile->path_count;)
         freePath(tile->paths[i++]);

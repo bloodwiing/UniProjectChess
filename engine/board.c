@@ -82,10 +82,15 @@ Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception)
     Board * out = createEmptyBoard(scenario, settings);
 
     for (tile_index_t i = 0; i < scenario->size_x * scenario->size_y; i++) {
+        Tile * board_tile = out->tiles[i];
         Tile * tile = loadTile(stream);
+
+        board_tile->phantom_count = tile->phantom_count;
+        board_tile->phantoms = tile->phantoms;
+
         if (tile->game_piece != NULL) {
-            Tile * board_tile = out->tiles[i];
             Team * team = getGamePieceTeam(out, tile->game_piece);
+
             board_tile->game_piece = tile->game_piece;
             tile->game_piece->position = board_tile;
 
@@ -149,6 +154,8 @@ Piece * getTilePiece(Board * board, Tile * tile) {
 
 void nextBoardTurn(Board * board) {
     if (board->active_turn++ >= board->team_count - 1) board->active_turn = 0;
+    for (tile_index_t i = 0; i < board->width * board->height;)
+        updatePhantoms(board->tiles[i++]);
 }
 
 void moveBoardGamePiece(Board * board, ucoord_t from_x, ucoord_t from_y, ucoord_t to_x, ucoord_t to_y) {
@@ -162,6 +169,8 @@ void moveBoardGamePiece(Board * board, ucoord_t from_x, ucoord_t from_y, ucoord_
     from->game_piece = NULL;
 
     to->game_piece->position = to;
+
+    capturePhantoms(board, to);
 
     updateTilePaths(board, from_x, from_y);
     updateTilePaths(board, to_x, to_y);

@@ -36,6 +36,8 @@ VersionInfo getVersionInfo(version_t version) {
             return (VersionInfo){.name = "v0.9 Beta", .min_scenario_version = 15};  // reworked scenario creation and structs
         case 16:
             return (VersionInfo){.name = "v0.10 Beta", .min_scenario_version = 16};  // special moves
+        case 17:
+            return (VersionInfo){.name = "v0.11 Beta", .min_scenario_version = 16};  // phantom pieces
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }

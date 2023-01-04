@@ -137,6 +137,16 @@ bool_t validatePath(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_
         }
         return false;
     }
+    else if (target->phantom_count) {
+        for (move_index_t move_index = 0; move_index < move_set.attack_count;) {
+            Move move = move_set.attacks[move_index++];
+            Vector relative = toVector(move.vector);
+
+            if (hasPath(target, piece, relative, move.repeat, PATH_TYPE_ATTACK))
+                return true;
+        }
+        return false;
+    }
     else {
         for (move_index_t move_index = 0; move_index < move_set.move_count;) {
             Move move = move_set.moves[move_index++];
@@ -159,7 +169,8 @@ void updateTilePaths(Board * board, ucoord_t x, ucoord_t y) {
                 extendPath(board, path, x, y);
         }
         clearOrigins(tile);
-    } else {
+    }
+    else {
         for (path_index_t i = 0; i < tile->path_count;) {
             Path * path = tile->paths[i++];
             if (path->repeat)

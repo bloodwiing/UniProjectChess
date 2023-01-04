@@ -75,9 +75,11 @@ void executeGameMove(GameState * state) {
             nextBoardTurn(state->board);
 
             state->piece_selected = false;
-        } else {  // check for special/none
+        }
+        else {  // check for special/none
             Tile * selected = getTile(state->board, state->sel_x, state->sel_y);
-            Piece * piece = getOriginalPiece(selected->game_piece, state->board->scenario);
+            GamePiece * game_piece = selected->game_piece;
+            Piece * piece = getOriginalPiece(game_piece, state->board->scenario);
 
             if (piece != NULL) {
                 for (move_index_t move_index = 0; move_index < piece->move_set.special_count;) {  // loop over every special
@@ -92,6 +94,10 @@ void executeGameMove(GameState * state) {
                         continue;
 
                     moveBoardGamePiece(state->board, state->sel_x, state->sel_y, state->sel_x + vector.x, state->sel_y + vector.y);  // move the main piece
+                    if (special->data.is_phantom) {  // register phantom piece
+                        Tile * phantom_tile = getTile(state->board, state->sel_x + vector.x + special->data.phantom.x, state->sel_y + vector.y + special->data.phantom.y);
+                        addPhantom(state->board, phantom_tile, game_piece);
+                    }
 
                     for (special_extra_index_t i = 0; i < special->extra_count;) {  // move every extra piece
                         SpecialMoveExtra extra = special->extra[i++];
@@ -99,9 +105,14 @@ void executeGameMove(GameState * state) {
                         ucoord_t pos_x = state->sel_x + extra.piece_location.x,
                                  pos_y = state->sel_y + extra.piece_location.y;
 
+                        GamePiece * extra_game_piece = getBoardGamePiece(state->board, pos_x, pos_y);
                         Vector extra_vector = toVector(extra.data.vector);
 
                         moveBoardGamePiece(state->board, pos_x, pos_y, pos_x + extra_vector.x, pos_y + extra_vector.y);
+                        if (extra.data.is_phantom) {  // register phantom pieces
+                            Tile * phantom_tile = getTile(state->board, pos_x + extra_vector.x + extra.data.phantom.x, pos_y + extra_vector.y + extra.data.phantom.y);
+                            addPhantom(state->board, phantom_tile, extra_game_piece);
+                        }
                     }
                     nextBoardTurn(state->board);  // finish turn
 

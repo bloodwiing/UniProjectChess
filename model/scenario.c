@@ -49,7 +49,8 @@ Scenario * loadScenario(FILE * stream, bool_t with_header, Exception * exception
             updateException(exception, EXCEPTION_SCENARIO_NO_HEADER);
             return NULL;
         }
-    } else {
+    }
+    else {
         out->version = VERSION_UNKNOWN;
         fread((uint8_t *)out + offsetof(Scenario, name), STRUCT_SCENARIO_SIZE_WITHOUT_POINTERS - offsetof(Scenario, name), 1, stream);
     }

@@ -6,6 +6,8 @@
 #include "./gamepiece.h"
 #include "./path.h"
 
+struct Board;
+
 typedef count16_t path_index_t;
 
 typedef struct Tile {
@@ -18,6 +20,12 @@ typedef struct Tile {
     Path ** origins;
 
     ucoord_t x, y;
+
+    count_t phantom_count;
+    uint16_t * phantoms;
+
+    count_t new_phantom_count;
+    uint16_t * new_phantoms;
 } Tile;
 
 Tile * createTile(GamePiece * game_piece, ucoord_t x, ucoord_t y);
@@ -35,6 +43,10 @@ Path * addOrigin(Tile * tile, Vector vector, bool_t repeat, path_type_t type);
 Path * findOrigin(Tile * tile, Vector vector, bool_t repeat, path_type_t type);
 bool_t hasOrigin(Tile * tile, Vector vector, bool_t repeat, path_type_t type);
 void clearOrigins(Tile * tile);
+
+void addPhantom(struct Board * board, Tile * tile, GamePiece * game_piece);
+void updatePhantoms(Tile * tile);
+void capturePhantoms(struct Board * board, Tile * tile);
 
 void freeTile(Tile * tile);
 

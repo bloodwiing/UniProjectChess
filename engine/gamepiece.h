@@ -14,9 +14,6 @@ typedef struct GamePiece {
 
     count16_t moves;
 
-    bool_t vulnerable;
-    ucoord_t vul_x, vul_y;
-
     struct Tile * position;
 } GamePiece;
 
@@ -25,8 +22,6 @@ Piece * getOriginalPiece(GamePiece * game_piece, Scenario * scenario);
 
 void saveGamePiece(GamePiece * game_piece, FILE * stream);
 GamePiece * loadGamePiece(FILE * stream);
-
-void markGamePieceVulnerable(Scenario * scenario, GamePiece * game_piece, SpecialMove * special_move, ucoord_t x, ucoord_t y);
 
 GamePiece * cloneGamePiece(GamePiece * game_piece);
 void freeGamePiece(GamePiece * game_piece);
