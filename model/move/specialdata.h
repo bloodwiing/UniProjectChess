@@ -1,12 +1,12 @@
 #ifndef CHESS_SPECIALDATA_H
 #define CHESS_SPECIALDATA_H
 
-#include "./teamdirection.h"
-#include "./vector8.h"
-
 #include <stdio.h>
 
 #include "abstract/defs.h"
+
+#include "model/teamdirection.h"
+#include "model/vector8.h"
 
 typedef struct SpecialData {
     bool_t normalised;

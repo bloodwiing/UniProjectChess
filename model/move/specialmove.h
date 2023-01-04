@@ -4,10 +4,11 @@
 #include <stdio.h>
 
 #include "./specialdata.h"
-#include "./teamdirection.h"
-#include "./vector8.h"
 
 #include "abstract/defs.h"
+
+#include "model/teamdirection.h"
+#include "model/vector8.h"
 
 typedef struct SpecialMoveExtra {
     Vector8 piece_location;

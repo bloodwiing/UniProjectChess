@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "./moveset.h"
+#include "model/move/moveset.h"
 
 #include "abstract/defs.h"
 #include "utils/encoding.h"

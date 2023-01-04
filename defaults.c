@@ -2,8 +2,8 @@
 
 #include "abstract/defs.h"
 
-#include "model/move.h"
-#include "model/moveset.h"
+#include "model/move/move.h"
+#include "model/move/moveset.h"
 #include "model/spawn.h"
 
 #include "ui/con_lib.h"

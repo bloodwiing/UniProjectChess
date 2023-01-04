@@ -4,10 +4,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "./vector8.h"
-
 #include "abstract/defs.h"
-#include "teamdirection.h"
+
+#include "model/teamdirection.h"
+#include "model/vector8.h"
 
 typedef struct Move {
     bool_t normalised;

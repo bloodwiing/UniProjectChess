@@ -23,6 +23,9 @@ int main() {
 
     mainMenuLoop(settings);
     freeSettings(settings);
+
+    con_show_echo(true);
+    con_show_cursor(true);
 }
 
 #ifdef _WIN32
