@@ -15,6 +15,7 @@ void saveSpecialMove(SpecialMove move, FILE * stream) {
     fwrite(&move.extra_count, sizeof(special_extra_index_t), 1, stream);
     for (special_extra_index_t i = 0; i < move.extra_count; i++) {
         fwrite(&move.extra[i].piece_location, sizeof(Vector8), 1, stream);
+        fwrite(&move.extra[i].piece_type, sizeof(piece_index_t), 1, stream);
         saveSpecialData(move.extra[i].data, stream);
     }
 }
@@ -29,6 +30,7 @@ SpecialMove loadSpecialMove(FILE * stream) {
     out.extra = calloc(out.extra_count, sizeof(SpecialMoveExtra));
     for (special_extra_index_t i = 0; i < out.extra_count; i++) {
         fread(&out.extra[i].piece_location, sizeof(Vector8), 1, stream);
+        fread(&out.extra[i].piece_type, sizeof(piece_index_t), 1, stream);
         out.extra[i].data = loadSpecialData(stream);
     }
 
@@ -51,11 +53,12 @@ void printSpecialMove(SpecialMove special_move) {
     }
 }
 
-void addSpecialMoveExtra(SpecialMove * special_move, Vector8 piece_location, SpecialData data) {
+void addSpecialMoveExtra(SpecialMove * special_move, Vector8 piece_location, piece_index_t piece_type, SpecialData data) {
     special_move->extra = realloc(special_move->extra, sizeof(SpecialMoveExtra) * ++special_move->extra_count);
     SpecialMoveExtra * extra = &special_move->extra[special_move->extra_count - 1];
     memset(extra, 0, sizeof(SpecialMoveExtra));
     extra->piece_location = piece_location;
+    extra->piece_type = piece_type;
     extra->data = data;
 }
 

@@ -145,6 +145,7 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
 
         for (move_index_t move_index = 0; move_index < piece->move_set.special_count;) {
             SpecialMove * special = piece->move_set.specials + move_index++;
+
             if (!isSpecialMoveValid(board, sel_x, sel_y, special))
                 continue;
 

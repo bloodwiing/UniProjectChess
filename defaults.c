@@ -133,13 +133,13 @@ Piece createDefaultKing(uint8_t team) {
     // special possibilities
     SpecialMove castle_king_side = createSpecialMove(createSpecialDataRaw(2, 0, true, false, true));
     addSpecialDataConditionRaw(&castle_king_side.data, 1, 0);
-    addSpecialMoveExtra(&castle_king_side, createVector8(3, 0), createSpecialDataRaw(-2, 0, true, false, true));
+    addSpecialMoveExtra(&castle_king_side, createVector8(3, 0), 1, createSpecialDataRaw(-2, 0, true, false, true));
     addSpecialMove(&move_set, castle_king_side);
 
     SpecialMove castle_queen_side = createSpecialMove(createSpecialDataRaw(-2, 0, true, false, true));
     addSpecialDataConditionRaw(&castle_queen_side.data, -1, 0);
     addSpecialDataConditionRaw(&castle_queen_side.data, -3, 0);
-    addSpecialMoveExtra(&castle_queen_side, createVector8(-4, 0), createSpecialDataRaw(3, 0, true, false, true));
+    addSpecialMoveExtra(&castle_queen_side, createVector8(-4, 0), 1, createSpecialDataRaw(3, 0, true, false, true));
     addSpecialDataConditionRaw(&castle_queen_side.extra[0].data, 1, 0);
     addSpecialMove(&move_set, castle_queen_side);
 

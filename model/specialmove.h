@@ -11,6 +11,7 @@
 
 typedef struct SpecialMoveExtra {
     Vector8 piece_location;
+    piece_index_t piece_type;
     SpecialData data;
 } SpecialMoveExtra;
 
@@ -27,7 +28,7 @@ void saveSpecialMove(SpecialMove move, FILE * stream);
 SpecialMove loadSpecialMove(FILE * stream);
 void printSpecialMove(SpecialMove special_move);
 
-void addSpecialMoveExtra(SpecialMove * special_move, Vector8 piece_location, SpecialData data);
+void addSpecialMoveExtra(SpecialMove * special_move, Vector8 piece_location, piece_index_t piece_type, SpecialData data);
 
 void normaliseSpecialMove(SpecialMove * special_move, TeamDirection direction);
 

@@ -66,14 +66,50 @@ void reselectGameAtCursor(GameState * state) {
 }
 
 void executeGameMove(GameState * state) {
-    if (!state->piece_selected)
-        reselectGameAtCursor(state);
+    if (!state->piece_selected)  // if nothing is selected
+        reselectGameAtCursor(state);  // just select
     else {
-        if (isMoveValid(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y, true)) {
+        if (isMoveValid(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y, true)) {  // valid basic/attack move
+
             moveBoardGamePiece(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y);
             nextBoardTurn(state->board);
+
             state->piece_selected = false;
-        } else {
+        } else {  // check for special/none
+            Tile * selected = getTile(state->board, state->sel_x, state->sel_y);
+            Piece * piece = getOriginalPiece(selected->game_piece, state->board->scenario);
+
+            if (piece != NULL) {
+                for (move_index_t move_index = 0; move_index < piece->move_set.special_count;) {  // loop over every special
+                    SpecialMove * special = piece->move_set.specials + move_index++;
+
+                    Vector vector = toVector(special->data.vector);
+
+                    if (state->sel_x + vector.x != state->cur_x || state->sel_y + vector.y != state->cur_y)  // if the result of the special move doesn't match the target under the cursor - it's the wrong move
+                        continue;
+
+                    if (!isSpecialMoveValid(state->board, state->sel_x, state->sel_y, special))  // if it's not a valid special move
+                        continue;
+
+                    moveBoardGamePiece(state->board, state->sel_x, state->sel_y, state->sel_x + vector.x, state->sel_y + vector.y);  // move the main piece
+
+                    for (special_extra_index_t i = 0; i < special->extra_count;) {  // move every extra piece
+                        SpecialMoveExtra extra = special->extra[i++];
+
+                        ucoord_t pos_x = state->sel_x + extra.piece_location.x,
+                                 pos_y = state->sel_y + extra.piece_location.y;
+
+                        Vector extra_vector = toVector(extra.data.vector);
+
+                        moveBoardGamePiece(state->board, pos_x, pos_y, pos_x + extra_vector.x, pos_y + extra_vector.y);
+                    }
+                    nextBoardTurn(state->board);  // finish turn
+
+                    state->piece_selected = false;
+                    return;
+                }
+            }
+
             reselectGameAtCursor(state);
         }
     }

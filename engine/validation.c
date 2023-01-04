@@ -325,11 +325,18 @@ bool_t isSpecialMoveValid(Board * board, ucoord_t origin_x, ucoord_t origin_y, S
         return false;
 
     for (special_extra_index_t i = 0; i < special_move->extra_count;) {
-        SpecialMoveExtra * extra = special_move->extra + i++;
-        Vector normalised = toVector(extra->piece_location);
-        ucoord_t from_x = origin_x + normalised.x,
-                 from_y = origin_y + normalised.y;
-        if (!checkSpecialDataRequirements(board, from_x, from_y, &extra->data))  // extra tests
+        SpecialMoveExtra extra = special_move->extra[i++];
+
+        Vector location = toVector(extra.piece_location);
+
+        ucoord_t from_x = origin_x + location.x,
+                 from_y = origin_y + location.y;
+
+        GamePiece * extra_piece;
+        if ((extra_piece = getBoardGamePiece(board, from_x, from_y)) == NULL || extra_piece->piece != extra.piece_type)  // if the type doesn't match - fail
+            return false;
+
+        if (!checkSpecialDataRequirements(board, from_x, from_y, &extra.data))  // extra tests
             return false;
     }
 
@@ -347,6 +354,7 @@ bool_t isSpecialMoveValid(Board * board, ucoord_t origin_x, ucoord_t origin_y, S
                  from_y = origin_y + location.y,
                  to_x = from_x + vector.x,
                  to_y = from_y + vector.y;
+
         moveBoardGamePiece(prediction, from_x, from_y, to_x, to_y);
     }
 
