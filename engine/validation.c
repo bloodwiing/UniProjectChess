@@ -198,6 +198,9 @@ bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, u
         if (path->piece->team == origin->team)  // if path of same team <=> not an enemy and continue
             continue;
 
+        if (path->piece == getBoardGamePiece(board, target_x, target_y) && (path->type & PATH_TYPE_ATTACK))  // if path is being attacked by this move
+            continue;
+
         Tile * tile_start = path->piece->position;  // the starting point of the enemy path
 
         int x = tile_start->x, y = tile_start->y;
@@ -210,8 +213,7 @@ bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, u
                 if (x == origin_x && y == origin_y)  // if the piece moved from this location, continue the path
                     continue;
                 if ((getOriginalPiece(obstacle, board->scenario) && !protected_moved)  // if the path now ends at the protected tile (that wasn't moved)
-                    && (obstacle->team != origin->team)  // if the obstacle is an enemy type
-                    && (path->piece != getBoardGamePiece(board, target_x, target_y)))  // if the piece is not being attacked by this move
+                    && (obstacle->team != origin->team))  // if the obstacle is an enemy type
                     return true;
                 break;
             }
@@ -250,7 +252,7 @@ bool_t isTeamCheckedAfterMove(Board * board, Team * team, ucoord_t origin_x, uco
             Tile * path_start = path->piece->position;
             ucoord_t x = path_start->x, y = path_start->y;
 
-            if (path->piece == getBoardGamePiece(board, target_x, target_y))  // if the move is going to capture this piece
+            if (path->piece == target_tile->game_piece && (path->type & PATH_TYPE_ATTACK))  // if the move is going to capture this piece
                 continue;  // then it is safe
 
             while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && !(x == target_x && y == target_y)) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving)
