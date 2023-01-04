@@ -1,6 +1,7 @@
 #include "gamepiece.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "model/vector.h"
 

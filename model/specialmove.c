@@ -69,4 +69,5 @@ void freeSpecialMove(SpecialMove * special_move) {
     for (special_extra_index_t i = 0; i < special_move->extra_count;)
         freeSpecialData(&special_move->extra[i++].data);
     free(special_move->extra);
+    freeSpecialData(&special_move->data);
 }

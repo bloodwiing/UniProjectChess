@@ -202,13 +202,15 @@ bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, u
 
         int x = tile_start->x, y = tile_start->y;
 
-        while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && (!(x == target_x && y == target_y)) || protected_moved) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving, unless intersection is with a protected piece)
+        while (validateInBounds(board, x += path->vector.x, y += path->vector.y) && (!(x == target_x && y == target_y) || protected_moved)) {  // keep in bounds and check if the path will be intersected by this move (if so, stop moving, unless intersection is with a protected piece)
+            if (getTile(board, x, y) == protected_tile)
+                return true;
             GamePiece * obstacle;
             if ((obstacle = getBoardGamePiece(board, x, y)) != NULL) {
                 if (x == origin_x && y == origin_y)  // if the piece moved from this location, continue the path
                     continue;
-                if ((getTile(board, x, y) == protected_tile)  // if the path now ends at the protected tile
-                    && (obstacle->team == origin->team)  // if the protected piece is of own team
+                if ((getOriginalPiece(obstacle, board->scenario) && !protected_moved)  // if the path now ends at the protected tile (that wasn't moved)
+                    && (obstacle->team != origin->team)  // if the obstacle is an enemy type
                     && (path->piece != getBoardGamePiece(board, target_x, target_y)))  // if the piece is not being attacked by this move
                     return true;
                 break;

@@ -54,8 +54,6 @@ MENU_ITEM_CALLBACK(onMainMenuResume) {
     GameState * state = loadGameStateDefault(settings, &exception);
     if (state == NULL && exception.status) {
         reportException(exception);
-        freeBoard(state->board, true);
-        free(state);
         return false;
     }
 
