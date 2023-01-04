@@ -9,7 +9,7 @@
 #define EXCEPTION_BOARD_NO_PROTECT 0x10002, false, "A team needs to have at least one Protect-flagged piece"
 
 Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
-    Board * out = malloc(sizeof(Board));
+    Board * out = calloc(1, sizeof(Board));
 
     out->user_settings = settings;
     out->scenario = scenario;
@@ -62,8 +62,6 @@ Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * ex
             return NULL;
         }
     }
-
-    out->active_turn = 1;
 
     return out;
 }

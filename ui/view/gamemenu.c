@@ -43,7 +43,7 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
 
     con_set_pos(32, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Current team: ");
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", TEAM_NAME_LENGTH, board->teams + board->active_turn);
+    renderTextColoured(settings, COLOR_RESET, getActiveTeam(board)->colour, L"%-*hs", TEAM_NAME_LENGTH, getActiveTeam(board)->name);
     con_set_pos(32, 3);
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Selected piece: ");
     if (state->piece_selected)
