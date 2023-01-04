@@ -22,7 +22,11 @@ typedef struct Team {
     TeamDirection direction;
 
     Piece * pieces;
+
     struct GamePiece * protected_piece;
+
+    piece_index_t promotion_count;
+    piece_index_t * promotions;
 } Team;
 
 Team createTeam(char * name, colour_t colour, TeamDirection direction);
@@ -31,6 +35,8 @@ Team loadTeam(FILE * stream);
 void printTeam(Team team);
 
 void addPiece(Team * team, Piece piece);
+
+void addPromotion(Team * team, piece_index_t type);
 
 void freeTeam(Team * team);
 

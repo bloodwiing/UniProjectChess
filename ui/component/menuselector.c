@@ -41,7 +41,7 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
     uint32_t key;
 
     while ((key = con_read_key())) {
-        if (key == KEY_ENTER) {
+        if (key == KEY_ENTER || key == KEY_SPACE) {
             if (!runMenuItem(menu_selector->items[menu_selector->selected])) {
                 menu_selector->init_callback(menu_selector->settings);
                 runMenuSelectorUpdateCallback(menu_selector);
@@ -53,13 +53,11 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
         }
 
         switch (key) {
-            case KEY_W:
-            case KEY_ARROW_UP:
+            CASE_KEY_UP:
                 if (menu_selector->selected-- == 0) menu_selector->selected = menu_selector->item_count - 1;
                 runMenuSelectorUpdateCallback(menu_selector);
                 break;
-            case KEY_S:
-            case KEY_ARROW_DOWN:
+            CASE_KEY_DOWN:
                 if (menu_selector->selected++ == menu_selector->item_count - 1) menu_selector->selected = 0;
                 runMenuSelectorUpdateCallback(menu_selector);
                 break;

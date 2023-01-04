@@ -4,6 +4,7 @@
 #ifdef _WIN32
 
 #define KEY_ENTER 13
+#define KEY_SPACE 0x20
 
 #define KEY_ARROW_UP 38
 #define KEY_ARROW_DOWN 40
@@ -17,9 +18,12 @@
 
 #define KEY_Q 81
 
+#define KEY_ESCAPE 0x1B
+
 #elif __linux__
 
 #define KEY_ENTER 10
+#define KEY_SPACE need_value
 
 #define KEY_ARROW_UP 1792865
 #define KEY_ARROW_DOWN 1792866
@@ -33,6 +37,26 @@
 
 #define KEY_Q 113
 
+#define KEY_ESCAPE need_value
+
 #endif
+
+#define CASE_KEY_CONFIRM case KEY_ENTER: \
+case KEY_SPACE
+
+#define CASE_KEY_UP case KEY_ARROW_UP: \
+case KEY_W
+
+#define CASE_KEY_DOWN case KEY_ARROW_DOWN: \
+case KEY_S
+
+#define CASE_KEY_LEFT case KEY_ARROW_LEFT: \
+case KEY_A
+
+#define CASE_KEY_RIGHT case KEY_ARROW_RIGHT: \
+case KEY_D
+
+#define CASE_KEY_CANCEL case KEY_Q: \
+case KEY_ESCAPE
 
 #endif //CHESS_KEY_H

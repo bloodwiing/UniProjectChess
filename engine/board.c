@@ -1,14 +1,19 @@
 #include "board.h"
-#include "../ui/con_lib.h"
+
 #include <string.h>
-#include "../ui/render.h"
-#include "validation.h"
 #include <wchar.h>
+
+#include "./validation.h"
+
+#include "ui/con_lib.h"
+#include "ui/render.h"
+#include "ui/view/promotionmenu.h"
 
 #define EXCEPTION_BOARD_MULTIPLE_PROTECT 0x10001, false, "A team cannot have multiple Protect-flagged pieces"
 #define EXCEPTION_BOARD_NO_PROTECT 0x10002, false, "A team needs to have at least one Protect-flagged piece"
+#define EXCEPTION_BOARD_NO_PROMOTIONS 0x10003, false, "A promotable piece exists, but no pieces can be promoted to"
 
-Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
+Board * createEmptyBoard(Scenario * scenario, UserSettings * settings, Exception * exception) {
     Board * out = calloc(1, sizeof(Board));
 
     out->user_settings = settings;
@@ -26,14 +31,36 @@ Board * createEmptyBoard(Scenario * scenario, UserSettings * settings) {
 
     out->team_count = scenario->team_count;
     out->teams = calloc(scenario->team_count, sizeof(Team));
-    for (team_index_t i = 0; i < scenario->team_count; i++)
+    for (team_index_t i = 0; i < scenario->team_count; i++) {
         out->teams[i] = scenario->teams[i];
+
+        bool_t has_promotable = false;
+
+        Team * team = out->teams + i;
+        for (piece_index_t piece_type = 0; piece_type < team->piece_count; piece_type++) {
+            Piece * piece = team->pieces + piece_type;
+
+            if (piece->promotable) {
+                has_promotable = true;
+            } else if (!piece->protected) {
+                addPromotion(team, piece_type);
+            }
+        }
+
+        if (has_promotable && team->promotion_count == 0) {
+            updateException(exception, EXCEPTION_BOARD_NO_PROMOTIONS);
+            freeBoard(out, false);
+            return NULL;
+        }
+    }
 
     return out;
 }
 
 Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * exception) {
-    Board * out = createEmptyBoard(scenario, settings);
+    Board * out = createEmptyBoard(scenario, settings, exception);
+    if (out == NULL && exception->status)
+        return NULL;
 
     for (spawn_index_t i = 0; i < scenario->spawn_count;) {
         Spawn * spawn = scenario->spawns + i++;
@@ -45,7 +72,7 @@ Board * createBoard(Scenario * scenario, UserSettings * settings, Exception * ex
         tile->game_piece = game_piece;
         game_piece->position = tile;
 
-        if (piece->protect) {
+        if (piece->protected) {
             if (team->protected_piece != NULL) {
                 updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
                 freeBoard(out, false);
@@ -76,10 +103,12 @@ void saveBoard(Board * board, FILE * stream) {
 
 Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception) {
     Scenario * scenario = loadScenario(stream, false, exception);
-    if (scenario == NULL && exception->status) {
+    if (scenario == NULL && exception->status)
         return NULL;
-    }
-    Board * out = createEmptyBoard(scenario, settings);
+
+    Board * out = createEmptyBoard(scenario, settings, exception);
+    if (out == NULL && exception->status)
+        return NULL;
 
     for (tile_index_t i = 0; i < scenario->size_x * scenario->size_y; i++) {
         Tile * board_tile = out->tiles[i];
@@ -94,7 +123,7 @@ Board * loadBoard(UserSettings * settings, FILE * stream, Exception * exception)
             board_tile->game_piece = tile->game_piece;
             tile->game_piece->position = board_tile;
 
-            if (getOriginalPiece(tile->game_piece, scenario)->protect) {
+            if (getOriginalPiece(tile->game_piece, scenario)->protected) {
                 if (team->protected_piece != NULL) {
                     updateException(exception, EXCEPTION_BOARD_MULTIPLE_PROTECT);
                     free(tile);
@@ -176,8 +205,39 @@ void moveBoardGamePiece(Board * board, ucoord_t from_x, ucoord_t from_y, ucoord_
     updateTilePaths(board, to_x, to_y);
 }
 
+bool_t canPromoteGamePiece(Board * board, GamePiece * game_piece) {
+    if (game_piece == NULL)
+        return false;
+
+    Team * team = getGamePieceTeam(board, game_piece);
+    switch (team->direction) {
+        case TeamDirectionUp:
+            return game_piece->position->y == 0;
+        case TeamDirectionDown:
+            return game_piece->position->y == board->height - 1;
+        case TeamDirectionLeft:
+            return game_piece->position->x == 0;
+        case TeamDirectionRight:
+            return game_piece->position->x == board->width - 1;
+    }
+    return false;
+}
+
+void promoteGamePiece(Board * board, GamePiece * game_piece, piece_index_t new_type) {
+    if (game_piece == NULL)
+        return;
+
+    game_piece->piece = new_type;
+    updateTilePaths(board, game_piece->position->x, game_piece->position->y);
+}
+
 Board * cloneBoard(Board * board) {
-    Board * out = createEmptyBoard(board->scenario, board->user_settings);
+    Exception exception;
+    Board * out = createEmptyBoard(board->scenario, board->user_settings, &exception);
+    if (out == NULL && exception.status) {
+        reportException(exception);
+        return NULL;
+    }
 
     for (tile_index_t i = 0; i < board->width * board->height; i++) {
         out->tiles[i]->game_piece = cloneGamePiece(board->tiles[i]->game_piece);
@@ -187,7 +247,7 @@ Board * cloneBoard(Board * board) {
             continue;
 
         Piece * piece = getOriginalPiece(game_piece, board->scenario);
-        if (piece->protect) {
+        if (piece->protected) {
             Team *team = getTeam(out, piece->team);
             team->protected_piece = game_piece;
         }
@@ -197,6 +257,11 @@ Board * cloneBoard(Board * board) {
 
     out->active_turn = board->active_turn;
     return out;
+}
+
+void handleGamePiecePromotion(Board * board, GamePiece * game_piece) {
+    if (canPromoteGamePiece(board, game_piece))
+        promoteGamePiece(board, game_piece, promotionMenuLoop(board->user_settings, getGamePieceTeam(board, game_piece)));
 }
 
 void freeBoard(Board * board, bool_t free_scenario) {

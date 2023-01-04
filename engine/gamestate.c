@@ -5,6 +5,7 @@
 #include "enum/key.h"
 
 #include "ui/con_lib.h"
+#include "ui/view/promotionmenu.h"
 
 GameState * createGameState(Board * board) {
     GameState * out = calloc(1, sizeof(GameState));
@@ -74,6 +75,9 @@ void executeGameMove(GameState * state) {
             moveBoardGamePiece(state->board, state->sel_x, state->sel_y, state->cur_x, state->cur_y);
             nextBoardTurn(state->board);
 
+            GamePiece * game_piece = getGamePieceAtCursor(state);
+            handleGamePiecePromotion(state->board, game_piece);  // promotion check
+
             state->piece_selected = false;
         }
         else {  // check for special/none
@@ -99,6 +103,8 @@ void executeGameMove(GameState * state) {
                         addPhantom(state->board, phantom_tile, game_piece);
                     }
 
+                    handleGamePiecePromotion(state->board, game_piece);  // promotion check
+
                     for (special_extra_index_t i = 0; i < special->extra_count;) {  // move every extra piece
                         SpecialMoveExtra extra = special->extra[i++];
 
@@ -113,6 +119,8 @@ void executeGameMove(GameState * state) {
                             Tile * phantom_tile = getTile(state->board, pos_x + extra_vector.x + extra.data.phantom.x, pos_y + extra_vector.y + extra.data.phantom.y);
                             addPhantom(state->board, phantom_tile, extra_game_piece);
                         }
+
+                        handleGamePiecePromotion(state->board, extra_game_piece);  // promotion check
                     }
                     nextBoardTurn(state->board);  // finish turn
 
@@ -130,31 +138,27 @@ bool_t evaluateGameInput(GameState * state, bool_t * game_active) {
     key_code_t key;
     if ((key = con_read_key()) != 0) {
         switch (key) {
-            case KEY_ARROW_UP:
-            case KEY_W:
+            CASE_KEY_UP:
                 if (state->cur_y-- <= 0) state->cur_y = state->board->height - 1;
                 break;
 
-            case KEY_ARROW_DOWN:
-            case KEY_S:
+            CASE_KEY_DOWN:
                 if (state->cur_y++ >= state->board->height - 1) state->cur_y = 0;
                 break;
 
-            case KEY_ARROW_LEFT:
-            case KEY_A:
+            CASE_KEY_LEFT:
                 if (state->cur_x-- <= 0) state->cur_x = state->board->width - 1;
                 break;
 
-            case KEY_ARROW_RIGHT:
-            case KEY_D:
+            CASE_KEY_RIGHT:
                 if (state->cur_x++ >= state->board->width - 1) state->cur_x = 0;
                 break;
 
-            case KEY_ENTER:
+            CASE_KEY_CONFIRM:
                 executeGameMove(state);
                 break;
 
-            case KEY_Q:
+            CASE_KEY_CANCEL:
                 *game_active = false;
                 break;
 

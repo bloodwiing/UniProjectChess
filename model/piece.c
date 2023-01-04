@@ -5,11 +5,11 @@
 
 #define STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET offsetof(Piece, symbol) + sizeof(char)
 
-Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet move_set) {
+Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t promotable, bool_t protected, team_index_t team, MoveSet move_set) {
     Piece out = {
         .symbol = symbol,
-        .upgradable = upgradable,
-        .protect = protect,
+        .promotable = promotable,
+        .protected = protected,
         .team = team,
         .move_set = move_set
     };
@@ -49,12 +49,12 @@ void printPiece(Piece piece) {
              "\tName: %s\n"
              "\tUnicode: %ls\n"
              "\tSymbol: %c\n"
-             "\tUpgradable: %s\n"
-             "\tProtect: %s\n"
+             "\tPromotable: %s\n"
+             "\tProtected: %s\n"
              "\tTeam: %d\n"
              "\tMove Set:\n",
-             piece.name, piece.unicode, piece.symbol, piece.upgradable ? "Yes" : "No",
-             piece.protect ? "Yes" : "No", piece.team);
+            piece.name, piece.unicode, piece.symbol, piece.promotable ? "Yes" : "No",
+            piece.protected ? "Yes" : "No", piece.team);
     printMoveSet(piece.move_set);
 }
 

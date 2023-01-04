@@ -34,9 +34,9 @@ typedef uint32_t key_code_t;
 #define COLOR_RESET     16
 
 // Ekrano dydis
-struct ConSize{
+typedef struct ConSize{
     int height, width;
-};
+} ConSize;
 
 // Išvalo ekraną
 void con_clear();
@@ -72,7 +72,7 @@ void con_show_echo(int show);
 void con_sleep(float seconds);
 
 // Grąžina ekrano dydį
-struct ConSize con_get_size();
+ConSize con_get_size();
 
 // Užbaigia ekrano rašymo darbą
 void con_flush();

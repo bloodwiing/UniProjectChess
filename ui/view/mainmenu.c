@@ -22,7 +22,7 @@ void mainMenuLoop(UserSettings * settings) {
 
     MenuSelector * selector = createMenuSelector(settings, initMainMenu, updateMainMenu);
 
-    if (isPathFile("./data/save.bin"))
+    if (isPathFile(GAME_STATE_SAVE_FILE))
         addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
     addMenuItem(selector, L"New Scenario", "New day, new battle", onMainMenuStart);
     addMenuItem(selector, L"Quit", "Leaving already?", onMainMenuExit);

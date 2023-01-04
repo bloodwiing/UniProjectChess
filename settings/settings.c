@@ -4,6 +4,8 @@
 
 #include "utils/files.h"
 
+#define SETTINGS_FILE "./data/settings.ini"
+
 const char user_setting_string[] = "# ROOK'S GAMBIT Settings\n"
                                    "input=%d\n"
                                    "colourful=%d\n"
@@ -35,7 +37,7 @@ UserSettings * loadSettings(FILE * stream) {
 
 int saveUserSettings(UserSettings * settings) {
     createDirectoryIfMissing("data");
-    FILE * file = fopen("data/settings.ini", "wb");
+    FILE * file = fopen(SETTINGS_FILE, "wb");
     if (file == NULL) return -1;
     saveSettings(settings, file);
     fclose(file);
@@ -43,7 +45,7 @@ int saveUserSettings(UserSettings * settings) {
 }
 
 UserSettings * loadUserSettings() {
-    FILE * file = fopen("data/settings.ini", "rb");
+    FILE * file = fopen(SETTINGS_FILE, "rb");
     if (file == NULL) return NULL;
     UserSettings * settings = loadSettings(file);
     fclose(file);

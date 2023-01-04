@@ -16,8 +16,8 @@
 typedef struct Piece {
     char name[PIECE_NAME_LENGTH];
 
-    bool_t upgradable;
-    bool_t protect;
+    bool_t promotable;
+    bool_t protected;
 
     team_index_t team;
 
@@ -27,7 +27,7 @@ typedef struct Piece {
     MoveSet move_set;
 } Piece;
 
-Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t upgradable, bool_t protect, team_index_t team, MoveSet move_set);
+Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t promotable, bool_t protected, team_index_t team, MoveSet move_set);
 void savePiece(Piece piece, FILE * stream);
 Piece loadPiece(FILE * stream);
 void printPiece(Piece piece);

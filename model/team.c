@@ -58,8 +58,14 @@ void addPiece(Team * team, Piece piece) {
     normaliseMoveSet(&team->pieces[team->piece_count - 1].move_set, team->direction);
 }
 
+void addPromotion(Team * team, piece_index_t type) {
+    team->promotions = realloc(team->promotions, sizeof(piece_index_t) * ++team->promotion_count);
+    team->promotions[team->promotion_count - 1] = type;
+}
+
 void freeTeam(Team * team) {
     for (piece_index_t i = 0; i < team->piece_count;)
         freeMoveSet(&team->pieces[i++].move_set);
+    free(team->promotions);
     free(team->pieces);
 }

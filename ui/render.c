@@ -183,6 +183,19 @@ void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int
     freeBoard(board, false);
 }
 
+void ditherEffect() {
+    ConSize size = con_get_size();
+    con_set_color(COLOR_RESET, COLOR_RESET);
+    for (int y = 0; y < size.height; y++)
+        for (int x = 0; x < size.width / 2; x++)
+            if ((x + y) % 2) {
+                con_set_pos(x * 2, y);
+                putwchar(L' ');
+                putwchar(L' ');
+            }
+    con_flush();
+}
+
 void clearRect(int x, int y, int w, int h) {
     for (int i = y; i < y + h;) {
         con_set_pos(x, i++);

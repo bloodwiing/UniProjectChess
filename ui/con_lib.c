@@ -153,14 +153,14 @@ void con_sleep(float seconds) {
   }
 }
 
-struct ConSize con_get_size() {
+ConSize con_get_size() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
     printf ("lines %d\n", w.ws_row);
     printf ("columns %d\n", w.ws_col);
 
-    struct ConSize result;
+    ConSize result = {};
     result.width = w.ws_col;
     result.height = w.ws_row;
     return result;
@@ -358,9 +358,9 @@ void con_sleep(float seconds) {
 }
 
 // Modified version of https://stackoverflow.com/questions/6812224/getting-terminal-size-in-c-for-windows/12642749#12642749
-struct ConSize con_get_size() {
+ConSize con_get_size() {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    struct ConSize size;
+    ConSize size = {};
 
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     size.width = csbi.srWindow.Right - csbi.srWindow.Left + 1;

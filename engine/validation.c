@@ -313,7 +313,7 @@ bool_t checkSpecialDataRequirements(Board * board, ucoord_t origin_x, ucoord_t o
         Tile * tile = getTile(board, origin_x + condition.x, origin_y + condition.y);
         if (tile->game_piece != NULL)  // the passing tile must be emtpy
             return false;
-        if (piece->protect && !special_data->is_check_safe && isTileDangerous(tile, piece->team))  // if the passing tile would cause a check, it fails
+        if (piece->protected && !special_data->is_check_safe && isTileDangerous(tile, piece->team))  // if the passing tile would cause a check, it fails
             return false;
     }
 

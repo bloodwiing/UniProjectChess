@@ -10,6 +10,7 @@
 #include "settings/settings.h"
 
 #include "model/piece.h"
+#include "model/rect.h"
 #include "model/scenario.h"
 #include "model/team.h"
 
@@ -23,6 +24,8 @@ void renderPiece(UserSettings * settings, Team * team, Piece * piece);
 void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h);
 void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y);
 void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h);
+
+void ditherEffect();
 
 void clearRect(int x, int y, int w, int h);
 
