@@ -28,6 +28,7 @@ DialogBox createDialogBox(wchar_t * title, uint16_t height, uint16_t width, DIAL
 void runDialogBoxCallback(UserSettings * settings, DialogBox * dialog_box) {
     con_set_pos(dialog_box->x + 9, dialog_box->y + 5);
     dialog_box->content_callback(settings, dialog_box->x + 9, dialog_box->y + 5, dialog_box->width, dialog_box->height - 2, dialog_box->data_ptr);
+    con_flush();
 }
 
 void drawDialogBox(UserSettings * settings, DialogBox * dialog_box, int x, int y) {
@@ -88,6 +89,7 @@ void drawDialogBox(UserSettings * settings, DialogBox * dialog_box, int x, int y
     free(border_right);
 
     runDialogBoxCallback(settings, dialog_box);
+    con_flush();
 }
 
 void drawDialogBoxCentered(UserSettings * settings, DialogBox * dialog_box) {
