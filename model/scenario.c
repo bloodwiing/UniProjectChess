@@ -106,6 +106,22 @@ void addSpawn(Scenario * scenario, Spawn spawn) {
     scenario->spawns[scenario->spawn_count - 1] = spawn;
 }
 
+Rect getScenarioRect(Scenario * scenario, int x, int y) {
+    return createRect(x, y, scenario->size_x * 2 + 3, scenario->size_y + 2);
+}
+
+Rect getScenarioRectWithinRect(Scenario * scenario, int x, int y, Rect rect) {
+    Rect original = getScenarioRect(scenario, x, y);
+    return fitRect(original, rect.width, rect.height);
+}
+
+Rect getScenarioCenteredRect(Scenario * scenario, Rect rect, int cursor_x, int cursor_y) {
+    Rect inner = getScenarioRectWithinRect(scenario, 0, 0, rect);
+    Rect bounded = getScenarioRectWithinRect(scenario, cursor_x * 2 - (inner.width - 3) / 2 + 1, cursor_y - (inner.height - 2) / 2, rect);
+    bounded.x /= 2;
+    return bounded;
+}
+
 void freeScenario(Scenario * scenario) {
     for (team_index_t i = 0; i < scenario->team_count;)
         freeTeam(&scenario->teams[i++]);

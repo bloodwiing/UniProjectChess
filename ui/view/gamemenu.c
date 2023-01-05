@@ -27,12 +27,15 @@ void beginNewGameLoop(UserSettings * settings, Board * board, bool_t save_state)
 }
 
 void renderGameScreen(UserSettings * settings, GameState * state, Board * board) {
-    if (!state->piece_selected)
-        renderBoard(board, 2, 2, 0, 0, 30, 10);
-    else
-        renderBoardWithSelection(board, 2, 2, 0, 0, 30, 10, state->sel_x, state->sel_y);
+    Rect draw_rect = createRect(2, 2, 13, 5);
+    Rect board_rect = getBoardCenteredRect(board, draw_rect, state->cur_x, state->cur_y);
 
-    con_set_pos(state->cur_x * 2 + 4, state->cur_y + 3);
+    if (!state->piece_selected)
+        renderBoard(board, draw_rect, board_rect);
+    else
+        renderBoardWithSelection(board, draw_rect, board_rect, state->sel_x, state->sel_y);
+
+    setCursorAtTile(draw_rect, board_rect, state->cur_x, state->cur_y);
     GamePiece * game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece;
 
     if (game_piece != NULL) {

@@ -22,9 +22,11 @@ void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, 
 void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg);
 void renderPiece(UserSettings * settings, Team team, Piece piece);
 
-void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h);
-void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y);
-void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h);
+void renderBoard(Board * board, Rect draw_rect, Rect board_rect);
+void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int sel_x, int sel_y);
+void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect);
+
+void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y);
 
 void ditherEffect();
 

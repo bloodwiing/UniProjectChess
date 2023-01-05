@@ -9,6 +9,7 @@
 struct Board;
 
 typedef count16_t path_index_t;
+typedef uint16_t tile_index_t;
 
 typedef struct Tile {
     GamePiece * game_piece;
@@ -22,10 +23,10 @@ typedef struct Tile {
     ucoord_t x, y;
 
     count_t phantom_count;
-    uint16_t * phantoms;
+    tile_index_t * phantoms;
 
     count_t new_phantom_count;
-    uint16_t * new_phantoms;
+    tile_index_t * new_phantoms;
 } Tile;
 
 Tile * createTile(GamePiece * game_piece, ucoord_t x, ucoord_t y);

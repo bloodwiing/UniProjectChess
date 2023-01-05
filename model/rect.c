@@ -16,7 +16,21 @@ Rect centerRectInRect(int inner_width, int inner_height, Rect outer) {
     return createRect(left, top, inner_width, inner_height);
 }
 
-Rect getCenteredRect(int width, int height) {
+Rect getScreenCenteredRect(int width, int height) {
     ConSize size = con_get_size();
     return centerRectInRect(width, height, createRect(0, 0, size.width, size.height));
+}
+
+Rect fitRect(Rect rect, int bound_width, int bound_height) {
+    Rect out = createRect(
+        rect.x > 0 ? rect.x : 0,
+        rect.y > 0 ? rect.y : 0,
+        rect.width > bound_width ? bound_width : rect.width,
+        rect.height > bound_height ? bound_height : rect.height
+    );
+    if (rect.x + out.width > rect.width)
+        out.x = rect.width - out.width;
+    if (rect.y + out.height > rect.height)
+        out.y = rect.height - out.height;
+    return out;
 }

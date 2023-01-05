@@ -61,33 +61,34 @@ char getEdgeChar(int i, int j, int board_width, int board_height) {
     return edge;
 }
 
-void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h) {
-    int board_width = board->width * 2 + 1,
-            board_height = board->height;
+void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
+    Rect original_rect = getBoardRect(board, 0, 0);
+    original_rect.width -= 2;
+    original_rect.height -= 2;
 
-    int width = w > board_width + 2 ? board_width + 2 : w,
-            height = h > board_height + 2 ? board_height + 2 : h;
+    board_rect.x *= 2;
 
-    if (i > board_width + 2 - width) i = board_width + 2 - width;
-    if (j > board_height + 2 - height) j = board_height + 2 - height;
-    int reset_i = i - 1;
-    int reset_j = j - 1;
+    int i = board_rect.x,
+        j = board_rect.y;
 
-    pos_x += 1 - i;
-    pos_y += 1 - j;
+    int reset_i = i - 1,
+        reset_j = j - 1;
 
-    width += i - 2;
-    height += j - 2;
+    int pos_x = draw_rect.x - i + 1,
+        pos_y = draw_rect.y + draw_rect.height - 2 - j;
 
-    for (--j; j <= height; ++j) {
-        for (i = reset_i; i <= width; ++i) {
-            con_set_pos(pos_x + i, pos_y + j);
+    int width = board_rect.width + i - 2,
+        height = board_rect.height + j - 2;
+
+    for (--j; j <= height; j++) {
+        for (i = reset_i; i <= width; i++) {
+            con_set_pos(pos_x + i, pos_y - j + board_rect.y * 2);
             char edge;
 
-            if ((edge = getEdgeChar(i, j, board_width, board_height)) != ' ')
+            if ((edge = getEdgeChar(i, j, original_rect.width, original_rect.height)) != ' ')
                 renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%c", edge);
 
-            else if (i % 2 == 1) {
+            else if (j >= 0 && i >= 0 && i % 2 == 1) {
                 int tile = i / 2 + j * board->width;
 
                 GamePiece * game_piece;
@@ -99,20 +100,20 @@ void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h
                 wprintf(L" ");
         }
 
-        wprintf(L"%*s", w - (width - reset_i) - 1, "");
+        wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1, "");
     }
 
-    for (int end = 0; end <= h - height - reset_j + 1;) {
+    for (int end = 0; end <= draw_rect.height - height - reset_j + 1;) {
         con_set_pos(pos_x - 1, pos_y + j + end++);
-        wprintf(L"%*s", w, "");
+        wprintf(L"%*s", draw_rect.width, "");
     }
 }
 
-void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y) {
-    renderBoard(board, pos_x, pos_y, i, j, w, h);
+void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int sel_x, int sel_y) {
+    renderBoard(board, draw_rect, board_rect);
 
-    uint8_t top_left_x = pos_x - i + 2,
-            top_left_y = pos_y - j + 1;
+    uint8_t bottom_left_x = draw_rect.x - board_rect.x + 2,
+            bottom_left_y = draw_rect.y + board_rect.height + board_rect.y + 3;
 
     if (sel_x != -1 && sel_y != -1) {
         Tile * selected = getTile(board, sel_x, sel_y);
@@ -130,7 +131,7 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
                 Tile * tile = target->next_tile;
                 target = target->next_path;
 
-                con_set_pos(top_left_x + target_x * 2, top_left_y + target_y);
+                con_set_pos(bottom_left_x + target_x * 2, bottom_left_y - target_y);
 
                 GamePiece * occupant;
 
@@ -161,7 +162,7 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
             ucoord_t target_x = sel_x + normalised.x,
                      target_y = sel_y + normalised.y;
 
-            con_set_pos(top_left_x + target_x * 2, top_left_y + target_y);
+            con_set_pos(bottom_left_x + target_x * 2, bottom_left_y - target_y);
 
             Tile * target = getTile(board, target_x, target_y);
             GamePiece * occupant;
@@ -174,16 +175,20 @@ void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j,
     }
 }
 
-void renderScenario(Scenario * scenario, UserSettings * settings, int pos_x, int pos_y, int i, int j, int w, int h) {
+void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect) {
     Exception exception = {};
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
-        clearRect(pos_x, pos_y, w, h);
-        reportExceptionAtPos(exception, pos_x, pos_y);
+        clearRect(draw_rect.x, draw_rect.y, draw_rect.width, draw_rect.height);
+        reportExceptionAtPos(exception, draw_rect.x, draw_rect.y);
         return;
     }
-    renderBoard(board, pos_x, pos_y, i, j, w, h);
+    renderBoard(board, draw_rect, board_rect);
     freeBoard(board, false);
+}
+
+void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y) {
+    con_set_pos(draw_rect.x + (x - board_rect.x + 1) * 2, draw_rect.y + board_rect.height - 2 - y + board_rect.y);
 }
 
 void ditherEffect() {

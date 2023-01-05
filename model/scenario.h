@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "./team.h"
+#include "./rect.h"
 #include "./spawn.h"
 
 #include "abstract/version.h"
@@ -35,6 +36,10 @@ void printSpawnResolved(Spawn * spawn, Scenario * scenario);
 
 void addTeam(Scenario * scenario, Team team);
 void addSpawn(Scenario * scenario, Spawn spawn);
+
+Rect getScenarioRect(Scenario * scenario, int x, int y);
+Rect getScenarioRectWithinRect(Scenario * scenario, int x, int y, Rect rect);
+Rect getScenarioCenteredRect(Scenario * scenario, Rect rect, int cursor_x, int cursor_y);
 
 void freeScenario(Scenario * scenario);
 

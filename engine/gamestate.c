@@ -138,11 +138,11 @@ bool_t evaluateGameInput(GameState * state, bool_t * game_active) {
     key_code_t key;
     if ((key = con_read_key()) != 0) {
         switch (key) {
-            CASE_KEY_UP:
+            CASE_KEY_DOWN:
                 if (state->cur_y-- <= 0) state->cur_y = state->board->height - 1;
                 break;
 
-            CASE_KEY_DOWN:
+            CASE_KEY_UP:
                 if (state->cur_y++ >= state->board->height - 1) state->cur_y = 0;
                 break;
 

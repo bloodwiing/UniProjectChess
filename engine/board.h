@@ -8,6 +8,7 @@
 
 #include "abstract/exception.h"
 
+#include "model/rect.h"
 #include "model/scenario.h"
 
 #include "settings/settings.h"
@@ -40,6 +41,10 @@ Tile * getTile(Board * board, ucoord_t x, ucoord_t y);
 GamePiece * getBoardGamePiece(Board * board, ucoord_t x, ucoord_t y);
 Piece * getTilePiece(Board * board, Tile * tile);
 
+Rect getBoardRect(Board * board, int x, int y);
+Rect getBoardRectWithinRect(Board * board, int x, int y, Rect rect);
+Rect getBoardCenteredRect(Board * board, Rect rect, int cursor_x, int cursor_y);
+
 void nextBoardTurn(Board * board);
 void moveBoardGamePiece(Board * board, ucoord_t from_x, ucoord_t from_y, ucoord_t to_x, ucoord_t to_y);
 
@@ -49,5 +54,6 @@ void handleGamePiecePromotion(Board * board, GamePiece * game_piece);
 
 Board * cloneBoard(Board * board);
 void freeBoard(Board * board, bool_t free_scenario);
+
 
 #endif

@@ -21,7 +21,7 @@ void saveTile(Tile * tile, FILE * stream) {
         saveGamePiece(tile->game_piece, stream);
 
     fwrite(&tile->phantom_count, sizeof(count_t), 1, stream);
-    fwrite(tile->phantoms, sizeof(uint16_t), tile->phantom_count, stream);
+    fwrite(tile->phantoms, sizeof(tile_index_t), tile->phantom_count, stream);
 }
 
 Tile * loadTile(FILE * stream) {
@@ -31,11 +31,8 @@ Tile * loadTile(FILE * stream) {
     out->game_piece = filled ? loadGamePiece(stream) : NULL;
 
     fread(&out->phantom_count, sizeof(count_t), 1, stream);
-    out->phantoms = malloc(sizeof(uint16_t) * out->phantom_count);
-    fread(out->phantoms, sizeof(uint16_t), out->phantom_count, stream);
-    if (out->phantom_count) {
-        int a = 0;
-    }
+    out->phantoms = malloc(sizeof(tile_index_t) * out->phantom_count);
+    fread(out->phantoms, sizeof(tile_index_t), out->phantom_count, stream);
     return out;
 }
 
@@ -129,6 +126,8 @@ void capturePhantoms(Board * board, Tile * tile) {
 void freeTile(Tile * tile) {
     if (tile == NULL)
         return;
+    free(tile->phantoms);
+    free(tile->new_phantoms);
     freeGamePiece(tile->game_piece);
     for (path_index_t i = 0; i < tile->path_count;)
         freePath(tile->paths[i++]);

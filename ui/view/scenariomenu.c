@@ -69,7 +69,10 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
         reportExceptionAtPos(exception, 50, 2);
         return;
     }
-    renderScenario(scenario, settings, 50, 2, 0, 0, 30, 10);
+
+    Rect draw_rect = createRect(50, 2, 30, 10);
+    Rect board_rect = getScenarioRectWithinRect(scenario, 0, 0, draw_rect);
+    renderScenario(scenario, settings, draw_rect, board_rect);
 
     con_set_pos(50, 14);
     if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {

@@ -181,6 +181,18 @@ Piece * getTilePiece(Board * board, Tile * tile) {
     return getOriginalPiece(tile->game_piece, board->scenario);
 }
 
+Rect getBoardRect(Board * board, int x, int y) {
+    return getScenarioRect(board->scenario, x, y);
+}
+
+Rect getBoardRectWithinRect(Board * board, int x, int y, Rect rect) {
+    return getScenarioRectWithinRect(board->scenario, x, y, rect);
+}
+
+Rect getBoardCenteredRect(Board * board, Rect rect, int cursor_x, int cursor_y) {
+    return getScenarioCenteredRect(board->scenario, rect, cursor_x, cursor_y);
+}
+
 void nextBoardTurn(Board * board) {
     if (board->active_turn++ >= board->team_count - 1) board->active_turn = 0;
     for (tile_index_t i = 0; i < board->width * board->height;)

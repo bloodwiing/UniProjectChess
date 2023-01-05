@@ -93,6 +93,6 @@ void drawDialogBox(UserSettings * settings, DialogBox * dialog_box, int x, int y
 }
 
 void drawDialogBoxCentered(UserSettings * settings, DialogBox * dialog_box) {
-    Rect centered = getCenteredRect(dialog_box->width + 18, dialog_box->height + 6);
+    Rect centered = getScreenCenteredRect(dialog_box->width + 18, dialog_box->height + 6);
     drawDialogBox(settings, dialog_box, centered.x, centered.y);
 }
