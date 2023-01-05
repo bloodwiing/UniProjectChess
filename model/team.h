@@ -37,6 +37,7 @@ void printTeam(Team team);
 void addPiece(Team * team, Piece piece);
 
 void addPromotion(Team * team, piece_index_t type);
+void clearPromotions(Team * team);
 
 void freeTeam(Team * team);
 

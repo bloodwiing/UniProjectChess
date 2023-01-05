@@ -63,6 +63,12 @@ void addPromotion(Team * team, piece_index_t type) {
     team->promotions[team->promotion_count - 1] = type;
 }
 
+void clearPromotions(Team * team) {
+    free(team->promotions);
+    team->promotions = NULL;
+    team->promotion_count = 0;
+}
+
 void freeTeam(Team * team) {
     for (piece_index_t i = 0; i < team->piece_count;)
         freeMoveSet(&team->pieces[i++].move_set);

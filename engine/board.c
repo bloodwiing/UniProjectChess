@@ -272,6 +272,8 @@ void handleGamePiecePromotion(Board * board, GamePiece * game_piece) {
 void freeBoard(Board * board, bool_t free_scenario) {
     for (tile_index_t i = 0; i < board->width * board->height;)
         freeTile(board->tiles[i++]);
+    for (team_index_t i = 0; i < board->team_count;)
+        clearPromotions(&board->teams[i++]);
     free(board->tiles);
     free(board->teams);
     if (free_scenario)
