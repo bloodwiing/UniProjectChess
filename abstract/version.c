@@ -15,7 +15,7 @@ VersionInfo getVersionInfo(version_t version) {
         case 5:
             return (VersionInfo){.name = "v0.4.1 Alpha", .min_scenario_version = 5};  // scenario author
         case 6:
-            return (VersionInfo){.name = "v0.5 Alpha", .min_scenario_version = 5};  // first gameplay
+            return (VersionInfo){.name = "v0.5 Alpha", .min_scenario_version = 5};  // basic gameplay
         case 7:
             return (VersionInfo){.name = "v0.5.1 Alpha", .min_scenario_version = 5};  // vectors
         case 8:
@@ -40,6 +40,8 @@ VersionInfo getVersionInfo(version_t version) {
             return (VersionInfo){.name = "v0.11 Beta", .min_scenario_version = 16};  // phantom pieces
         case 18:
             return (VersionInfo){.name = "v0.12 Beta", .min_scenario_version = 16};  // pawn promotion
+        case 19:
+            return (VersionInfo){.name = "v0.13 Beta", .min_scenario_version = 19};  // algebraic notation
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }

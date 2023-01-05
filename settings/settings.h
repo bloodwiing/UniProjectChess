@@ -10,6 +10,11 @@ typedef enum InputType {
     InputType_Commands = 1
 } InputType;
 
+typedef enum NotationType {
+    NotationType_SHORT = 0,
+    NotationType_LONG = 1
+} NotationType;
+
 typedef struct UserSettings {
 
     struct {
@@ -18,6 +23,9 @@ typedef struct UserSettings {
     } display;
 
     InputType inputs;
+
+    NotationType notation;
+    bool_t notation_figurines;
 
 } UserSettings;
 

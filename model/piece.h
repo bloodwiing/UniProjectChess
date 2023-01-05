@@ -22,12 +22,15 @@ typedef struct Piece {
     team_index_t team;
 
     char symbol;
+    char notation;
+
     wchar_t unicode[PIECE_UNICODE_LENGTH];
+    wchar_t notation_unicode[PIECE_UNICODE_LENGTH];
 
     MoveSet move_set;
 } Piece;
 
-Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t promotable, bool_t protected, team_index_t team, MoveSet move_set);
+Piece createPiece(char * name, wchar_t * unicode, char symbol, wchar_t * notation_unicode, char notation, bool_t promotable, bool_t protected, team_index_t team, MoveSet move_set);
 void savePiece(Piece piece, FILE * stream);
 Piece loadPiece(FILE * stream);
 void printPiece(Piece piece);

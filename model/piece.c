@@ -3,18 +3,21 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET offsetof(Piece, symbol) + sizeof(char)
+#define STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET offsetof(Piece, notation) + sizeof(char)
 
-Piece createPiece(char * name, wchar_t * unicode, char symbol, bool_t promotable, bool_t protected, team_index_t team, MoveSet move_set) {
+Piece createPiece(char * name, wchar_t * unicode, char symbol, wchar_t * notation_unicode, char notation, bool_t promotable, bool_t protected, team_index_t team, MoveSet move_set) {
     Piece out = {
         .symbol = symbol,
+        .notation = notation,
         .promotable = promotable,
         .protected = protected,
         .team = team,
         .move_set = move_set
     };
     strcpy(out.name, name);
+
     wcscpy(out.unicode, unicode);
+    wcscpy(out.notation_unicode, notation_unicode);
     return out;
 }
 
@@ -22,6 +25,10 @@ void savePiece(Piece piece, FILE * stream) {
     fwrite(&piece, STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET, 1, stream);
 
     wchar16_t * converted = createU16(piece.unicode, PIECE_UNICODE_LENGTH);
+    fwrite(converted, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
+    free(converted);
+
+    converted = createU16(piece.notation_unicode, PIECE_UNICODE_LENGTH);
     fwrite(converted, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
     free(converted);
 
@@ -37,6 +44,12 @@ Piece loadPiece(FILE * stream) {
 
     wchar_t * converted = createWStr(unicode, PIECE_UNICODE_LENGTH);
     memcpy(out.unicode, converted, sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
+    free(converted);
+
+    fread(unicode, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
+
+    converted = createWStr(unicode, PIECE_UNICODE_LENGTH);
+    memcpy(out.notation_unicode, converted, sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
     free(converted);
 
     out.move_set = loadMoveSet(stream);

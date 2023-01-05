@@ -10,7 +10,8 @@ SpecialData createSpecialData(Vector8 vector, bool_t is_first_move, bool_t is_ch
         .is_first_move = is_first_move,
         .is_check_safe = is_check_safe,
         .is_phantom = false,
-        .phantom = VECTOR8_ZERO
+        .phantom = VECTOR8_ZERO,
+        .has_custom_notation = false
     };
 }
 
@@ -28,6 +29,10 @@ void saveSpecialData(SpecialData special_data, FILE * stream) {
 
     fwrite(&special_data.is_phantom, sizeof(bool_t), 1, stream);
     fwrite(&special_data.phantom, sizeof(Vector8), 1, stream);
+    fwrite(&special_data.phantom_notation, sizeof(char), SPECIAL_MOVE_NOTATION_SIZE, stream);
+
+    fwrite(&special_data.has_custom_notation, sizeof(bool_t), 1, stream);
+    fwrite(&special_data.move_notation, sizeof(char), SPECIAL_MOVE_NOTATION_SIZE, stream);
 }
 
 SpecialData loadSpecialData(FILE * stream) {
@@ -42,6 +47,10 @@ SpecialData loadSpecialData(FILE * stream) {
 
     fread(&out.is_phantom, sizeof(bool_t), 1, stream);
     fread(&out.phantom, sizeof(Vector8), 1, stream);
+    fread(&out.phantom_notation, sizeof(char), SPECIAL_MOVE_NOTATION_SIZE, stream);
+
+    fread(&out.has_custom_notation, sizeof(bool_t), 1, stream);
+    fread(&out.move_notation, sizeof(char), SPECIAL_MOVE_NOTATION_SIZE, stream);
     return out;
 }
 
@@ -74,13 +83,19 @@ void addSpecialDataConditionRaw(SpecialData * special_data, coord_t x, coord_t y
     addSpecialDataCondition(special_data, createVector8(x, y));
 }
 
-void updateSpecialDataPhantom(SpecialData * special_data, Vector8 phantom) {
+void updateSpecialDataPhantom(SpecialData * special_data, Vector8 phantom, char * phantom_notation) {
     special_data->is_phantom = true;
     special_data->phantom = phantom;
+    strncpy(special_data->phantom_notation, phantom_notation, SPECIAL_MOVE_NOTATION_SIZE);
 }
 
-void updateSpecialDataPhantomRaw(SpecialData * special_data, coord_t x, coord_t y) {
-    updateSpecialDataPhantom(special_data, createVector8(x, y));
+void updateSpecialDataPhantomRaw(SpecialData * special_data, coord_t x, coord_t y, char * phantom_notation) {
+    updateSpecialDataPhantom(special_data, createVector8(x, y), phantom_notation);
+}
+
+void setSpecialDataNotation(SpecialData * special_data, char * notation) {
+    special_data->has_custom_notation = true;
+    strncpy(special_data->move_notation, notation, SPECIAL_MOVE_NOTATION_SIZE);
 }
 
 void normaliseSpecialData(SpecialData * special_data, TeamDirection direction) {

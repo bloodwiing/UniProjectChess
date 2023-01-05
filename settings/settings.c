@@ -6,15 +6,27 @@
 
 #define SETTINGS_FILE "./data/settings.ini"
 
-const char user_setting_string[] = "# ROOK'S GAMBIT Settings\n"
-                                   "input=%d\n"
-                                   "colourful=%d\n"
-                                   "unicode=%d";
+const char user_setting_string[] = \
+"# ROOK'S GAMBIT Settings\n"
+"[DISPLAY]\n"
+"colourful=%d\n"
+"unicode=%d\n"
+"\n"
+"[INPUT]\n"
+"input=%d\n"
+"\n"
+"[HISTORY]\n"
+"notation=%d\n"
+"figurine=%d";
+
+#define SETTINGS_SCAN_CHECK 5
 
 void initDefaultUserSettings(UserSettings * settings) {
     settings->inputs = InputType_WASD;
     settings->display.colourful = true;
     settings->display.unicode = false;
+    settings->notation = NotationType_SHORT;
+    settings->notation_figurines = false;
 }
 
 UserSettings * createDefaultUserSettings() {
@@ -24,14 +36,19 @@ UserSettings * createDefaultUserSettings() {
 }
 
 void saveSettings(UserSettings * settings, FILE * stream) {
-    fprintf(stream, user_setting_string, settings->inputs, settings->display.colourful, settings->display.unicode);
+    fprintf(stream, user_setting_string, settings->display.colourful, settings->display.unicode, settings->inputs, settings->notation, settings->notation_figurines);
 }
 
 UserSettings * loadSettings(FILE * stream) {
     UserSettings * out = calloc(1, sizeof(UserSettings));
     int input_type;
-    fscanf(stream, user_setting_string, &input_type, (int *)&out->display.colourful, (int *)&out->display.unicode);
+    int notation_type;
+    if (fscanf(stream, user_setting_string, (int *)&out->display.colourful, (int *)&out->display.unicode, &input_type, &notation_type, (int *)&out->notation_figurines) != SETTINGS_SCAN_CHECK) {
+        free(out);
+        return createDefaultUserSettings();
+    }
     out->inputs = input_type;
+    out->notation = notation_type;
     return out;
 }
 
@@ -46,7 +63,8 @@ int saveUserSettings(UserSettings * settings) {
 
 UserSettings * loadUserSettings() {
     FILE * file = fopen(SETTINGS_FILE, "rb");
-    if (file == NULL) return NULL;
+    if (file == NULL)
+        return NULL;
     UserSettings * settings = loadSettings(file);
     fclose(file);
     return settings;
