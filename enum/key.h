@@ -23,7 +23,7 @@
 #elif __linux__
 
 #define KEY_ENTER 10
-#define KEY_SPACE need_value
+#define KEY_SPACE 32
 
 #define KEY_ARROW_UP 1792865
 #define KEY_ARROW_DOWN 1792866
@@ -37,7 +37,7 @@
 
 #define KEY_Q 113
 
-#define KEY_ESCAPE need_value
+#define KEY_ESCAPE 27
 
 #endif
 
