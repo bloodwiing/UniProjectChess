@@ -17,9 +17,10 @@
 void renderText(wchar_t * format, ...);
 void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * format, ...);
 
-void renderPieceWithBackground(UserSettings * settings, Team * team, Piece * piece, int bg);
+void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece);
+void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg);
 void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg);
-void renderPiece(UserSettings * settings, Team * team, Piece * piece);
+void renderPiece(UserSettings * settings, Team team, Piece piece);
 
 void renderBoard(Board * board, int pos_x, int pos_y, int i, int j, int w, int h);
 void renderBoardWithSelection(Board * board, int pos_x, int pos_y, int i, int j, int w, int h, int sel_x, int sel_y);

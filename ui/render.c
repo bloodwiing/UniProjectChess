@@ -26,20 +26,23 @@ void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * forma
         con_set_color(COLOR_RESET, COLOR_RESET);
 }
 
-void renderPieceWithBackground(UserSettings * settings, Team * team, Piece * piece, int bg) {
+void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece) {
     if (settings->display.unicode)
-        renderTextColoured(settings, bg, team->colour, L"%ls", piece->unicode);
+        renderTextColoured(settings, bg, fg, L"%ls", piece.unicode);
     else
-        renderTextColoured(settings, bg, team->colour, L"%c", piece->symbol);
+        renderTextColoured(settings, bg, fg, L"%c", piece.symbol);
+}
+
+void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg) {
+    renderPieceColoured(settings, bg, team.colour, piece);
 }
 
 void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg) {
     Piece * piece = getOriginalPiece(game_piece, scenario);
-    Team * team = scenario->teams + piece->team;
-    renderPieceWithBackground(settings, team, piece, bg);
+    renderPieceWithBackground(settings, scenario->teams[piece->team], *piece, bg);
 }
 
-void renderPiece(UserSettings * settings, Team * team, Piece * piece) {
+void renderPiece(UserSettings * settings, Team team, Piece piece) {
     renderPieceWithBackground(settings, team, piece, COLOR_RESET);
 }
 

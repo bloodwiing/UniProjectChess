@@ -63,11 +63,14 @@ DIALOGBOX_CONTENT_CALLBACK(dialogBoxContent) {
 
     // choices
     Rect choices_rect = centerRectInRect(data->team->promotion_count * 2 - 1, 1, createRect(x, y, width, height));
-    con_set_pos(choices_rect.x, y);
 
     for (piece_index_t i = 0; i < data->team->promotion_count; i++) {
+        con_set_pos(choices_rect.x + 2 * i, y);
+
         piece_index_t promotion = data->team->promotions[i];
-        renderTextColoured(settings, COLOR_RESET, promotion == data->selected ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GRAY, L"%ls ", data->team->pieces[data->team->promotions[i]].unicode);
+        int colour = promotion == data->selected ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GRAY;
+        
+        renderPieceColoured(settings, COLOR_RESET, colour, data->team->pieces[data->team->promotions[i]]);
     }
 
     // selected piece name

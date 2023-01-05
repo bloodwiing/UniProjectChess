@@ -36,7 +36,7 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
     GamePiece * game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece;
 
     if (game_piece != NULL) {
-        renderPieceWithBackground(settings, board->teams + game_piece->team, getOriginalPiece(game_piece, board->scenario), COLOR_DARK_GRAY);
+        renderPieceWithBackground(settings, board->teams[game_piece->team], *getOriginalPiece(game_piece, board->scenario), COLOR_DARK_GRAY);
     } else {
         renderTextColoured(settings, COLOR_DARK_GRAY, COLOR_LIGHT_GRAY, L"X");
     }
