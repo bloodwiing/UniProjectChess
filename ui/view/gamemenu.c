@@ -40,10 +40,12 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
         renderBoardWithSelection(board, draw_rect, board_rect, state->sel_x, state->sel_y, true);
 
     setCursorAtTile(draw_rect, board_rect, state->cur_x, state->cur_y);
-    GamePiece * game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece;
+    GamePiece * game_piece = getGamePieceAtCursor(state);
 
     if (game_piece != NULL) {
-        renderPieceWithBackground(settings, board->teams[game_piece->team], *getOriginalPiece(game_piece, board->scenario), COLOR_DARK_GRAY);
+        Piece piece = *getOriginalPiece(game_piece, board->scenario);
+        Team team = board->teams[game_piece->team];
+        renderPieceWithBackground(settings, team, piece, COLOR_BLACK, true);
     } else {
         renderTextColoured(settings, COLOR_DARK_GRAY, COLOR_LIGHT_GRAY, L"X");
     }

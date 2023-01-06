@@ -35,17 +35,20 @@ void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece) {
         renderTextColoured(settings, bg, fg, L"%c", piece.symbol);
 }
 
-void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg) {
-    renderPieceColoured(settings, bg, team.colour, piece);
+void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg, bool_t invert) {
+    if (invert)
+        renderPieceColoured(settings, team.colour, bg, piece);
+    else
+        renderPieceColoured(settings, bg, team.colour, piece);
 }
 
-void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg) {
+void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg, bool_t invert) {
     Piece * piece = getOriginalPiece(game_piece, scenario);
-    renderPieceWithBackground(settings, scenario->teams[piece->team], *piece, bg);
+    renderPieceWithBackground(settings, scenario->teams[piece->team], *piece, bg, invert);
 }
 
 void renderPiece(UserSettings * settings, Team team, Piece piece) {
-    renderPieceWithBackground(settings, team, piece, COLOR_RESET);
+    renderPieceWithBackground(settings, team, piece, COLOR_RESET, false);
 }
 
 void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coords) {
@@ -108,7 +111,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
 #ifdef DEBUG_BOARD_RENDERING
                         renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_BLUE);
 #else
-                        renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET);
+                        renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET, false);
 #endif
                     else
                         wprintf(L" ");
@@ -207,7 +210,7 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
                 if ((occupant = tile->game_piece) != NULL  // tile has a piece
                         && (occupant->team != selected->game_piece->team)  // AND piece is an enemy
                         && (target->type & PATH_TYPE_ATTACK))  // AND the path supports attacking
-                    renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);
+                    renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN, false);
                 else if (((occupant == NULL)  // ELSE tile is free
                             && (target->type & PATH_TYPE_MOVE))  // AND path supports moving
                         || (tile->phantom_count)  // OR tile has phantom pieces
@@ -236,7 +239,7 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
             GamePiece * occupant;
 
             if (((occupant = target->game_piece) != NULL) && (occupant->team != selected->game_piece->team))
-                renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN);
+                renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN, false);
             else if (occupant == NULL)
                 renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
         }

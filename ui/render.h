@@ -18,8 +18,8 @@ void renderText(wchar_t * format, ...);
 void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * format, ...);
 
 void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece);
-void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg);
-void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg);
+void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg, bool_t invert);
+void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg, bool_t invert);
 void renderPiece(UserSettings * settings, Team team, Piece piece);
 
 void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coords);
