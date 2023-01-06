@@ -5,16 +5,22 @@
 
 // main instance
 
-ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* callback)) {
+ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* callback), RESPONSIVE_FREE_CALLBACK(* free_callback)) {
     return (ResponsiveLayout){
         .weight = weight,
         .data = data,
-        .callback = callback
+        .callback = callback,
+        .free_callback = free_callback
     };
 }
 
 void runLayout(ResponsiveLayout layout, Rect rect) {
     layout.callback(rect, layout.data);
+}
+
+void freeLayout(ResponsiveLayout layout) {
+    if (layout.free_callback != NULL)
+        layout.free_callback(layout.data);
 }
 
 // horizontal "sub-class"
@@ -52,8 +58,16 @@ RESPONSIVE_CALLBACK(horizontalLayoutCallback) {
     runLayout(layout->children[layout->child_count - 1], rect);
 }
 
+RESPONSIVE_FREE_CALLBACK(horizontalLayoutFreeCallback) {
+    ResponsiveHorizontalLayout * layout = data;
+    for (int i = 0; i < layout->child_count;)
+        freeLayout(layout->children[i++]);
+    free(layout->children);
+    free(layout);
+}
+
 ResponsiveLayout compileHorizontalLayout(ResponsiveHorizontalLayout * parent) {
-    return createLayout(parent->weight, parent, horizontalLayoutCallback);
+    return createLayout(parent->weight, parent, horizontalLayoutCallback, horizontalLayoutFreeCallback);
 }
 
 // vertical "sub-class"
@@ -91,6 +105,14 @@ RESPONSIVE_CALLBACK(verticalLayoutCallback) {
     runLayout(layout->children[layout->child_count - 1], rect);
 }
 
+RESPONSIVE_FREE_CALLBACK(verticalLayoutFreeCallback) {
+    ResponsiveVerticalLayout * layout = data;
+    for (int i = 0; i < layout->child_count;)
+        freeLayout(layout->children[i++]);
+    free(layout->children);
+    free(layout);
+}
+
 ResponsiveLayout compileVerticalLayout(ResponsiveVerticalLayout * parent) {
-    return createLayout(parent->weight, parent, verticalLayoutCallback);
+    return createLayout(parent->weight, parent, verticalLayoutCallback, verticalLayoutFreeCallback);
 }

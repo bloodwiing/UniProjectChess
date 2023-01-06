@@ -8,6 +8,7 @@
 
 #include "ui/con_lib.h"
 
+#define RESPONSIVE_FREE_CALLBACK(name) void (name)(void * data)
 #define RESPONSIVE_CALLBACK(name) void (name)(Rect rect, void * data)
 
 // main instance
@@ -16,12 +17,14 @@ typedef struct ResponsiveLayout {
     float weight;
 
     void * data;
+    RESPONSIVE_FREE_CALLBACK(* free_callback);
     RESPONSIVE_CALLBACK(* callback);
 } ResponsiveLayout;
 
-ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* callback));
+ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* callback), RESPONSIVE_FREE_CALLBACK(* free_callback));
 
 void runLayout(ResponsiveLayout layout, Rect rect);
+void freeLayout(ResponsiveLayout layout);
 
 // horizontal "sub-class" (more just an imitation of OOP)
 
