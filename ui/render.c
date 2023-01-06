@@ -1,12 +1,12 @@
 #include "render.h"
 
 #include "./con_lib.h"
+#include "./notation.h"
+#include "./shape.h"
 
 #include <stdio.h>
 
 #include "engine/validation.h"
-
-#include "ui/shape.h"
 
 void renderText(wchar_t * format, ...) {
     va_list argv;
@@ -48,7 +48,7 @@ void renderPiece(UserSettings * settings, Team team, Piece piece) {
     renderPieceWithBackground(settings, team, piece, COLOR_RESET);
 }
 
-void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
+void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coords) {
     Rect original_rect = getBoardRect(board, 0, 0);
     original_rect.width -= 2;
     original_rect.height -= 2;
@@ -61,7 +61,8 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
     int i = board_rect.x - offset_x,
         j = board_rect.y - offset_y;
 
-    int reset_i = i - 1;
+    int reset_i = i - 1,
+        reset_j = j - 1;
 
     int pos_x = draw_rect.x - i + 1,
         pos_y = draw_rect.y + draw_rect.height - 2 - j;
@@ -69,7 +70,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
     int width = board_rect.width + i - 2,
         height = board_rect.height + j - 2;
 
-    for (--j; j <= height; j++) {
+    for (j = reset_j; j <= height; j++) {
         // left margin clear
         con_set_pos(pos_x + reset_i, pos_y - j + board_rect.y * 2 - offset_y);
 #ifdef DEBUG_BOARD_RENDERING
@@ -85,33 +86,36 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
 
             // board edge check + rendering
             wchar_t edge;
+            box_space_t spaces = with_coords ? BOX_IGNORE_TOP | BOX_IGNORE_LEFT : 0;
             if ((edge = getBoxBorder(board->user_settings->display.unicode ? BOX_BORDER_DOUBLE : BOX_BORDER_DOUBLE_ASCII,
                                      createRect(-1, -1, original_rect.width + 1, original_rect.height + 1),
-                                     i, original_rect.height - j - 1)) != L'\0')
+                                     i, original_rect.height - j - 1, spaces)) != L'\0')
 #ifdef DEBUG_BOARD_RENDERING
                 renderTextColoured(board->user_settings, COLOR_ORANGE, COLOR_LIGHT_GRAY, L"%lc", edge);
 #else
-                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%lc", edge);
+                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_DARK_GRAY, L"%lc", edge);
 #endif
 
             // board bounds check
-            else if (i >= -1 && j >= 0
-                     && i < original_rect.width && j < original_rect.height
-                     && i % 2 == 1) {
-                int tile = i / 2 + j * board->width;
+            else if (i >= 0 && j >= 0
+                     && i < original_rect.width && j < original_rect.height) {
+                if (i % 2 == 1) {  // on grid check
+                    int tile = i / 2 + j * board->width;
 
-                // piece rendering
-                GamePiece * game_piece;
-                if ((game_piece = board->tiles[tile]->game_piece) != NULL)
+                    // piece rendering
+                    GamePiece *game_piece;
+                    if ((game_piece = board->tiles[tile]->game_piece) != NULL)
 #ifdef DEBUG_BOARD_RENDERING
-                    renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_BLUE);
+                        renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_BLUE);
 #else
-                    renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET);
+                        renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET);
 #endif
+                    else
+                        wprintf(L" ");
+                }
                 else
                     wprintf(L" ");
-            } else
-                wprintf(L" ");
+            }
         }
 
         // right margin clear
@@ -138,10 +142,42 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
         con_set_pos(draw_rect.x, draw_rect.y + draw_rect.height + end);
         wprintf(L"%*s", draw_rect.width, "");
     }
+
+    if (with_coords) {
+        // files
+        for (i = reset_i + 1; i < width / 2; i++) {
+            char * file = getFileNotation(i);
+            // above the chess board (top bar out of view)
+            if (height < board->height)
+                con_set_pos(pos_x + i * 2 - offset_x + 1, draw_rect.y - 1);
+            else {
+                // clean above the chess board if it was rendered there
+                if (board_rect.height < board->height) {
+                    con_set_pos(pos_x + i * 2 - offset_x + 1, draw_rect.y - 1);
+                    wprintf(L" ");
+                }
+                // on border
+                con_set_pos(pos_x + i * 2 - offset_x + 1,
+                            draw_rect.y + draw_rect.height - board_rect.height + offset_y);
+            }
+            renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%hs", file);
+            free(file);
+        }
+        // ranks
+        for (j = reset_j; j <= height; j++) {
+            // if the rank is out of range, skip it
+            if (j < 0 || j >= board->height)
+                continue;
+            char * rank = getRankNotation(j);
+            con_set_pos(draw_rect.x - offset_x, pos_y - j + board_rect.y * 2 - offset_y);
+            renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%hs", rank);
+            free(rank);
+        }
+    }
 }
 
-void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int sel_x, int sel_y) {
-    renderBoard(board, draw_rect, board_rect);
+void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int sel_x, int sel_y, bool_t with_coords) {
+    renderBoard(board, draw_rect, board_rect, with_coords);
 
     if (sel_x != -1 && sel_y != -1) {
         Tile * selected = getTile(board, sel_x, sel_y);
@@ -207,7 +243,7 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
     }
 }
 
-void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect) {
+void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect, bool_t with_coords) {
     Exception exception = {};
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
@@ -215,7 +251,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
         reportExceptionAtPos(exception, draw_rect.x, draw_rect.y);
         return;
     }
-    renderBoard(board, draw_rect, board_rect);
+    renderBoard(board, draw_rect, board_rect, with_coords);
     freeBoard(board, false);
 }
 

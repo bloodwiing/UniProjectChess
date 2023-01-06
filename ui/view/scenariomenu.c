@@ -75,7 +75,7 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
     }
 
     Rect board_rect = getScenarioRectWithinRect(scenario, 0, 0, draw_rect);
-    renderScenario(scenario, settings, draw_rect, board_rect);
+    renderScenario(scenario, settings, draw_rect, board_rect, false);
 
     con_set_pos(50, 14);
     if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {

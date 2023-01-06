@@ -18,8 +18,6 @@ void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_stat
 
         if (evaluateGameInput(state, &game_active))
             renderGameScreen(settings, state, state->board);
-
-        con_sleep(0.04f);
     }
 
     if (save_state)
@@ -33,13 +31,13 @@ void beginNewGameLoop(UserSettings * settings, Board * board, bool_t save_state)
 }
 
 void renderGameScreen(UserSettings * settings, GameState * state, Board * board) {
-    Rect draw_rect = createRect(3, 2, settings->size.width / 2 - 4, settings->size.height - 2);
+    Rect draw_rect = createRect(2, 1, settings->size.width / 2 - 4, settings->size.height - 1);
     Rect board_rect = getBoardCenteredRect(board, draw_rect, state->cur_x, state->cur_y);
 
     if (!state->piece_selected)
-        renderBoard(board, draw_rect, board_rect);
+        renderBoard(board, draw_rect, board_rect, true);
     else
-        renderBoardWithSelection(board, draw_rect, board_rect, state->sel_x, state->sel_y);
+        renderBoardWithSelection(board, draw_rect, board_rect, state->sel_x, state->sel_y, true);
 
     setCursorAtTile(draw_rect, board_rect, state->cur_x, state->cur_y);
     GamePiece * game_piece = board->tiles[state->cur_x + board->width * state->cur_y]->game_piece;
