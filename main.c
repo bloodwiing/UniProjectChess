@@ -17,24 +17,6 @@
 
 void setupConsole();
 
-RESPONSIVE_CALLBACK(item1) {
-    con_set_color(COLOR_RED, COLOR_RESET);
-    clearRect(offsetRect(rect, 1, 1, -2, -2));
-    drawDoubleBox((UserSettings *)data, offsetRect(rect, 0, 0, -1, -1), COLOR_LIGHT_RED, COLOR_BLACK);
-}
-
-RESPONSIVE_CALLBACK(item2) {
-    con_set_color(COLOR_GREEN, COLOR_RESET);
-    clearRect(offsetRect(rect, 1, 1, -2, -2));
-    drawSingleBox((UserSettings *)data, offsetRect(rect, 0, 0, -1, -1), COLOR_LIGHT_GREEN, COLOR_BLACK);
-}
-
-RESPONSIVE_CALLBACK(item3) {
-    con_set_color(COLOR_YELLOW, COLOR_RESET);
-    clearRect(offsetRect(rect, 1, 1, -2, -2));
-    drawSingleBox((UserSettings *)data, offsetRect(rect, 0, 0, -1, -1), COLOR_LIGHT_YELLOW, COLOR_BLACK);
-}
-
 int main() {
     setlocale(LC_ALL, "");
     setupConsole();
@@ -46,33 +28,8 @@ int main() {
 
     saveDefaultScenario();
 
-    ResponsiveManager * manager = createResponsiveManager();
-
-    ResponsiveHorizontalLayout * hor1 = createHorizontalLayout(1.0f);
-    addHorizontalChild(hor1, createLayout(0.7f, settings, item1));
-
-        ResponsiveVerticalLayout * ver1 = createVerticalLayout(0.3f);
-        addVerticalChild(ver1, createLayout(0.5f, settings, item2));
-        addVerticalChild(ver1, createLayout(0.5f, settings, item3));
-
-    addHorizontalChild(hor1, compileVerticalLayout(ver1));
-
-    addResponsiveBreakpoint(manager, createResponsiveBreakpoint(SIZE_MAX, 100, compileHorizontalLayout(hor1)));
-
-    ResponsiveHorizontalLayout * hor2 = createHorizontalLayout(1.0f);
-    addHorizontalChild(hor2, createLayout(0.4f, settings, item1));
-    addHorizontalChild(hor2, createLayout(0.3f, settings, item2));
-    addHorizontalChild(hor2, createLayout(0.3f, settings, item3));
-
-    addResponsiveBreakpoint(manager, createResponsiveBreakpoint(SIZE_MAX, SIZE_MAX, compileHorizontalLayout(hor2)));
-
-    while (1)
-        renderResponsive(manager);
-
-//    mainMenuLoop(settings);
+    mainMenuLoop(settings);
     freeSettings(settings);
-
-    con_sleep(10);
 
     con_show_echo(true);
     con_show_cursor(true);
