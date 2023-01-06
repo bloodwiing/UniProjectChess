@@ -6,6 +6,8 @@
 
 #include "engine/validation.h"
 
+#include "ui/shape.h"
+
 void renderText(wchar_t * format, ...) {
     va_list argv;
     va_start(argv, format);
@@ -46,21 +48,6 @@ void renderPiece(UserSettings * settings, Team team, Piece piece) {
     renderPieceWithBackground(settings, team, piece, COLOR_RESET);
 }
 
-char getEdgeChar(int i, int j, int board_width, int board_height) {
-    char edge = ' ';
-
-    if (i < 0 || i >= board_width)
-        edge = '|';
-    if (j < 0 || j >= board_height) {
-        if (edge != ' ')
-            edge = '+';
-        else
-            edge = '-';
-    }
-
-    return edge;
-}
-
 void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
     Rect original_rect = getBoardRect(board, 0, 0);
     original_rect.width -= 2;
@@ -83,10 +70,10 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
     for (--j; j <= height; j++) {
         for (i = reset_i; i <= width; i++) {
             con_set_pos(pos_x + i, pos_y - j + board_rect.y * 2);
-            char edge;
 
-            if ((edge = getEdgeChar(i, j, original_rect.width, original_rect.height)) != ' ')
-                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%c", edge);
+            wchar_t edge;
+            if ((edge = getDoubleBoxBorder(board->user_settings, createRect(-1, -1, original_rect.width + 1, original_rect.height + 1), i, original_rect.height - j - 1)) != L'\0')
+                renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%lc", edge);
 
             else if (j >= 0 && i >= 0 && i % 2 == 1) {
                 int tile = i / 2 + j * board->width;
@@ -180,7 +167,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
     Exception exception = {};
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
-        clearRect(draw_rect.x, draw_rect.y, draw_rect.width, draw_rect.height);
+        clearRect(draw_rect);
         reportExceptionAtPos(exception, draw_rect.x, draw_rect.y);
         return;
     }
@@ -211,9 +198,9 @@ void ditherEffect() {
     con_flush();
 }
 
-void clearRect(int x, int y, int w, int h) {
-    for (int i = y; i < y + h;) {
-        con_set_pos(x, i++);
-        wprintf(L"%*s", w, "");
+void clearRect(Rect rect) {
+    for (int i = rect.y; i < rect.y + rect.height;) {
+        con_set_pos(rect.x, i++);
+        wprintf(L"%*s", rect.width, "");
     }
 }

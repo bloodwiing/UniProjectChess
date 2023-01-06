@@ -31,6 +31,6 @@ bool_t isTileVisible(Rect board_rect, int x, int y);
 
 void ditherEffect();
 
-void clearRect(int x, int y, int w, int h);
+void clearRect(Rect rect);
 
 #endif //CHESS_RENDER_H

@@ -50,8 +50,12 @@ MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu) {
 }
 
 MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
+    Rect full_rect = createRect(50, 2, 30, 22);
+    Rect draw_rect = full_rect;
+    draw_rect.height = 10;
+
     if (strlen(data) == 0) {
-        clearRect(50, 2, 30, 22);
+        clearRect(full_rect);
         return;
     }
 
@@ -65,12 +69,11 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
     free(path);
 
     if (scenario == NULL && exception.status) {
-        clearRect(50, 2, 30, 22);
+        clearRect(full_rect);
         reportExceptionAtPos(exception, 50, 2);
         return;
     }
 
-    Rect draw_rect = createRect(50, 2, 30, 10);
     Rect board_rect = getScenarioRectWithinRect(scenario, 0, 0, draw_rect);
     renderScenario(scenario, settings, draw_rect, board_rect);
 

@@ -228,9 +228,9 @@ bool_t canPromoteGamePiece(Board * board, GamePiece * game_piece) {
         return false;
 
     switch (team->direction) {
-        case TeamDirectionUp:
-            return game_piece->position->y == 0;
         case TeamDirectionDown:
+            return game_piece->position->y == 0;
+        case TeamDirectionUp:
             return game_piece->position->y == board->height - 1;
         case TeamDirectionLeft:
             return game_piece->position->x == 0;

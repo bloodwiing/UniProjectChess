@@ -41,7 +41,7 @@ VersionInfo getVersionInfo(version_t version) {
         case 18:
             return (VersionInfo){.name = "v0.12 Beta", .min_scenario_version = 16};  // pawn promotion
         case 19:
-            return (VersionInfo){.name = "v0.13 Beta", .min_scenario_version = 19};  // algebraic notation
+            return (VersionInfo){.name = "v0.13 Beta", .min_scenario_version = 19};  // algebraic notation + inverted map
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }
