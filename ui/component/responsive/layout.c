@@ -47,7 +47,7 @@ RESPONSIVE_CALLBACK(horizontalLayoutCallback) {
     }
 
     // last one fill remaining without any precision errors
-    rect.y += used;
+    rect.x += used;
     rect.width -= used;
     runLayout(layout->children[layout->child_count - 1], rect);
 }

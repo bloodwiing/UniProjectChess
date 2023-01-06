@@ -1,6 +1,7 @@
 #ifndef CHESS_RESPONSIVE_LAYOUT_H
 #define CHESS_RESPONSIVE_LAYOUT_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "model/rect.h"

@@ -69,7 +69,7 @@ DIALOGBOX_CONTENT_CALLBACK(dialogBoxContent) {
 
         piece_index_t promotion = data->team->promotions[i];
         int colour = promotion == data->selected ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GRAY;
-        
+
         renderPieceColoured(settings, COLOR_RESET, colour, data->team->pieces[data->team->promotions[i]]);
     }
 

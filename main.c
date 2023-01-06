@@ -19,20 +19,20 @@ void setupConsole();
 
 RESPONSIVE_CALLBACK(item1) {
     con_set_color(COLOR_RED, COLOR_RESET);
-    clearRect(rect);
-    drawDoubleBox((UserSettings *)data, rect, COLOR_LIGHT_RED, COLOR_BLACK);
+    clearRect(offsetRect(rect, 1, 1, -2, -2));
+    drawDoubleBox((UserSettings *)data, offsetRect(rect, 0, 0, -1, -1), COLOR_LIGHT_RED, COLOR_BLACK);
 }
 
 RESPONSIVE_CALLBACK(item2) {
     con_set_color(COLOR_GREEN, COLOR_RESET);
-    clearRect(rect);
-    drawSingleBox((UserSettings *)data, rect, COLOR_LIGHT_GREEN, COLOR_BLACK);
+    clearRect(offsetRect(rect, 1, 1, -2, -2));
+    drawSingleBox((UserSettings *)data, offsetRect(rect, 0, 0, -1, -1), COLOR_LIGHT_GREEN, COLOR_BLACK);
 }
 
 RESPONSIVE_CALLBACK(item3) {
     con_set_color(COLOR_YELLOW, COLOR_RESET);
-    clearRect(rect);
-    drawSingleBox((UserSettings *)data, rect, COLOR_LIGHT_YELLOW, COLOR_BLACK);
+    clearRect(offsetRect(rect, 1, 1, -2, -2));
+    drawSingleBox((UserSettings *)data, offsetRect(rect, 0, 0, -1, -1), COLOR_LIGHT_YELLOW, COLOR_BLACK);
 }
 
 int main() {
@@ -66,12 +66,13 @@ int main() {
 
     addResponsiveBreakpoint(manager, createResponsiveBreakpoint(SIZE_MAX, SIZE_MAX, compileHorizontalLayout(hor2)));
 
-//    while (1) {
+    while (1)
         renderResponsive(manager);
-//    }
 
 //    mainMenuLoop(settings);
     freeSettings(settings);
+
+    con_sleep(10);
 
     con_show_echo(true);
     con_show_cursor(true);

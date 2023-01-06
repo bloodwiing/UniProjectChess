@@ -157,9 +157,6 @@ ConSize con_get_size() {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-    printf ("lines %d\n", w.ws_row);
-    printf ("columns %d\n", w.ws_col);
-
     ConSize result = {};
     result.width = w.ws_col;
     result.height = w.ws_row;

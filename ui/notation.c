@@ -42,7 +42,7 @@ wchar_t * generateMoveNotation(UserSettings * settings, MoveEntry entry) {
     size_t bytes_written;
 
     if (entry.special_move != NULL && entry.special_move->data.has_custom_notation) {
-        snwprintf(result, SPECIAL_MOVE_NOTATION_SIZE, L"%hs", entry.special_move->data.move_notation);
+        swprintf(result, SPECIAL_MOVE_NOTATION_SIZE, L"%hs", entry.special_move->data.move_notation);
         if (entry.flags & MOVE_ENTRY_CHECKMATE)
             wcscat(result, L"#");
         else if (entry.flags & MOVE_ENTRY_CHECK)
@@ -58,7 +58,7 @@ wchar_t * generateMoveNotation(UserSettings * settings, MoveEntry entry) {
     if (settings->notation_figurines)
         wcscat(result, entry.type->notation_unicode);
     else
-        snwprintf(result, 2, L"%c", entry.type->notation);
+        swprintf(result, 2, L"%c", entry.type->notation);
 
     bytes_written = wcslen(result);
 
@@ -66,14 +66,14 @@ wchar_t * generateMoveNotation(UserSettings * settings, MoveEntry entry) {
 
     if (entry.flags & MOVE_ENTRY_AMBIGUOUS_FILE || settings->notation == NotationType_LONG) {
         char * file = getFileNotation(entry.from_x);
-        bytes_written += snwprintf(result + bytes_written, 3, L"%hs", file);
+        bytes_written += swprintf(result + bytes_written, 3, L"%hs", file);
         free(file);
         needs_long_notation = true;
     }
 
     if (entry.flags & MOVE_ENTRY_AMBIGUOUS_RANK || settings->notation == NotationType_LONG) {
         char * rank = getRankNotation(entry.from_y);
-        bytes_written += snwprintf(result + bytes_written, 4, L"%hs", rank);
+        bytes_written += swprintf(result + bytes_written, 4, L"%hs", rank);
         free(rank);
         needs_long_notation = true;
     }
@@ -90,18 +90,18 @@ wchar_t * generateMoveNotation(UserSettings * settings, MoveEntry entry) {
         --bytes_written;
 
     char * file = getFileNotation(entry.to_x);
-    bytes_written += snwprintf(result + bytes_written, 3, L"%hs", file);
+    bytes_written += swprintf(result + bytes_written, 3, L"%hs", file);
     free(file);
 
     char * rank = getRankNotation(entry.to_y);
-    bytes_written += snwprintf(result + bytes_written, 4, L"%hs", rank);
+    bytes_written += swprintf(result + bytes_written, 4, L"%hs", rank);
     free(rank);
 
     if (entry.flags & MOVE_ENTRY_PROMOTION) {
         if (settings->notation_figurines)
-            bytes_written += snwprintf(result + bytes_written, 1 + PIECE_UNICODE_LENGTH, L"=%ls", entry.new_type->notation_unicode);
+            bytes_written += swprintf(result + bytes_written, 1 + PIECE_UNICODE_LENGTH, L"=%ls", entry.new_type->notation_unicode);
         else
-            bytes_written += snwprintf(result + bytes_written, 3, L"=%hc", entry.new_type->notation);
+            bytes_written += swprintf(result + bytes_written, 3, L"=%hc", entry.new_type->notation);
     }
 
     ++bytes_written;
@@ -113,7 +113,7 @@ wchar_t * generateMoveNotation(UserSettings * settings, MoveEntry entry) {
         --bytes_written;
 
     if (entry.flags & MOVE_ENTRY_PHANTOM && entry.phantom_move != NULL)
-        snwprintf(result + bytes_written, SPECIAL_MOVE_NOTATION_SIZE, L"%hs", entry.phantom_move->data.phantom_notation);
+        swprintf(result + bytes_written, SPECIAL_MOVE_NOTATION_SIZE, L"%hs", entry.phantom_move->data.phantom_notation);
 
     return result;
 }
