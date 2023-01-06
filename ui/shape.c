@@ -44,12 +44,14 @@ wchar_t getBoxBorder(wchar_t * data, Rect rect, int x, int y, box_space_t flag) 
 
 void drawBox(UserSettings * settings, wchar_t * border, Rect rect, int bg, int fg) {
     wchar_t * horizontal = calloc(rect.width - 1, sizeof(wchar_t));
+    if (horizontal == NULL)
+        return;
     wmemset(horizontal, getBoxBorder(border, RECT_3X3(0, 0), 1, 0, 0), rect.width - 1);
 
     con_set_pos(rect.x + 1, rect.y);
-    renderTextColoured(settings, bg, fg, L"%s", horizontal);
+    renderTextColoured(settings, bg, fg, L"%ls", horizontal);
     con_set_pos(rect.x + 1, rect.y + rect.height);
-    renderTextColoured(settings, bg, fg, L"%s", horizontal);
+    renderTextColoured(settings, bg, fg, L"%ls", horizontal);
 
     free(horizontal);
 

@@ -9,10 +9,31 @@
 #include "settings/settings.h"
 
 #include "ui/con_lib.h"
+#include "ui/component/responsive/responsive.h"
 #include "ui/notation.h"
+#include "ui/render.h"
+#include "ui/shape.h"
 #include "ui/view/mainmenu.h"
 
 void setupConsole();
+
+RESPONSIVE_CALLBACK(item1) {
+    con_set_color(COLOR_RED, COLOR_RESET);
+    clearRect(rect);
+    drawDoubleBox((UserSettings *)data, rect, COLOR_LIGHT_RED, COLOR_BLACK);
+}
+
+RESPONSIVE_CALLBACK(item2) {
+    con_set_color(COLOR_GREEN, COLOR_RESET);
+    clearRect(rect);
+    drawSingleBox((UserSettings *)data, rect, COLOR_LIGHT_GREEN, COLOR_BLACK);
+}
+
+RESPONSIVE_CALLBACK(item3) {
+    con_set_color(COLOR_YELLOW, COLOR_RESET);
+    clearRect(rect);
+    drawSingleBox((UserSettings *)data, rect, COLOR_LIGHT_YELLOW, COLOR_BLACK);
+}
 
 int main() {
     setlocale(LC_ALL, "");
@@ -25,29 +46,31 @@ int main() {
 
     saveDefaultScenario();
 
-//    Scenario * scenario = createDefaultScenario();
-//    Exception exception;
-//    Board * board = createBoard(scenario, settings, &exception);
-//    if (board == NULL && exception.status) {
-//        reportException(exception);
-//        return 1;
-//    }
-//
-//    Tile * tile = getTile(board, 0, 1);
-//
-//    MoveEntry entry = createMoveEntry(getTilePiece(board, tile), tile->game_piece, 255, 254, 255, 255);
-//    markMoveEntryPromote(&entry, &getGamePieceTeam(board, tile->game_piece)->pieces[4]);
-//    markMoveEntryPhantom(&entry, &getGamePieceTeam(board, tile->game_piece)->pieces[0].move_set.specials[0]);
-//    markMoveEntryCheck(&entry, true);
-//    markMoveEntryAmbiguous(&entry, false, false);
-//    wchar_t * test = generateMoveNotation(settings, entry);
-//
-//    wprintf(test);
-//
-//    freeBoard(board, true);
-//    free(test);
+    ResponsiveManager * manager = createResponsiveManager();
 
-    mainMenuLoop(settings);
+    ResponsiveHorizontalLayout * hor1 = createHorizontalLayout(1.0f);
+    addHorizontalChild(hor1, createLayout(0.7f, settings, item1));
+
+        ResponsiveVerticalLayout * ver1 = createVerticalLayout(0.3f);
+        addVerticalChild(ver1, createLayout(0.5f, settings, item2));
+        addVerticalChild(ver1, createLayout(0.5f, settings, item3));
+
+    addHorizontalChild(hor1, compileVerticalLayout(ver1));
+
+    addResponsiveBreakpoint(manager, createResponsiveBreakpoint(SIZE_MAX, 100, compileHorizontalLayout(hor1)));
+
+    ResponsiveHorizontalLayout * hor2 = createHorizontalLayout(1.0f);
+    addHorizontalChild(hor2, createLayout(0.4f, settings, item1));
+    addHorizontalChild(hor2, createLayout(0.3f, settings, item2));
+    addHorizontalChild(hor2, createLayout(0.3f, settings, item3));
+
+    addResponsiveBreakpoint(manager, createResponsiveBreakpoint(SIZE_MAX, SIZE_MAX, compileHorizontalLayout(hor2)));
+
+//    while (1) {
+        renderResponsive(manager);
+//    }
+
+//    mainMenuLoop(settings);
     freeSettings(settings);
 
     con_show_echo(true);
