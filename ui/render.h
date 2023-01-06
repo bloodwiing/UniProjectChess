@@ -27,6 +27,7 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
 void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect);
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y);
+bool_t isTileVisible(Rect board_rect, int x, int y);
 
 void ditherEffect();
 

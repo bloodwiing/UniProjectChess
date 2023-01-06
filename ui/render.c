@@ -112,9 +112,6 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
 void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int sel_x, int sel_y) {
     renderBoard(board, draw_rect, board_rect);
 
-    uint8_t bottom_left_x = draw_rect.x - board_rect.x + 2,
-            bottom_left_y = draw_rect.y + board_rect.height + board_rect.y + 3;
-
     if (sel_x != -1 && sel_y != -1) {
         Tile * selected = getTile(board, sel_x, sel_y);
 
@@ -131,7 +128,9 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
                 Tile * tile = target->next_tile;
                 target = target->next_path;
 
-                con_set_pos(bottom_left_x + target_x * 2, bottom_left_y - target_y);
+                if (!isTileVisible(board_rect, target_x, target_y))
+                    continue;
+                setCursorAtTile(draw_rect, board_rect, target_x, target_y);
 
                 GamePiece * occupant;
 
@@ -162,7 +161,9 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
             ucoord_t target_x = sel_x + normalised.x,
                      target_y = sel_y + normalised.y;
 
-            con_set_pos(bottom_left_x + target_x * 2, bottom_left_y - target_y);
+            if (!isTileVisible(board_rect, target_x, target_y))
+                continue;
+            setCursorAtTile(draw_rect, board_rect, target_x, target_y);
 
             Tile * target = getTile(board, target_x, target_y);
             GamePiece * occupant;
@@ -189,6 +190,12 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y) {
     con_set_pos(draw_rect.x + (x - board_rect.x + 1) * 2, draw_rect.y + board_rect.height - 2 - y + board_rect.y);
+}
+
+bool_t isTileVisible(Rect board_rect, int x, int y) {
+    x -= board_rect.x - 1;
+    y -= board_rect.y - 1;
+    return x >= 0 && y >= 0 && x < (board_rect.width + 1) / 2 && y < board_rect.height;
 }
 
 void ditherEffect() {
