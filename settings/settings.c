@@ -32,6 +32,7 @@ void initDefaultUserSettings(UserSettings * settings) {
 UserSettings * createDefaultUserSettings() {
     UserSettings * out = malloc(sizeof(UserSettings));
     initDefaultUserSettings(out);
+    out->size = con_get_size();
     return out;
 }
 
@@ -49,6 +50,7 @@ UserSettings * loadSettings(FILE * stream) {
     }
     out->inputs = input_type;
     out->notation = notation_type;
+    out->size = con_get_size();
     return out;
 }
 
@@ -77,6 +79,15 @@ UserSettings * safeLoadUserSettings() {
         saveUserSettings(settings);
     }
     return settings;
+}
+
+bool_t hasConsoleSizeChanged(UserSettings * settings) {
+    ConSize new = con_get_size();
+    if (new.width != settings->size.width || new.height != settings->size.height) {
+        settings->size = new;
+        return true;
+    }
+    return false;
 }
 
 void freeSettings(UserSettings * settings) {

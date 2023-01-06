@@ -5,12 +5,14 @@
 
 #include "settings/settings.h"
 
-#define BOX_BORDER(name) wchar_t (name)(UserSettings * settings, Rect rect, int x, int y)
+#define BOX_BORDER_SINGLE L"\0││ ─┌┐ ─└┘    "
+#define BOX_BORDER_DOUBLE L"\0║║ ═╔╗ ═╚╝    "
+#define BOX_BORDER_SINGLE_ASCII L"\0|| -++ -++    "
+#define BOX_BORDER_DOUBLE_ASCII L"\0## =## =##    "
 
-BOX_BORDER(getSingleBoxBorder);
-BOX_BORDER(getDoubleBoxBorder);
+wchar_t getBoxBorder(wchar_t * data, Rect rect, int x, int y);
 
-void drawBox(UserSettings * settings, BOX_BORDER(border), Rect rect, int bg, int fg);
+void drawBox(UserSettings * settings, wchar_t * border, Rect rect, int bg, int fg);
 
 void drawSingleBox(UserSettings * settings, Rect rect, int bg, int fg);
 void drawDoubleBox(UserSettings * settings, Rect rect, int bg, int fg);

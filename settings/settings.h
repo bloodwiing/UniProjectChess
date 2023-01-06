@@ -5,6 +5,8 @@
 
 #include "abstract/defs.h"
 
+#include "ui/con_lib.h"
+
 typedef enum InputType {
     InputType_WASD = 0,
     InputType_Commands = 1
@@ -27,6 +29,8 @@ typedef struct UserSettings {
     NotationType notation;
     bool_t notation_figurines;
 
+    // runtime data
+    ConSize size;
 } UserSettings;
 
 void initDefaultUserSettings(UserSettings * settings);
@@ -39,6 +43,8 @@ int saveUserSettings(UserSettings * settings);
 UserSettings * loadUserSettings();
 
 UserSettings * safeLoadUserSettings();
+
+bool_t hasConsoleSizeChanged(UserSettings * settings);
 
 void freeSettings(UserSettings * settings);
 

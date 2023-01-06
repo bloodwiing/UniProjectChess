@@ -11,9 +11,15 @@ void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_stat
     bool_t game_active = true;
 
     while (game_active) {
+        if (hasConsoleSizeChanged(settings)) {
+            con_clear();
+            renderGameScreen(settings, state, state->board);
+        }
+
         if (evaluateGameInput(state, &game_active))
             renderGameScreen(settings, state, state->board);
-//        con_sleep(0.08f);
+
+        con_sleep(0.04f);
     }
 
     if (save_state)
@@ -27,7 +33,7 @@ void beginNewGameLoop(UserSettings * settings, Board * board, bool_t save_state)
 }
 
 void renderGameScreen(UserSettings * settings, GameState * state, Board * board) {
-    Rect draw_rect = createRect(2, 2, 13, 5);
+    Rect draw_rect = createRect(3, 2, settings->size.width / 2 - 4, settings->size.height - 2);
     Rect board_rect = getBoardCenteredRect(board, draw_rect, state->cur_x, state->cur_y);
 
     if (!state->piece_selected)
@@ -44,10 +50,12 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
         renderTextColoured(settings, COLOR_DARK_GRAY, COLOR_LIGHT_GRAY, L"X");
     }
 
-    con_set_pos(32, 2);
+    int right = settings->size.width - settings->size.width / 2;
+
+    con_set_pos(right, 2);
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Current team: ");
     renderTextColoured(settings, COLOR_RESET, getActiveTeam(board)->colour, L"%-*hs", TEAM_NAME_LENGTH, getActiveTeam(board)->name);
-    con_set_pos(32, 3);
+    con_set_pos(right, 3);
     renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Selected piece: ");
     if (state->piece_selected)
         renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%-*hs", PIECE_NAME_LENGTH,

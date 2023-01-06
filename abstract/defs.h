@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <wchar.h>
 
+#include "./debug.h"
+
 // single byte boolean, because why is the built-in one 4 bytes...
 typedef uint8_t bool_t;
 #define true 1

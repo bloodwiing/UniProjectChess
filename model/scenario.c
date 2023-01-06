@@ -117,8 +117,17 @@ Rect getScenarioRectWithinRect(Scenario * scenario, int x, int y, Rect rect) {
 
 Rect getScenarioCenteredRect(Scenario * scenario, Rect rect, int cursor_x, int cursor_y) {
     Rect inner = getScenarioRectWithinRect(scenario, 0, 0, rect);
-    Rect bounded = getScenarioRectWithinRect(scenario, cursor_x * 2 - (inner.width - 3) / 2 + 1, cursor_y - (inner.height - 2) / 2, rect);
+    Rect centered = centerRectInRect(inner.width, inner.height, rect);
+
+    Rect bounded = getScenarioRectWithinRect(scenario, cursor_x * 2 - (inner.width - 3) / 2 + 1,
+                                             cursor_y - (inner.height - 2) / 2, rect);
     bounded.x /= 2;
+
+    if (bounded.width < rect.width)
+        bounded.x = -(centered.x - 3) / 2 - 1;
+    if (bounded.height < rect.height)
+        bounded.y = -centered.y + 1;
+
     return bounded;
 }
 

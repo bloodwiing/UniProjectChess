@@ -55,11 +55,13 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
 
     board_rect.x *= 2;
 
-    int i = board_rect.x,
-        j = board_rect.y;
+    int offset_x = board_rect.x < 0 ? board_rect.x : 0,
+        offset_y = board_rect.y < 0 ? board_rect.y : 0;
 
-    int reset_i = i - 1,
-        reset_j = j - 1;
+    int i = board_rect.x - offset_x,
+        j = board_rect.y - offset_y;
+
+    int reset_i = i - 1;
 
     int pos_x = draw_rect.x - i + 1,
         pos_y = draw_rect.y + draw_rect.height - 2 - j;
@@ -68,30 +70,72 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect) {
         height = board_rect.height + j - 2;
 
     for (--j; j <= height; j++) {
+        // left margin clear
+        con_set_pos(pos_x + reset_i, pos_y - j + board_rect.y * 2 - offset_y);
+#ifdef DEBUG_BOARD_RENDERING
+        con_set_color(COLOR_LIGHT_MAGENTA, COLOR_RESET);
+#endif
+        wprintf(L"%*s", -offset_x, "");
+
         for (i = reset_i; i <= width; i++) {
-            con_set_pos(pos_x + i, pos_y - j + board_rect.y * 2);
+#ifdef DEBUG_BOARD_RENDERING
+            con_set_color(COLOR_RED, COLOR_RESET);
+#endif
+            con_set_pos(pos_x + i - offset_x, pos_y - j + board_rect.y * 2 - offset_y);
 
+            // board edge check + rendering
             wchar_t edge;
-            if ((edge = getDoubleBoxBorder(board->user_settings, createRect(-1, -1, original_rect.width + 1, original_rect.height + 1), i, original_rect.height - j - 1)) != L'\0')
+            if ((edge = getBoxBorder(board->user_settings->display.unicode ? BOX_BORDER_DOUBLE : BOX_BORDER_DOUBLE_ASCII,
+                                     createRect(-1, -1, original_rect.width + 1, original_rect.height + 1),
+                                     i, original_rect.height - j - 1)) != L'\0')
+#ifdef DEBUG_BOARD_RENDERING
+                renderTextColoured(board->user_settings, COLOR_ORANGE, COLOR_LIGHT_GRAY, L"%lc", edge);
+#else
                 renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%lc", edge);
+#endif
 
-            else if (j >= 0 && i >= 0 && i % 2 == 1) {
+            // board bounds check
+            else if (i >= -1 && j >= 0
+                     && i < original_rect.width && j < original_rect.height
+                     && i % 2 == 1) {
                 int tile = i / 2 + j * board->width;
 
+                // piece rendering
                 GamePiece * game_piece;
                 if ((game_piece = board->tiles[tile]->game_piece) != NULL)
+#ifdef DEBUG_BOARD_RENDERING
+                    renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_BLUE);
+#else
                     renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET);
+#endif
                 else
                     wprintf(L" ");
             } else
                 wprintf(L" ");
         }
 
-        wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1, "");
+        // right margin clear
+#ifdef DEBUG_BOARD_RENDERING
+        con_set_color(COLOR_CYAN, COLOR_RESET);
+#endif
+        wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1 + offset_x, "");
     }
 
-    for (int end = 0; end <= draw_rect.height - height - reset_j + 1;) {
-        con_set_pos(pos_x - 1, pos_y + j + end++);
+    // top margin clear
+    for (int end = draw_rect.height - board_rect.height + offset_y; end > 0; end--) {
+#ifdef DEBUG_BOARD_RENDERING
+        con_set_color(COLOR_GREEN, COLOR_RESET);
+#endif
+        con_set_pos(draw_rect.x, draw_rect.y + end - 1);
+        wprintf(L"%*s", draw_rect.width, "");
+    }
+
+    // bottom margin clear
+    for (int end = offset_y; end < 0; end++) {
+#ifdef DEBUG_BOARD_RENDERING
+        con_set_color(COLOR_YELLOW, COLOR_RESET);
+#endif
+        con_set_pos(draw_rect.x, draw_rect.y + draw_rect.height + end);
         wprintf(L"%*s", draw_rect.width, "");
     }
 }
@@ -176,12 +220,18 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
 }
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y) {
-    con_set_pos(draw_rect.x + (x - board_rect.x + 1) * 2, draw_rect.y + board_rect.height - 2 - y + board_rect.y);
+    x = (x - board_rect.x + 1) * 2;
+    y = board_rect.y - 2 - y;
+    con_set_pos(draw_rect.x + x, draw_rect.y + draw_rect.height + y);
 }
 
 bool_t isTileVisible(Rect board_rect, int x, int y) {
-    x -= board_rect.x - 1;
-    y -= board_rect.y - 1;
+    int offset_x = board_rect.x < 0 ? board_rect.x : 0,
+        offset_y = board_rect.y < 0 ? board_rect.y : 0;
+
+    x -= board_rect.x - 1 - offset_x;
+    y -= board_rect.y - 1 - offset_y;
+
     return x >= 0 && y >= 0 && x < (board_rect.width + 1) / 2 && y < board_rect.height;
 }
 
