@@ -4,18 +4,18 @@
 #include <stdarg.h>
 #include <wchar.h>
 
+#include "./generic/rect.h"
+#include "./generic/shape.h"
+#include "./generic/text.h"
+
 #include "engine/board.h"
 #include "engine/gamepiece.h"
 
 #include "settings/settings.h"
 
 #include "model/piece.h"
-#include "model/rect.h"
 #include "model/scenario.h"
 #include "model/team.h"
-
-void renderText(wchar_t * format, ...);
-void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * format, ...);
 
 void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece);
 void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, int bg, bool_t invert);

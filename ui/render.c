@@ -2,31 +2,10 @@
 
 #include "./con_lib.h"
 #include "./notation.h"
-#include "./shape.h"
 
 #include <stdio.h>
 
 #include "engine/validation.h"
-
-void renderText(wchar_t * format, ...) {
-    va_list argv;
-    va_start(argv, format);
-    vfwprintf(stdout, format, argv);
-    va_end(argv);
-}
-
-void renderTextColoured(UserSettings * settings, int bg, int fg, wchar_t * format, ...) {
-    if (settings->display.colourful)
-        con_set_color(bg, fg);
-
-    va_list argv;
-    va_start(argv, format);
-    vfwprintf(stdout, format, argv);
-    va_end(argv);
-
-    if (settings->display.colourful)
-        con_set_color(COLOR_RESET, COLOR_RESET);
-}
 
 void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece) {
     if (settings->display.unicode)
@@ -73,19 +52,23 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
     int width = board_rect.width + i - 2,
         height = board_rect.height + j - 2;
 
+    int corrected_offset_y = offset_y != 0 ? - offset_y + draw_rect.y - 1 : 0,
+        corrected_offset_x = offset_x != 0 ? - offset_x - draw_rect.x + 2 : 0;
+
     for (j = reset_j; j <= height; j++) {
         // left margin clear
-        con_set_pos(pos_x + reset_i, pos_y - j + board_rect.y * 2 - offset_y);
+        con_set_pos(pos_x + reset_i, pos_y - j + board_rect.y * 2 + corrected_offset_y);
 #ifdef DEBUG_BOARD_RENDERING
         con_set_color(COLOR_LIGHT_MAGENTA, COLOR_RESET);
 #endif
-        wprintf(L"%*s", -offset_x, "");
+        if (offset_x != 0)
+            wprintf(L"%*s", corrected_offset_x, "");
 
         for (i = reset_i; i <= width; i++) {
 #ifdef DEBUG_BOARD_RENDERING
             con_set_color(COLOR_RED, COLOR_RESET);
 #endif
-            con_set_pos(pos_x + i - offset_x, pos_y - j + board_rect.y * 2 - offset_y);
+            con_set_pos(pos_x + i + corrected_offset_x, pos_y - j + board_rect.y * 2 + corrected_offset_y);
 
             // board edge check + rendering
             wchar_t edge;
@@ -109,7 +92,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
                     GamePiece *game_piece;
                     if ((game_piece = board->tiles[tile]->game_piece) != NULL)
 #ifdef DEBUG_BOARD_RENDERING
-                        renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_BLUE);
+                        renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_BLUE, false);
 #else
                         renderGamePieceWithBackground(board->user_settings, board->scenario, game_piece, COLOR_RESET, false);
 #endif
@@ -125,11 +108,11 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
 #ifdef DEBUG_BOARD_RENDERING
         con_set_color(COLOR_CYAN, COLOR_RESET);
 #endif
-        wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1 + offset_x, "");
+        wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1 - corrected_offset_x, "");
     }
 
     // top margin clear
-    for (int end = draw_rect.height - board_rect.height + offset_y; end > 0; end--) {
+    for (int end = draw_rect.height - board_rect.height + (offset_y != 0 ? offset_y + draw_rect.y - 1 : 0); end > 0; end--) {
 #ifdef DEBUG_BOARD_RENDERING
         con_set_color(COLOR_GREEN, COLOR_RESET);
 #endif
@@ -138,7 +121,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
     }
 
     // bottom margin clear
-    for (int end = offset_y; end < 0; end++) {
+    for (int end = (offset_y != 0 ? offset_y + draw_rect.y - 1 : 0); end < 0; end++) {
 #ifdef DEBUG_BOARD_RENDERING
         con_set_color(COLOR_YELLOW, COLOR_RESET);
 #endif
@@ -152,16 +135,16 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
             char * file = getFileNotation(i);
             // above the chess board (top bar out of view)
             if (height < board->height)
-                con_set_pos(pos_x + i * 2 - offset_x + 1, draw_rect.y - 1);
+                con_set_pos(pos_x + i * 2 + corrected_offset_x + 1, draw_rect.y - 1);
             else {
                 // clean above the chess board if it was rendered there
                 if (board_rect.height < board->height) {
-                    con_set_pos(pos_x + i * 2 - offset_x + 1, draw_rect.y - 1);
+                    con_set_pos(pos_x + i * 2 + corrected_offset_x + 1, draw_rect.y - 1);
                     wprintf(L" ");
                 }
                 // on border
-                con_set_pos(pos_x + i * 2 - offset_x + 1,
-                            draw_rect.y + draw_rect.height - board_rect.height + offset_y);
+                con_set_pos(pos_x + i * 2 + corrected_offset_x + 1,
+                            draw_rect.y + draw_rect.height - board_rect.height - corrected_offset_y);
             }
             renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%hs", file);
             free(file);
@@ -172,7 +155,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
             if (j < 0 || j >= board->height)
                 continue;
             char * rank = getRankNotation(j);
-            con_set_pos(draw_rect.x - offset_x, pos_y - j + board_rect.y * 2 - offset_y);
+            con_set_pos(draw_rect.x + corrected_offset_x, pos_y - j + board_rect.y * 2 + corrected_offset_y);
             renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%hs", rank);
             free(rank);
         }
@@ -251,7 +234,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
         clearRect(draw_rect);
-        reportExceptionAtPos(exception, draw_rect.x, draw_rect.y);
+        reportExceptionAtPos(settings, exception, draw_rect);
         return;
     }
     renderBoard(board, draw_rect, board_rect, with_coords);
@@ -259,7 +242,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
 }
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y) {
-    x = (x - board_rect.x + 1) * 2;
+    x = (x - board_rect.x + 1) * 2 - 1;
     y = board_rect.y - 2 - y;
     con_set_pos(draw_rect.x + x, draw_rect.y + draw_rect.height + y);
 }
@@ -290,6 +273,6 @@ void ditherEffect() {
 void clearRect(Rect rect) {
     for (int i = rect.y; i < rect.y + rect.height;) {
         con_set_pos(rect.x, i++);
-        wprintf(L"%*s", rect.width, "");
+        wprintf(L"%*hs", rect.width, "");
     }
 }
