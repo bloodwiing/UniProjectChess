@@ -3,16 +3,9 @@
 
 #include "defaults.h"
 
-#include "engine/board.h"
-#include "engine/moveentry.h"
-
 #include "settings/settings.h"
 
 #include "ui/con_lib.h"
-#include "ui/component/responsive/responsive.h"
-#include "ui/notation.h"
-#include "ui/render.h"
-#include "ui/shape.h"
 #include "ui/view/mainmenu.h"
 
 void setupConsole();

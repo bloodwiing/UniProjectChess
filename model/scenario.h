@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "./team.h"
-#include "./rect.h"
+#include "ui/generic/rect.h"
 #include "./spawn.h"
 
 #include "abstract/version.h"

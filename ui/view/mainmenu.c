@@ -23,12 +23,12 @@ void mainMenuLoop(UserSettings * settings) {
     MenuSelector * selector = createMenuSelector(settings, initMainMenu, updateMainMenu);
 
     if (isPathFile(GAME_STATE_SAVE_FILE))
-        addMenuItem(selector, L"Resume", "Let's get back into the fight", onMainMenuResume);
-    addMenuItem(selector, L"New Scenario", "New day, new battle", onMainMenuStart);
-    addMenuItem(selector, L"Quit", "Leaving already?", onMainMenuExit);
+        addMenuItem(selector, L"Resume", "Let's get back into the fight", NULL, onMainMenuResume);
+    addMenuItem(selector, L"New Scenario", "New day, new battle", NULL, onMainMenuStart);
+    addMenuItem(selector, L"Quit", "Leaving already?", NULL, onMainMenuExit);
 
     while (updateMenuSelector(selector, true)) {
-        displayMenuSelector(selector, 2, 4);
+        displayMenuSelector(selector, offsetRect(getScreenRect(), 2, 4, -2, -4));
     }
 }
 
@@ -44,8 +44,10 @@ MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
 }
 
 MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
+    if (settings->size.height < 12)
+        return;
     con_set_pos(5, 8);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MENU_ITEM_MAX_STRING_LEN, data);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MENU_ITEM_MAX_STRING_LEN, text_data);
     con_flush();
 }
 
@@ -53,7 +55,7 @@ MENU_ITEM_CALLBACK(onMainMenuResume) {
     Exception exception = {};
     GameState * state = loadGameStateDefault(settings, &exception);
     if (state == NULL && exception.status) {
-        reportException(exception);
+        reportException(settings, exception);
         return false;
     }
 

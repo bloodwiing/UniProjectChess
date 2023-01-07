@@ -252,7 +252,7 @@ Board * cloneBoard(Board * board) {
     Exception exception;
     Board * out = createEmptyBoard(board->scenario, board->user_settings, &exception);
     if (out == NULL && exception.status) {
-        reportException(exception);
+        reportException(board->user_settings, exception);
         return NULL;
     }
 

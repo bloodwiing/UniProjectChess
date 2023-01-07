@@ -6,6 +6,7 @@
 #include "./gamemenu.h"
 
 #include "ui/component/menuselector.h"
+#include "ui/component/responsive/responsive.h"
 #include "ui/render.h"
 
 #include "utils/files.h"
@@ -16,10 +17,164 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu);
 MENU_ITEM_CALLBACK(onScenarioMenuSelect);
 MENU_ITEM_CALLBACK(onScenarioMenuLeave);
 
+
+// RESPONSIVE PROCESSING
+typedef struct ScenarioResponsiveProcessingResult {
+    Exception exception;
+    Scenario * scenario;
+    MenuSelector * selector;
+    ResponsiveManager * responsive;
+} ScenarioResponsiveProcessingResult;
+
+ScenarioResponsiveProcessingResult * scenarioResponsiveProcessingResultUpdate(ScenarioResponsiveProcessingResult * result) {
+    freeScenario(result->scenario);
+    result->scenario = NULL;
+
+    clearException(&result->exception);
+
+    char * selected = getSelectedTextData(result->selector);
+
+    if (strlen(selected) == 0)
+        return NULL;
+
+    char * path = combinePath(SCENARIO_FOLDER, selected);
+    FILE * file = fopen(path, "rb");
+
+    result->scenario = loadScenario(file, true, &result->exception);
+
+    fclose(file);
+    free(path);
+
+    return result;
+}
+
+
+// RESPONSIVE LAYOUTS
+RESPONSIVE_CALLBACK(bp_scenarioCallback_List) {
+    ScenarioResponsiveProcessingResult * result = data;
+    renderTextColouredWrappedRect(result->selector->settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(2, 1, rect.width - 4), L"Scenario select");
+    displayMenuSelector(result->selector, offsetRect(rect, 2, 3, -4, -4));
+}
+
+RESPONSIVE_CALLBACK(bp_scenarioCallback_Preview) {
+    ScenarioResponsiveProcessingResult * result = data;
+    Scenario * scenario = result->scenario;
+
+    if (result->exception.status) {
+        clearRect(rect);
+        reportExceptionAtPos(result->selector->settings, result->exception, offsetRect(rect, 2, 2, -2, -2));
+        return;
+    }
+
+    if (scenario == NULL) {
+        clearRect(rect);
+        return;
+    }
+
+    Rect board_rect = getScenarioCenteredRect(scenario, rect, 0, 0);
+    renderScenario(scenario, result->selector->settings, rect, board_rect, false);
+    drawSingleBoxContained(result->selector->settings, rect, COLOR_RESET, COLOR_YELLOW);
+
+    con_flush();
+}
+
+RESPONSIVE_CALLBACK(bp_scenarioCallback_Info) {
+    ScenarioResponsiveProcessingResult * result = data;
+    Scenario * scenario = result->scenario;
+    UserSettings * settings = result->selector->settings;
+
+    Rect original = rect;
+
+    rect.y += 2;
+    rect.height -= 2;
+
+    if (scenario == NULL) {
+        clearRect(rect);
+        return;
+    }
+
+    if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GRAY, RECT_LINE(rect.x, rect.y++, rect.width), L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_RED, RECT_LINE(rect.x, rect.y++, rect.width), L"[ %-*hs ]", SCENARIO_MAX_STRING_LEN, getVersionName(scenario->version));
+    } else {
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, RECT_LINE(rect.x, rect.y++, rect.width), L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(rect.x, rect.y++, rect.width), L"[ %-*hs ]", SCENARIO_MAX_STRING_LEN, getVersionName(scenario->version));
+    }
+
+    ++rect.y;
+    con_set_pos(rect.x, rect.y);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Author: ");
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, RECT_LINE(rect.x + 8, rect.y++, rect.width - 8), L"@%-*hs", SCENARIO_MAX_STRING_LEN, scenario->author);
+
+    con_set_pos(rect.x, rect.y);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Size: ");
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, RECT_LINE(rect.x + 6, rect.y++, rect.width - 6), L"%d x %d", scenario->size_x, scenario->size_y);
+
+    con_set_pos(rect.x, rect.y);
+    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Teams: ");
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, RECT_LINE(rect.x + 7, rect.y++, rect.width - 7), L"%d", scenario->team_count);
+
+    ++rect.y;
+
+    Rect remaining = createRect(rect.x, rect.y, rect.width, rect.height - (rect.y - original.y));
+
+    if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version)
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_RED, remaining, L"Scenario outdated! ( < %hs )",
+                                      getVersionName(getMinSupportedScenarioVersion(BUILD_VERSION)));
+    else
+        clearRect(remaining);
+}
+
+
+// RESPONSIVE BREAKPOINT
+// Only the scenario list
+ResponsiveBreakpoint createScenarioListBreakpoint(ScenarioResponsiveProcessingResult * result) {
+    ResponsiveLayout layout = createLayout(1.0f, result, bp_scenarioCallback_List, NULL);
+    return createResponsiveBreakpoint(12, 50, layout, ResponsiveBreakpointType_OR);
+}
+
+// RESPONSIVE BREAKPOINT
+// Show both 50/50 without map
+ResponsiveBreakpoint createScenarioFullBreakpoint(ScenarioResponsiveProcessingResult * result) {
+    ResponsiveHorizontalLayout * hor = createHorizontalLayout(1.0f);
+    addHorizontalChild(hor, createLayout(0.4f, result, bp_scenarioCallback_List, NULL));
+    addHorizontalChild(hor, createLayout(0.6f, result, bp_scenarioCallback_Info, NULL));
+
+    return createResponsiveBreakpoint(25, SIZE_MAX, compileHorizontalLayout(hor), ResponsiveBreakpointType_AND);
+}
+
+// RESPONSIVE BREAKPOINT
+// Show both 50/50 with map
+ResponsiveBreakpoint createScenarioMapFullBreakpoint(ScenarioResponsiveProcessingResult * result) {
+    ResponsiveHorizontalLayout * hor = createHorizontalLayout(1.0f);
+    addHorizontalChild(hor, createLayout(0.4f, result, bp_scenarioCallback_List, NULL));
+
+        ResponsiveVerticalLayout * ver = createVerticalLayout(0.6f);
+        addVerticalChild(ver, createLayout(0.45f, result, bp_scenarioCallback_Preview, NULL));
+        addVerticalChild(ver, createLayout(0.55f, result, bp_scenarioCallback_Info, NULL));
+
+    addHorizontalChild(hor, compileVerticalLayout(ver));
+
+    return createResponsiveBreakpoint(SIZE_MAX, SIZE_MAX, compileHorizontalLayout(hor), ResponsiveBreakpointType_AND);
+}
+
+
+// MENU NAVIGATION
 void scenarioMenuLoop(UserSettings * settings) {
     initScenarioMenu(settings);
 
+    // Responsive layout
+    ResponsiveManager * responsive = createResponsiveManager();
+
     MenuSelector * selector = createMenuSelector(settings, initScenarioMenu, updateScenarioMenu);
+
+    ScenarioResponsiveProcessingResult * result = calloc(1, sizeof(ScenarioResponsiveProcessingResult));
+    result->responsive = responsive;
+    result->selector = selector;
+
+    addResponsiveBreakpoint(responsive, createScenarioListBreakpoint(result));
+    addResponsiveBreakpoint(responsive, createScenarioFullBreakpoint(result));
+    addResponsiveBreakpoint(responsive, createScenarioMapFullBreakpoint(result));
 
     size_t count = 0;
     char ** files = listDirectoryFiles(SCENARIO_FOLDER, &count);
@@ -27,13 +182,18 @@ void scenarioMenuLoop(UserSettings * settings) {
     for (int i = 0; i < count; i++) {
         wchar_t name[MENU_ITEM_MAX_STRING_LEN];
         mbstowcs(name, files[i], MENU_ITEM_MAX_STRING_LEN);
-        addMenuItem(selector, name, files[i], onScenarioMenuSelect);
+        addMenuItem(selector, name, files[i], result, onScenarioMenuSelect);
     }
-    addMenuItem(selector, L"Back", "", onScenarioMenuLeave);
+    addMenuItem(selector, L"Back", "", result, onScenarioMenuLeave);
 
-    while (updateMenuSelector(selector, true)) {
-        displayMenuSelector(selector, 2, 3);
-    }
+    scenarioResponsiveProcessingResultUpdate(result);
+    renderResponsive(responsive);
+    while (updateMenuSelector(selector, true));
+
+    freeResponsiveBreakpoint(responsive);
+
+    freeScenario(result->scenario);
+    free(result);
 
     for (int i = 0; i < count;)
         free(files[i++]);
@@ -42,74 +202,12 @@ void scenarioMenuLoop(UserSettings * settings) {
 
 MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu) {
     con_clear();
-
-    con_set_pos(2, 1);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"Scenario select");
-
-    con_flush();
 }
 
 MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
-    Rect full_rect = createRect(50, 2, 30, 22);
-    Rect draw_rect = full_rect;
-    draw_rect.height = 10;
-
-    if (strlen(data) == 0) {
-        clearRect(full_rect);
-        return;
-    }
-
-    char * path = combinePath(SCENARIO_FOLDER, data);
-    FILE * file = fopen(path, "rb");
-
-    Exception exception = {};
-    Scenario * scenario = loadScenario(file, true, &exception);
-
-    fclose(file);
-    free(path);
-
-    if (scenario == NULL && exception.status) {
-        clearRect(full_rect);
-        reportExceptionAtPos(exception, 50, 2);
-        return;
-    }
-
-    Rect board_rect = getScenarioRectWithinRect(scenario, 0, 0, draw_rect);
-    renderScenario(scenario, settings, draw_rect, board_rect, false);
-
-    con_set_pos(50, 14);
-    if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {
-        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
-        con_set_pos(50, 15);
-        renderTextColoured(settings, COLOR_RESET, COLOR_RED, L"[ %-*hs ]", SCENARIO_MAX_STRING_LEN, getVersionName(scenario->version));
-    } else {
-        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", SCENARIO_MAX_STRING_LEN, scenario->name);
-        con_set_pos(50, 15);
-        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"[ %-*hs ]", SCENARIO_MAX_STRING_LEN, getVersionName(scenario->version));
-    }
-    con_set_pos(50, 17);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Author: ");
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"@%-*hs", SCENARIO_MAX_STRING_LEN, scenario->author);
-    con_set_pos(50, 19);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Size: ");
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d x %d", scenario->size_x, scenario->size_y);
-    con_set_pos(50, 20);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"Teams: ");
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L"%d", scenario->team_count);
-
-    con_set_pos(50, 22);
-    if (getMinSupportedScenarioVersion(BUILD_VERSION) > scenario->version) {
-        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_RED, L"Scenario outdated!");
-        con_set_pos(50, 23);
-        renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_RED, L"( < %hs )",
-                           getVersionName(getMinSupportedScenarioVersion(BUILD_VERSION)));
-    } else {
-        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"%30hs", "");
-        con_set_pos(50, 23);
-        renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GRAY, L"%30hs", "");
-    }
-
-    freeScenario(scenario);
+    ScenarioResponsiveProcessingResult * result = other_data;
+    scenarioResponsiveProcessingResultUpdate(result);
+    renderResponsive(result->responsive);
     con_flush();
 }
 
@@ -126,7 +224,7 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
         fclose(file);
         free(path);
         if (scenario == NULL && exception.status) {
-            reportException(exception);
+            reportException(settings, exception);
             return false;
         }
         if (scenario->version < getMinSupportedScenarioVersion(BUILD_VERSION)) {
@@ -137,7 +235,7 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
         clearException(&exception);
         board = createBoard(scenario, settings, &exception);
         if (board == NULL && exception.status) {
-            reportException(exception);
+            reportException(settings, exception);
             freeScenario(scenario);
             return false;
         }

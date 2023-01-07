@@ -8,7 +8,7 @@
 
 #include "abstract/exception.h"
 
-#include "model/rect.h"
+#include "ui/generic/rect.h"
 #include "model/scenario.h"
 
 #include "settings/settings.h"

@@ -132,6 +132,8 @@ Rect getScenarioCenteredRect(Scenario * scenario, Rect rect, int cursor_x, int c
 }
 
 void freeScenario(Scenario * scenario) {
+    if (scenario == NULL)
+        return;
     for (team_index_t i = 0; i < scenario->team_count;)
         freeTeam(&scenario->teams[i++]);
     free(scenario->teams);
