@@ -35,10 +35,8 @@ void mainMenuLoop(UserSettings * settings) {
 MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
     con_clear();
 
-    con_set_pos(2, 1);
-    renderTextColoured(settings, COLOR_RESET, COLOR_DARK_GREY, L"%hs", getVersionName(BUILD_VERSION));
-    con_set_pos(2, 2);
-    renderTextColoured(settings, COLOR_RESET, COLOR_WHITE, L"Rook's Gambit");
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_DARK_GREY, RECT_LINE(2, 1, settings->size.width - 2), L"%hs", getVersionName(BUILD_VERSION));
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_WHITE, RECT_LINE(2, 2, settings->size.width - 2), L"Rook's Gambit");
 
     con_flush();
 }
@@ -46,8 +44,8 @@ MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
 MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
     if (settings->size.height < 12)
         return;
-    con_set_pos(5, 8);
-    renderTextColoured(settings, COLOR_RESET, COLOR_LIGHT_GREEN, L"%-*hs", MENU_ITEM_MAX_STRING_LEN, text_data);
+
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, createRect(5, 8, settings->size.width - 5, 2), L"%-*hs", MENU_ITEM_MAX_STRING_LEN, text_data);
     con_flush();
 }
 
