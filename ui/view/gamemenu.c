@@ -35,9 +35,9 @@ void renderGameScreen(UserSettings * settings, GameState * state, Board * board)
     Rect board_rect = getBoardCenteredRect(board, draw_rect, state->cur_x, state->cur_y);
 
     if (!state->piece_selected)
-        renderBoard(board, draw_rect, board_rect, true);
+        renderBoard(board, draw_rect, board_rect, state->cur_x, state->cur_y, true);
     else
-        renderBoardWithSelection(board, draw_rect, board_rect, state->sel_x, state->sel_y, true);
+        renderBoardWithSelection(board, draw_rect, board_rect, state->cur_x, state->cur_y, state->sel_x, state->sel_y, true);
 
     setCursorAtTile(draw_rect, board_rect, state->cur_x, state->cur_y);
     GamePiece * game_piece = getGamePieceAtCursor(state);

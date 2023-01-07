@@ -30,7 +30,7 @@ void renderPiece(UserSettings * settings, Team team, Piece piece) {
     renderPieceWithBackground(settings, team, piece, COLOR_RESET, false);
 }
 
-void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coords) {
+void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, bool_t with_coords) {
     Rect original_rect = getBoardRect(board, 0, 0);
     original_rect.width -= 2;
     original_rect.height -= 2;
@@ -131,7 +131,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
 
     if (with_coords) {
         // files
-        for (i = reset_i + 1; i < width / 2; i++) {
+        for (i = (reset_i + 1) / 2; i < width / 2; i++) {
             char * file = getFileNotation(i);
             // above the chess board (top bar out of view)
             if (height < board->height)
@@ -146,7 +146,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
                 con_set_pos(pos_x + i * 2 + corrected_offset_x + 1,
                             draw_rect.y + draw_rect.height - board_rect.height - corrected_offset_y);
             }
-            renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%hs", file);
+            renderTextColoured(board->user_settings, COLOR_RESET, i == cur_x ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GRAY, L"%hs", file);
             free(file);
         }
         // ranks
@@ -155,15 +155,26 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, bool_t with_coo
             if (j < 0 || j >= board->height)
                 continue;
             char * rank = getRankNotation(j);
-            con_set_pos(draw_rect.x + corrected_offset_x, pos_y - j + board_rect.y * 2 + corrected_offset_y);
-            renderTextColoured(board->user_settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"%hs", rank);
+            // left of the chess board (left bar out of view)
+            if (board_rect.width / 2 < board->width && board_rect.x > 0)
+                con_set_pos(draw_rect.x + corrected_offset_x - 2, pos_y - j + board_rect.y * 2 + corrected_offset_y);
+            else {
+                // clean left of the chess board if it was rendered there
+                if (board_rect.width / 2 < board->width) {
+                    con_set_pos(draw_rect.x + corrected_offset_x - 2, pos_y - j + board_rect.y * 2 + corrected_offset_y);
+                    wprintf(L"  ");
+                }
+                // on border
+                con_set_pos(draw_rect.x + corrected_offset_x, pos_y - j + board_rect.y * 2 + corrected_offset_y);
+            }
+            renderTextColoured(board->user_settings, COLOR_RESET, j == cur_y ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GRAY, L"%hs", rank);
             free(rank);
         }
     }
 }
 
-void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int sel_x, int sel_y, bool_t with_coords) {
-    renderBoard(board, draw_rect, board_rect, with_coords);
+void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, int sel_x, int sel_y, bool_t with_coords) {
+    renderBoard(board, draw_rect, board_rect, cur_x, cur_y, with_coords);
 
     if (sel_x != -1 && sel_y != -1) {
         Tile * selected = getTile(board, sel_x, sel_y);
@@ -237,12 +248,12 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
         reportExceptionAtPos(settings, exception, draw_rect);
         return;
     }
-    renderBoard(board, draw_rect, board_rect, with_coords);
+    renderBoard(board, draw_rect, board_rect, -1, -1, with_coords);
     freeBoard(board, false);
 }
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y) {
-    x = (x - board_rect.x + 1) * 2 - 1;
+    x = (x - board_rect.x + 1) * 2;
     y = board_rect.y - 2 - y;
     con_set_pos(draw_rect.x + x, draw_rect.y + draw_rect.height + y);
 }
