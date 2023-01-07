@@ -19,7 +19,7 @@ void renderResponsive(ResponsiveManager * manager) {
     for (size_t i = 0; i < manager->breakpoint_count; i++) {
         ResponsiveBreakpoint breakpoint = manager->breakpoints[i];
         if (checkResponsiveBreakpoint(breakpoint, size)) {
-            runLayout(breakpoint.layout, createRect(0, 0, size.width, size.height));
+            runLayout(breakpoint.layout, getScreenRect());
             break;
         }
     }

@@ -4,9 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "model/rect.h"
-
 #include "ui/con_lib.h"
+#include "ui/generic/rect.h"
 
 #define RESPONSIVE_FREE_CALLBACK(name) void (name)(void * data)
 #define RESPONSIVE_CALLBACK(name) void (name)(Rect rect, void * data)
@@ -23,6 +22,7 @@ typedef struct ResponsiveLayout {
 
 ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* callback), RESPONSIVE_FREE_CALLBACK(* free_callback));
 
+void runLayoutWithData(ResponsiveLayout layout, Rect rect, void * data);
 void runLayout(ResponsiveLayout layout, Rect rect);
 void freeLayout(ResponsiveLayout layout);
 

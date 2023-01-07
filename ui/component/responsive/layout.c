@@ -14,8 +14,12 @@ ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* c
     };
 }
 
+void runLayoutWithData(ResponsiveLayout layout, Rect rect, void * data) {
+    layout.callback(rect, data);
+}
+
 void runLayout(ResponsiveLayout layout, Rect rect) {
-    layout.callback(rect, layout.data);
+    runLayoutWithData(layout, rect, layout.data);
 }
 
 void freeLayout(ResponsiveLayout layout) {
