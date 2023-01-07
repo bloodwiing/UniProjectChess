@@ -16,25 +16,60 @@ MenuSelector * createMenuSelector(UserSettings * settings, MENU_SELECTOR_INIT_CA
     return out;
 }
 
-void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * data, MENU_ITEM_CALLBACK(*callback)) {
+void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * text_data, void * other_data, MENU_ITEM_CALLBACK(*callback)) {
     menu_selector->items = realloc(menu_selector->items, sizeof(MenuItem) * ++(menu_selector->item_count));
-    menu_selector->items[menu_selector->item_count - 1] = createMenuItem(menu_selector->settings, name, data, callback);
+    menu_selector->items[menu_selector->item_count - 1] = createMenuItem(menu_selector->settings, name, text_data, other_data, callback);
     if (menu_selector->item_count == 1) {
         menu_selector->selected = 0;
         runMenuSelectorUpdateCallback(menu_selector);
     }
 }
 
-void displayMenuSelector(MenuSelector * menu_selector, int x, int y) {
-    for (int i = 0; i < menu_selector->item_count; i++) {
-        con_set_pos(x, y + i);
-        MenuItem * item = menu_selector->items[i];
+void displayMenuSelector(MenuSelector * menu_selector, Rect rect) {
+    size_t item_count = rect.height < menu_selector->item_count ? rect.height : menu_selector->item_count;
+    size_t space = menu_selector->item_count - item_count;
+    int offset = (int)(menu_selector->selected - (item_count + 1) / 2 + 1);
+    size_t clamped_offset = offset > space ? space : (offset < 0 ? 0 : offset);
 
-        if (menu_selector->selected == i)
-            renderTextColoured(menu_selector->settings, COLOR_RESET, COLOR_LIGHT_YELLOW, L">> %ls", item->text);
-        else
-            renderTextColoured(menu_selector->settings, COLOR_RESET, COLOR_LIGHT_GRAY, L"   %ls", item->text);
+    for (size_t i = 0; i < item_count; i++) {
+        size_t item_index = i + clamped_offset;
+
+        MenuItem * item = menu_selector->items[item_index];
+
+        int fg = menu_selector->selected == item_index ? COLOR_LIGHT_YELLOW : COLOR_LIGHT_GRAY;
+        wchar_t * format = menu_selector->selected == item_index ? L">> %ls" : L"   %ls";
+
+        Rect line = RECT_LINE(rect.x, rect.y + i, rect.width);
+#ifdef DEBUG_MENU_RENDERING
+        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RED, fg, line, format, item->text, NULL);
+#else
+        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, fg, line, format, item->text, NULL);
+#endif
     }
+
+#ifdef DEBUG_MENU_RENDERING
+    con_set_color(COLOR_GREEN, COLOR_BLACK);
+    clearRect(offsetRect(rect, 0, (int)item_count, 0, -(int)item_count));
+#endif
+}
+
+char * getSelectedTextData(MenuSelector * menu_selector) {
+    return menu_selector->items[menu_selector->selected]->text_data;
+}
+
+void * getSelectedOtherData(MenuSelector * menu_selector) {
+    return menu_selector->items[menu_selector->selected]->other_data;
+}
+
+void runMenuSelectorInitCallback(MenuSelector * menu_selector) {
+    if (menu_selector->init_callback != NULL)
+        menu_selector->init_callback(menu_selector->settings);
+    runMenuSelectorUpdateCallback(menu_selector);
+}
+
+void runMenuSelectorUpdateCallback(MenuSelector * menu_selector) {
+    if (menu_selector->update_callback != NULL)
+        menu_selector->update_callback(menu_selector->settings, getSelectedTextData(menu_selector), getSelectedOtherData(menu_selector));
 }
 
 bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
@@ -43,8 +78,7 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
     while ((key = con_read_key())) {
         if (key == KEY_ENTER || key == KEY_SPACE) {
             if (!runMenuItem(menu_selector->items[menu_selector->selected])) {
-                menu_selector->init_callback(menu_selector->settings);
-                runMenuSelectorUpdateCallback(menu_selector);
+                runMenuSelectorInitCallback(menu_selector);
                 continue;
             }
             if (auto_free)
@@ -66,11 +100,10 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
         }
     }
 
-    return true;
-}
+    if (hasConsoleSizeChanged(menu_selector->settings))
+        runMenuSelectorInitCallback(menu_selector);
 
-void runMenuSelectorUpdateCallback(MenuSelector * menu_selector) {
-    menu_selector->update_callback(menu_selector->settings, menu_selector->items[menu_selector->selected]->data);
+    return true;
 }
 
 void freeMenuSelector(MenuSelector * menu_selector) {

@@ -14,11 +14,12 @@ typedef struct MenuItem {
     UserSettings * settings;
 
     wchar_t text[MENU_ITEM_MAX_STRING_LEN];
-    char data[MENU_ITEM_MAX_STRING_LEN];
+    char text_data[MENU_ITEM_MAX_STRING_LEN];
+    void * other_data;
     MENU_ITEM_CALLBACK(*callback);
 } MenuItem;
 
-MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * data, MENU_ITEM_CALLBACK(*callback));
+MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * text_data, void * other_data, MENU_ITEM_CALLBACK(*callback));
 bool_t runMenuItem(MenuItem * menu_item);
 
 void freeMenuItem(MenuItem * menu_item);
