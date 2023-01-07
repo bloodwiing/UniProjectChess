@@ -38,3 +38,8 @@ Rect fitRect(Rect rect, int bound_width, int bound_height) {
         out.y = rect.height - out.height;
     return out;
 }
+
+Rect getScreenRect() {
+    ConSize size = con_get_size();
+    return createRect(0, 0, size.width, size.height);
+}

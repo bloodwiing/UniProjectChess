@@ -2,6 +2,21 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
+// Solution by https://stackoverflow.com/questions/36280521/how-to-format-wide-char-string-via-vswprintf-on-osx-want-to-return-stdwstring/36282347#36282347
+int vfwslen(const wchar_t * format, va_list va) {
+#ifdef _WIN32
+    FILE * null_file = fopen("NUL", "wb");
+#else
+    FILE * null_file = fopen("/dev/null", "wb");
+#endif
+    if (null_file == NULL)
+        return -1;
+    int result = vfwprintf(null_file, format, va);
+    fclose(null_file);
+    return result;
+}
 
 size_t strU16len(uint16_t * string) {
     size_t size = 0;

@@ -63,10 +63,22 @@ void drawBox(UserSettings * settings, wchar_t * border, Rect rect, int bg, int f
     }
 }
 
+void drawBoxContained(UserSettings * settings, wchar_t * border, Rect rect, int bg, int fg) {
+    drawBox(settings, border, offsetRect(rect, 0, 0, -1, -1), bg, fg);
+}
+
 void drawSingleBox(UserSettings * settings, Rect rect, int bg, int fg) {
     drawBox(settings, settings->display.unicode ? BOX_BORDER_SINGLE : BOX_BORDER_SINGLE_ASCII, rect, bg, fg);
 }
 
 void drawDoubleBox(UserSettings * settings, Rect rect, int bg, int fg) {
     drawBox(settings, settings->display.unicode ? BOX_BORDER_DOUBLE : BOX_BORDER_DOUBLE_ASCII, rect, bg, fg);
+}
+
+void drawSingleBoxContained(UserSettings * settings, Rect rect, int bg, int fg) {
+    drawBoxContained(settings, settings->display.unicode ? BOX_BORDER_SINGLE : BOX_BORDER_SINGLE_ASCII, rect, bg, fg);
+}
+
+void drawDoubleBoxContained(UserSettings * settings, Rect rect, int bg, int fg) {
+    drawBoxContained(settings, settings->display.unicode ? BOX_BORDER_DOUBLE : BOX_BORDER_DOUBLE_ASCII, rect, bg, fg);
 }

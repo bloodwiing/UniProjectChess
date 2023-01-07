@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+int vfwslen(const wchar_t * format, va_list va);  // variable formatted wide-char string length
+
 typedef uint16_t wchar16_t;
 
 size_t strU16len(uint16_t * string);
