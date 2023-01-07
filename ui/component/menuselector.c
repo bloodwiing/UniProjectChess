@@ -29,10 +29,15 @@ void displayMenuSelector(MenuSelector * menu_selector, Rect rect) {
     size_t item_count = rect.height < menu_selector->item_count ? rect.height : menu_selector->item_count;
     size_t space = menu_selector->item_count - item_count;
     int offset = (int)(menu_selector->selected - (item_count + 1) / 2 + 1);
-    size_t clamped_offset = offset > space ? space : (offset < 0 ? 0 : offset);
 
-    for (size_t i = 0; i < item_count; i++) {
-        size_t item_index = i + clamped_offset;
+    size_t offset_max = offset < 0 ? 0 : offset;
+    size_t offset_max_min = offset_max > space ? space : offset_max;
+
+    if (item_count < menu_selector->item_count && offset_max_min != space)
+        --item_count;
+
+    for (size_t i = offset_max_min > 0 ? 1 : 0; i < item_count; i++) {
+        size_t item_index = i + offset_max_min;
 
         MenuItem * item = menu_selector->items[item_index];
 
@@ -46,6 +51,12 @@ void displayMenuSelector(MenuSelector * menu_selector, Rect rect) {
         renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, fg, line, format, item->text, NULL);
 #endif
     }
+
+    if (offset_max_min > 0)
+        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(rect.x, rect.y, rect.width), L"/\\ ...");
+
+    if (item_count < menu_selector->item_count && offset_max_min != space)
+        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(rect.x, rect.y + item_count, rect.width), L"\\/ ...");
 
 #ifdef DEBUG_MENU_RENDERING
     con_set_color(COLOR_GREEN, COLOR_BLACK);
