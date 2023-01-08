@@ -15,6 +15,6 @@ void addResponsiveBreakpoint(ResponsiveManager * manager, ResponsiveBreakpoint b
 
 void renderResponsive(UserSettings * settings, ResponsiveManager * manager);
 
-void freeResponsiveBreakpoint(ResponsiveManager * manager);
+void freeResponsiveManager(ResponsiveManager * manager);
 
 #endif //CHESS_RESPONSIVE_H

@@ -27,7 +27,9 @@ void renderResponsive(UserSettings * settings, ResponsiveManager * manager) {
     }
 }
 
-void freeResponsiveBreakpoint(ResponsiveManager * manager) {
+void freeResponsiveManager(ResponsiveManager * manager) {
+    for (size_t i = 0; i < manager->breakpoint_count;)
+        freeLayout(manager->breakpoints[i++].layout);
     free(manager->breakpoints);
     free(manager);
 }

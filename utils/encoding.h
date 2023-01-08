@@ -1,9 +1,10 @@
 #ifndef CHESS_ENCODING_H
 #define CHESS_ENCODING_H
 
-#include <wchar.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <wchar.h>
 
 int vfwslen(const wchar_t * format, va_list va);  // variable formatted wide-char string length
 

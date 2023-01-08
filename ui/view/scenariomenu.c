@@ -204,7 +204,7 @@ void scenarioMenuLoop(UserSettings * settings) {
     renderResponsive(settings, responsive);
     while (updateMenuSelector(selector, true));
 
-    freeResponsiveBreakpoint(responsive);
+    freeResponsiveManager(responsive);
 
     freeScenario(result->scenario);
     free(result);

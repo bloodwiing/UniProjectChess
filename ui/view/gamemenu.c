@@ -226,6 +226,9 @@ void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_stat
             renderResponsive(settings, responsive);
     }
 
+    freeResponsiveManager(responsive);
+    free(result);
+
     if (state->stale) {
         logInfo(settings, LOG_MODULE, L"Ending game due to lack of moves (stalemate / checkmate)");
         remove(GAME_STATE_SAVE_FILE);

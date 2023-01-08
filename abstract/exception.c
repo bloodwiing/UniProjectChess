@@ -42,6 +42,6 @@ void reportException(UserSettings * settings, Exception exception) {
     con_clear();
     reportExceptionAtPos(settings, exception, offsetRect(getScreenRect(), 2, 2, -4, -4));
     con_flush();
-    con_sleep(10);
+    con_sleep(5.0f);
     con_clear();
 }

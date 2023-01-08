@@ -109,9 +109,9 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
                 runMenuSelectorInitCallback(menu_selector);
                 continue;
             }
+            logInfo(menu_selector->settings, LOG_MODULE, L"Run was final: ending menu");
             if (auto_free)
                 freeMenuSelector(menu_selector);
-            logInfo(menu_selector->settings, LOG_MODULE, L"Run was final: ending menu");
             return false;
         }
 
