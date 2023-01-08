@@ -5,6 +5,9 @@
 #include "ui/component/dialogbox.h"
 #include "ui/render.h"
 
+DIALOGBOX_CONTENT_CALLBACK(checkmateText);
+DIALOGBOX_CONTENT_CALLBACK(stalemateText);
+
 void showEndMenu(UserSettings * settings, Board * board, GameState * state) {
     ditherEffect();
 
@@ -13,9 +16,9 @@ void showEndMenu(UserSettings * settings, Board * board, GameState * state) {
 
     DialogBox box;
     if (state->check)
-        box = createDialogBox(L"CHECKMATE!", 0, 26, NULL);
+        box = createDialogBox(L"CHECKMATE!", 0, 28, checkmateText);
     else
-        box = createDialogBox(L"STALEMATE", 0, 28, NULL);
+        box = createDialogBox(L"STALEMATE", 0, 28, stalemateText);
     box.data_ptr = board;
 
     drawDialogBoxCentered(settings, &box);
@@ -30,7 +33,8 @@ DIALOGBOX_CONTENT_CALLBACK(checkmateText) {
     Team * winning_team = getTeam(board, (++board->active_turn) % board->team_count);
 
     Rect rect = createRect(x, y, width, height);
-    Rect centered = centerRectInRect((int)(6 + strlen(winning_team->name)), 1, rect);
+    Rect centered = centerRectInRect((int)(8 + strlen(winning_team->name)), 1, offsetRect(rect, 1, 0, -2, 0));
+    ++centered.x;
 
     renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, centered, L"%s wins!", winning_team->name);
 }

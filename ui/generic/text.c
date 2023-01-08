@@ -101,7 +101,6 @@ void renderTextColouredWrappedRect(UserSettings * settings, int bg, int fg, Rect
     }
 
     con_set_pos((int)(rect.x + row_len), (int)(rect.y + row - 1));
-    con_set_color(COLOR_RED, COLOR_RESET);
     wprintf(L"%*hs", rect.width - row_len, "");  // fill rest with bg
     while (row++ < rect.height) {
         con_set_pos((int)rect.x, (int)(rect.y + row - 1));
