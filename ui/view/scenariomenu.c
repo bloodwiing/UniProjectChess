@@ -11,6 +11,8 @@
 
 #include "utils/files.h"
 
+#define LOG_MODULE L"ScenarioMenu"
+
 MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu);
 MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu);
 
@@ -57,16 +59,20 @@ RESPONSIVE_CALLBACK(bp_scenarioCallback_List) {
 }
 
 RESPONSIVE_CALLBACK(bp_scenarioCallback_Preview) {
+    logInfo(settings, LOG_MODULE, L"Rendering scenario PREVIEW...");
+
     ScenarioResponsiveProcessingResult * result = data;
     Scenario * scenario = result->scenario;
 
     if (result->exception.status) {
+        logError(settings, LOG_MODULE, L"Failed to load scenario: %hs", result->exception.message);
         clearRect(rect);
         reportExceptionAtPos(result->selector->settings, result->exception, offsetRect(rect, 2, 2, -2, -2));
         return;
     }
 
     if (scenario == NULL) {
+        logDebug(settings, LOG_MODULE, L"scenario=NULL");
         clearRect(rect);
         return;
     }
@@ -79,9 +85,10 @@ RESPONSIVE_CALLBACK(bp_scenarioCallback_Preview) {
 }
 
 RESPONSIVE_CALLBACK(bp_scenarioCallback_Info) {
+    logInfo(settings, LOG_MODULE, L"Rendering scenario INFO...");
+
     ScenarioResponsiveProcessingResult * result = data;
     Scenario * scenario = result->scenario;
-    UserSettings * settings = result->selector->settings;
 
     Rect original = rect;
 
@@ -89,6 +96,7 @@ RESPONSIVE_CALLBACK(bp_scenarioCallback_Info) {
     rect.height -= 2;
 
     if (scenario == NULL) {
+        logDebug(settings, LOG_MODULE, L"scenario=NULL");
         clearRect(rect);
         return;
     }
@@ -161,6 +169,8 @@ ResponsiveBreakpoint createScenarioMapFullBreakpoint(ScenarioResponsiveProcessin
 
 // MENU NAVIGATION
 void scenarioMenuLoop(UserSettings * settings) {
+    logInfo(settings, LOG_MODULE, L"Running scenario menu...");
+
     initScenarioMenu(settings);
 
     // Responsive layout
@@ -176,8 +186,12 @@ void scenarioMenuLoop(UserSettings * settings) {
     addResponsiveBreakpoint(responsive, createScenarioFullBreakpoint(result));
     addResponsiveBreakpoint(responsive, createScenarioMapFullBreakpoint(result));
 
+    logInfo(settings, LOG_MODULE, L"Listing files...");
+
     size_t count = 0;
     char ** files = listDirectoryFiles(SCENARIO_FOLDER, &count);
+
+    logInfo(settings, LOG_MODULE, L"Found files: %d", count);
 
     for (int i = 0; i < count; i++) {
         wchar_t name[MENU_ITEM_MAX_STRING_LEN];
@@ -187,7 +201,7 @@ void scenarioMenuLoop(UserSettings * settings) {
     addMenuItem(selector, L"Back", "", result, onScenarioMenuLeave);
 
     scenarioResponsiveProcessingResultUpdate(result);
-    renderResponsive(responsive);
+    renderResponsive(settings, responsive);
     while (updateMenuSelector(selector, true));
 
     freeResponsiveBreakpoint(responsive);
@@ -207,11 +221,13 @@ MENU_SELECTOR_INIT_CALLBACK(initScenarioMenu) {
 MENU_SELECTOR_UPDATE_CALLBACK(updateScenarioMenu) {
     ScenarioResponsiveProcessingResult * result = other_data;
     scenarioResponsiveProcessingResultUpdate(result);
-    renderResponsive(result->responsive);
+    renderResponsive(settings, result->responsive);
     con_flush();
 }
 
 MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
+    logInfo(settings, LOG_MODULE, L"Starting game...");
+
     char * path = combinePath(SCENARIO_FOLDER, data);
     FILE * file = fopen(path, "rb");
 
@@ -224,10 +240,13 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
         fclose(file);
         free(path);
         if (scenario == NULL && exception.status) {
+            logError(settings, LOG_MODULE, L"Failed to load scenario: %hs", exception.message);
             reportException(settings, exception);
             return false;
         }
         if (scenario->version < getMinSupportedScenarioVersion(BUILD_VERSION)) {
+            logWarning(settings, LOG_MODULE, L"Scenario outdated! (scenario)%hs < (supported)%hs", getVersionName(scenario->version),
+                       getVersionName(getMinSupportedScenarioVersion(BUILD_VERSION)));
             freeScenario(scenario);
             return false;
         }
@@ -235,12 +254,15 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
         clearException(&exception);
         board = createBoard(scenario, settings, &exception);
         if (board == NULL && exception.status) {
+            logError(settings, LOG_MODULE, L"Failed to create board: %hs", exception.message);
             reportException(settings, exception);
             freeScenario(scenario);
             return false;
         }
     }
     else {
+        logWarning(settings, LOG_MODULE, L"File not found: %hs", path);
+        free(path);
         return false;
     }
 
@@ -251,5 +273,6 @@ MENU_ITEM_CALLBACK(onScenarioMenuSelect) {
 }
 
 MENU_ITEM_CALLBACK(onScenarioMenuLeave) {
+    logInfo(settings, LOG_MODULE, L"Leaving scenario menu...");
     return true;
 }

@@ -3,10 +3,11 @@
 #include "ui/component/responsive/responsive.h"
 #include "ui/render.h"
 
+#define LOG_MODULE L"GameMenu"
+
 
 // RESPONSIVE PROCESSING
 typedef struct BoardResponsiveProcessingResult {
-    UserSettings * settings;
     GameState * state;
     Board * board;
     ResponsiveManager * responsive;
@@ -17,7 +18,8 @@ typedef struct BoardResponsiveProcessingResult {
 RESPONSIVE_CALLBACK(bp_boardCallback_Board) {
     BoardResponsiveProcessingResult * result = data;
 
-    UserSettings * settings = result->settings;
+    logInfo(settings, LOG_MODULE, L"Rendering board...");
+
     Board * board = result->board;
     GameState * state = result->state;
 
@@ -46,7 +48,8 @@ RESPONSIVE_CALLBACK(bp_boardCallback_Board) {
 RESPONSIVE_CALLBACK(bp_boardCallback_StatusBig) {
     BoardResponsiveProcessingResult * result = data;
 
-    UserSettings * settings = result->settings;
+    logInfo(settings, LOG_MODULE, L"Rendering big status...");
+
     Board * board = result->board;
     GameState * state = result->state;
 
@@ -71,7 +74,8 @@ RESPONSIVE_CALLBACK(bp_boardCallback_StatusBig) {
 RESPONSIVE_CALLBACK(bp_boardCallback_StatusSmall) {
     BoardResponsiveProcessingResult * result = data;
 
-    UserSettings * settings = result->settings;
+    logInfo(settings, LOG_MODULE, L"Rendering small status...");
+
     Board * board = result->board;
     GameState * state = result->state;
 
@@ -90,9 +94,7 @@ RESPONSIVE_CALLBACK(bp_boardCallback_StatusSmall) {
 }
 
 RESPONSIVE_CALLBACK(bp_boardCallback_MoveList) {
-    BoardResponsiveProcessingResult * result = data;
-
-    UserSettings * settings = result->settings;
+    logInfo(settings, LOG_MODULE, L"Rendering move list...");
 
     drawDoubleBoxContained(settings, rect, COLOR_RESET, COLOR_DARK_GRAY);
 }
@@ -189,13 +191,13 @@ ResponsiveBreakpoint createBoardFullBreakpoint(BoardResponsiveProcessingResult *
 
 
 void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_state) {
+    logInfo(settings, LOG_MODULE, L"Running game menu...");
     con_clear();
 
     ResponsiveManager * responsive = createResponsiveManager();
 
     BoardResponsiveProcessingResult * result = calloc(1, sizeof(BoardResponsiveProcessingResult));
     result->responsive = responsive;
-    result->settings = settings;
     result->state = state;
     result->board = state->board;
 
@@ -208,18 +210,19 @@ void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_stat
     addResponsiveBreakpoint(responsive, createBoardWideBreakpoint(result));
     addResponsiveBreakpoint(responsive, createBoardFullBreakpoint(result));
 
-    renderResponsive(responsive);
+    renderResponsive(settings, responsive);
 
     bool_t game_active = true;
 
     while (game_active) {
         if (hasConsoleSizeChanged(settings)) {
             con_clear();
-            renderResponsive(responsive);
+            logInfo(settings, LOG_MODULE, L"Console size changed: re-rendering");
+            renderResponsive(settings, responsive);
         }
 
-        if (evaluateGameInput(state, &game_active))
-            renderResponsive(responsive);
+        if (evaluateGameInput(settings, state, &game_active))
+            renderResponsive(settings, responsive);
     }
 
     if (save_state)

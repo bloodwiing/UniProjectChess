@@ -131,6 +131,7 @@ fabric.properties
 
 # CHESS save data
 data/
+logs/
 
 # Valgrind collected data
 valgrind.txt

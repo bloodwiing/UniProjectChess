@@ -6,6 +6,8 @@
 #include "ui/con_lib.h"
 #include "ui/render.h"
 
+#define LOG_MODULE L"DialogBox"
+
 #define COLOUR_SKULL COLOR_WHITE
 #define COLOUR_ROSE COLOR_LIGHT_RED
 #define COLOUR_ROSE_STEM COLOR_GREEN
@@ -32,6 +34,9 @@ void runDialogBoxCallback(UserSettings * settings, DialogBox * dialog_box) {
 }
 
 void drawDialogBox(UserSettings * settings, DialogBox * dialog_box, int x, int y) {
+    logInfo(settings, LOG_MODULE, L"Rendering Dialog box");
+    logDebug(settings, LOG_MODULE, L"width=%d height=%d", dialog_box->width, dialog_box->height);
+
     con_set_color(COLOR_RESET, COLOR_RESET);
 
     dialog_box->x = x;
@@ -40,8 +45,13 @@ void drawDialogBox(UserSettings * settings, DialogBox * dialog_box, int x, int y
     int title_pad = (int)(dialog_box->width - wcslen(dialog_box->title));
     int title_pad_left = title_pad / 2;
 
+    logDebug(settings, LOG_MODULE, L"title_pad=%d title_pad_left=%d", title_pad, title_pad_left);
+
     int border_pad = dialog_box->width - 9;
     int border_pad_left = border_pad / 2;
+
+    logDebug(settings, LOG_MODULE, L"border_pad=%d border_pad_left=%d", border_pad, border_pad_left);
+
     wchar_t * border_left = calloc(border_pad_left + 1, sizeof(wchar_t));
     wmemset(border_left, L'─', border_pad_left);
 

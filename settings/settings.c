@@ -30,9 +30,10 @@ void initDefaultUserSettings(UserSettings * settings) {
 }
 
 UserSettings * createDefaultUserSettings() {
-    UserSettings * out = malloc(sizeof(UserSettings));
+    UserSettings * out = calloc(1, sizeof(UserSettings));
     initDefaultUserSettings(out);
     out->size = con_get_size();
+    out->_log = createLog();
     return out;
 }
 
@@ -51,6 +52,7 @@ UserSettings * loadSettings(FILE * stream) {
     out->inputs = input_type;
     out->notation = notation_type;
     out->size = con_get_size();
+    out->_log = createLog();
     return out;
 }
 
@@ -90,6 +92,35 @@ bool_t hasConsoleSizeChanged(UserSettings * settings) {
     return false;
 }
 
+void logDebug(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...) {
+    va_list va;
+    va_start(va, format);
+    v_logDebug(settings->_log, module, format, va);
+    va_end(va);
+}
+
+void logInfo(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...) {
+    va_list va;
+    va_start(va, format);
+    v_logInfo(settings->_log, module, format, va);
+    va_end(va);
+}
+
+void logWarning(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...) {
+    va_list va;
+    va_start(va, format);
+    v_logWarning(settings->_log, module, format, va);
+    va_end(va);
+}
+
+void logError(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...) {
+    va_list va;
+    va_start(va, format);
+    v_logError(settings->_log, module, format, va);
+    va_end(va);
+}
+
 void freeSettings(UserSettings * settings) {
+    freeLog(settings->_log);
     free(settings);
 }

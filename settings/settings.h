@@ -1,7 +1,10 @@
 #ifndef CHESS_SETTINGS_H
 #define CHESS_SETTINGS_H
 
+#include <stdarg.h>
 #include <stdio.h>
+
+#include "./log.h"
 
 #include "abstract/defs.h"
 
@@ -31,6 +34,7 @@ typedef struct UserSettings {
 
     // runtime data
     ConSize size;
+    Log * _log;
 } UserSettings;
 
 void initDefaultUserSettings(UserSettings * settings);
@@ -45,6 +49,11 @@ UserSettings * loadUserSettings();
 UserSettings * safeLoadUserSettings();
 
 bool_t hasConsoleSizeChanged(UserSettings * settings);
+
+void logDebug(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...);
+void logInfo(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...);
+void logWarning(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...);
+void logError(UserSettings * settings, const wchar_t * module, const wchar_t * format, ...);
 
 void freeSettings(UserSettings * settings);
 

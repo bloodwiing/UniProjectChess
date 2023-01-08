@@ -7,6 +7,8 @@
 
 #include "engine/validation.h"
 
+#define LOG_MODULE L"Render"
+
 void renderPieceColoured(UserSettings * settings, int bg, int fg, Piece piece) {
     if (settings->display.unicode)
         renderTextColoured(settings, bg, fg, L"%ls", piece.unicode);
@@ -31,6 +33,8 @@ void renderPiece(UserSettings * settings, Team team, Piece piece) {
 }
 
 void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, bool_t with_coords, bool_t margin) {
+    logInfo(board->user_settings, LOG_MODULE, L"Rendering board...");
+
     Rect original_rect = getBoardRect(board, 0, 0);
     original_rect.width -= 2;
     original_rect.height -= 2;
@@ -180,8 +184,13 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
     renderBoard(board, draw_rect, board_rect, cur_x, cur_y, with_coords, margin);
 
     if (sel_x != -1 && sel_y != -1) {
+        logInfo(board->user_settings, LOG_MODULE, L"Rendering selection...");
+
         Tile * selected = getTile(board, sel_x, sel_y);
 
+        logDebug(board->user_settings, LOG_MODULE, L"sel_x=%d sel_y=%d", sel_x, sel_y);
+
+        logInfo(board->user_settings, LOG_MODULE, L"Origin count: %d", selected->origin_count);
         for (int origin_index = 0; origin_index < selected->origin_count;) {
 
             Path * target = selected->origins[origin_index++];
@@ -206,17 +215,21 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
 
                 if ((occupant = tile->game_piece) != NULL  // tile has a piece
                         && (occupant->team != selected->game_piece->team)  // AND piece is an enemy
-                        && (target->type & PATH_TYPE_ATTACK))  // AND the path supports attacking
+                        && (target->type & PATH_TYPE_ATTACK)) { // AND the path supports attacking
                     renderGamePieceWithBackground(board->user_settings, board->scenario, occupant, COLOR_GREEN, false);
+                }
                 else if (((occupant == NULL)  // ELSE tile is free
                             && (target->type & PATH_TYPE_MOVE))  // AND path supports moving
                         || (tile->phantom_count)  // OR tile has phantom pieces
-                            && (target->type & PATH_TYPE_ATTACK))  // AND the path supports attacking
+                            && (target->type & PATH_TYPE_ATTACK)) {  // AND the path supports attacking
                     renderTextColoured(board->user_settings, COLOR_GREEN, COLOR_LIGHT_GRAY, L" ");
+                }
             }
         }
 
         Piece * piece = getOriginalPiece(selected->game_piece, board->scenario);
+
+        logInfo(board->user_settings, LOG_MODULE, L"Special Moves: %d", piece->move_set.special_count);
 
         for (move_index_t move_index = 0; move_index < piece->move_set.special_count;) {
             SpecialMove * special = piece->move_set.specials + move_index++;
@@ -248,6 +261,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
         clearRect(draw_rect);
+        logError(board->user_settings, LOG_MODULE, L"Failed to render scenario: %hs", exception.message);
         reportExceptionAtPos(settings, exception, draw_rect);
         return;
     }

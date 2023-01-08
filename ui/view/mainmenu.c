@@ -10,6 +10,8 @@
 
 #include "utils/files.h"
 
+#define LOG_MODULE L"MainMenu"
+
 MENU_SELECTOR_INIT_CALLBACK(initMainMenu);
 MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu);
 
@@ -18,18 +20,18 @@ MENU_ITEM_CALLBACK(onMainMenuStart);
 MENU_ITEM_CALLBACK(onMainMenuExit);
 
 void mainMenuLoop(UserSettings * settings) {
+    logInfo(settings, LOG_MODULE, L"Running main menu...");
     initMainMenu(settings);
 
     MenuSelector * selector = createMenuSelector(settings, initMainMenu, updateMainMenu);
 
     if (isPathFile(GAME_STATE_SAVE_FILE))
-        addMenuItem(selector, L"Resume", "Let's get back into the fight", NULL, onMainMenuResume);
-    addMenuItem(selector, L"New Scenario", "New day, new battle", NULL, onMainMenuStart);
-    addMenuItem(selector, L"Quit", "Leaving already?", NULL, onMainMenuExit);
+        addMenuItem(selector, L"Resume", "Let's get back into the fight", selector, onMainMenuResume);
+    addMenuItem(selector, L"New Scenario", "New day, new battle", selector, onMainMenuStart);
+    addMenuItem(selector, L"Quit", "Leaving already?", selector, onMainMenuExit);
 
-    while (updateMenuSelector(selector, true)) {
-        displayMenuSelector(selector, offsetRect(getScreenRect(), 2, 4, -2, -4));
-    }
+    runMenuSelectorUpdateCallback(selector);
+    while (updateMenuSelector(selector, true));
 }
 
 MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
@@ -45,14 +47,18 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
     if (settings->size.height < 12)
         return;
 
+    displayMenuSelector(other_data, offsetRect(getScreenRect(), 2, 4, -2, -4));
+
     renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, createRect(5, 8, settings->size.width - 5, 2), L"%hs", text_data);
     con_flush();
 }
 
 MENU_ITEM_CALLBACK(onMainMenuResume) {
+    logInfo(settings, LOG_MODULE, L"Resuming previous game...");
     Exception exception = {};
     GameState * state = loadGameStateDefault(settings, &exception);
     if (state == NULL && exception.status) {
+        logError(settings, LOG_MODULE, L"Failed to resume: %hs", exception.message);
         reportException(settings, exception);
         return false;
     }
@@ -69,7 +75,6 @@ MENU_ITEM_CALLBACK(onMainMenuStart) {
 }
 
 MENU_ITEM_CALLBACK(onMainMenuExit) {
-    con_clear();
-    con_show_cursor(1);
+    logInfo(settings, LOG_MODULE, L"Exiting...");
     return true;
 }

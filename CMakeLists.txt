@@ -7,4 +7,4 @@ FILE(GLOB CHESS_SOURCES *.c abstract/*.c abstract/*.h engine/*.c model/*.c model
 add_executable(CHESS ${CHESS_SOURCES})
 
 target_include_directories(CHESS PRIVATE .)
-target_link_libraries(CHESS PRIVATE m)
+target_link_libraries(CHESS m)

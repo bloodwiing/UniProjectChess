@@ -4,6 +4,8 @@
 
 #include "ui/con_lib.h"
 
+#define LOG_MODULE L"ResponsiveManager"
+
 ResponsiveManager * createResponsiveManager() {
     ResponsiveManager * out = calloc(1, sizeof(ResponsiveManager));
     return out;
@@ -14,12 +16,12 @@ void addResponsiveBreakpoint(ResponsiveManager * manager, ResponsiveBreakpoint b
     manager->breakpoints[manager->breakpoint_count - 1] = breakpoint;
 }
 
-void renderResponsive(ResponsiveManager * manager) {
+void renderResponsive(UserSettings * settings, ResponsiveManager * manager) {
     ConSize size = con_get_size();
     for (size_t i = 0; i < manager->breakpoint_count; i++) {
         ResponsiveBreakpoint breakpoint = manager->breakpoints[i];
         if (checkResponsiveBreakpoint(breakpoint, size)) {
-            runLayout(breakpoint.layout, getScreenRect());
+            runLayout(settings, breakpoint.layout, getScreenRect());
             break;
         }
     }

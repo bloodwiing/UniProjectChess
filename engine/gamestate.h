@@ -27,7 +27,7 @@ GamePiece * getGamePieceSelected(GameState * state);
 bool_t isGameCursorOnSelected(GameState * state);
 
 void reselectGameAtCursor(GameState * state);
-void executeGameMove(GameState * state);
-bool_t evaluateGameInput(GameState * state, bool_t * game_active);
+void executeGameMove(UserSettings *settings, GameState *state);
+bool_t evaluateGameInput(UserSettings *settings, GameState *state, bool_t *game_active);
 
 #endif //CHESS_GAMESTATE_H

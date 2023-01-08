@@ -3,6 +3,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+#define LOG_MODULE L"ResponsiveLayout"
+
 // main instance
 
 ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* callback), RESPONSIVE_FREE_CALLBACK(* free_callback)) {
@@ -14,12 +16,12 @@ ResponsiveLayout createLayout(float weight, void * data, RESPONSIVE_CALLBACK(* c
     };
 }
 
-void runLayoutWithData(ResponsiveLayout layout, Rect rect, void * data) {
-    layout.callback(rect, data);
+void runLayoutWithData(UserSettings * settings, ResponsiveLayout layout, Rect rect, void * data) {
+    layout.callback(settings, rect, data);
 }
 
-void runLayout(ResponsiveLayout layout, Rect rect) {
-    runLayoutWithData(layout, rect, layout.data);
+void runLayout(UserSettings * settings, ResponsiveLayout layout, Rect rect) {
+    runLayoutWithData(settings, layout, rect, layout.data);
 }
 
 void freeLayout(ResponsiveLayout layout) {
@@ -43,6 +45,8 @@ void addHorizontalChild(ResponsiveHorizontalLayout * parent, ResponsiveLayout ch
 
 RESPONSIVE_CALLBACK(horizontalLayoutCallback) {
     ResponsiveHorizontalLayout * layout = data;
+    logInfo(settings, LOG_MODULE, L"Running horizontal layout");
+
     int used = 0;
     for (int i = 0; i < layout->child_count - 1;) {
         ResponsiveLayout child = layout->children[i++];
@@ -51,7 +55,7 @@ RESPONSIVE_CALLBACK(horizontalLayoutCallback) {
         new_rect.x = new_rect.x + used;
         new_rect.width = (int)round((double)new_rect.width * child.weight / layout->total_child_weight);
 
-        runLayout(child, new_rect);
+        runLayout(settings, child, new_rect);
 
         used += new_rect.width;
     }
@@ -59,7 +63,8 @@ RESPONSIVE_CALLBACK(horizontalLayoutCallback) {
     // last one fill remaining without any precision errors
     rect.x += used;
     rect.width -= used;
-    runLayout(layout->children[layout->child_count - 1], rect);
+
+    runLayout(settings, layout->children[layout->child_count - 1], rect);
 }
 
 RESPONSIVE_FREE_CALLBACK(horizontalLayoutFreeCallback) {
@@ -90,6 +95,8 @@ void addVerticalChild(ResponsiveVerticalLayout * parent, ResponsiveLayout child)
 
 RESPONSIVE_CALLBACK(verticalLayoutCallback) {
     ResponsiveVerticalLayout * layout = data;
+    logInfo(settings, LOG_MODULE, L"Running vertical layout");
+
     int used = 0;
     for (int i = 0; i < layout->child_count - 1;) {
         ResponsiveLayout child = layout->children[i++];
@@ -98,7 +105,7 @@ RESPONSIVE_CALLBACK(verticalLayoutCallback) {
         new_rect.y = new_rect.y + used;
         new_rect.height = (int)round((double)new_rect.height * child.weight / layout->total_child_weight);
 
-        runLayout(child, new_rect);
+        runLayout(settings, child, new_rect);
 
         used += new_rect.height;
     }
@@ -106,7 +113,8 @@ RESPONSIVE_CALLBACK(verticalLayoutCallback) {
     // last one fill remaining without any precision errors
     rect.y += used;
     rect.height -= used;
-    runLayout(layout->children[layout->child_count - 1], rect);
+
+    runLayout(settings, layout->children[layout->child_count - 1], rect);
 }
 
 RESPONSIVE_FREE_CALLBACK(verticalLayoutFreeCallback) {

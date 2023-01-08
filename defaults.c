@@ -10,6 +10,8 @@
 
 #include "utils/files.h"
 
+#define LOG_MODULE L"Scenario"
+
 Piece createDefaultPawn(uint8_t team) {
     MoveSet move_set = createMoveSet();
 
@@ -276,11 +278,14 @@ Scenario * createDefaultScenario() {
     return scenario;
 }
 
-void saveDefaultScenario() {
+void saveDefaultScenario(UserSettings * settings) {
+    createDirectoryIfMissing(SCENARIO_FOLDER);
+
     char * path = combinePath(SCENARIO_FOLDER, "classic.chess");
     FILE * file = fopen(path, "wb");
 
     if (file == NULL) {
+        logError(settings, LOG_MODULE, L"Could not open file: %hs", path);
         free(path);
         return;
     }

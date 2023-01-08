@@ -13,7 +13,7 @@ typedef struct ResponsiveManager {
 ResponsiveManager * createResponsiveManager();
 void addResponsiveBreakpoint(ResponsiveManager * manager, ResponsiveBreakpoint breakpoint);
 
-void renderResponsive(ResponsiveManager * manager);
+void renderResponsive(UserSettings * settings, ResponsiveManager * manager);
 
 void freeResponsiveBreakpoint(ResponsiveManager * manager);
 

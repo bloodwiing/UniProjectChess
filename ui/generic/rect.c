@@ -43,6 +43,10 @@ Rect fitRect(Rect rect, int bound_width, int bound_height) {
     return out;
 }
 
+void logDebugRect(UserSettings * settings, const wchar_t * module, const char * name, Rect rect) {
+    logDebug(settings, module, L"%hs={ x=%d, y=%d, width=%d, height=%d }", name, rect.x, rect.y, rect.width, rect.height);
+}
+
 Rect getScreenRect() {
     ConSize size = con_get_size();
     return createRect(0, 0, size.width, size.height);

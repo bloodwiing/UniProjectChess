@@ -19,9 +19,13 @@ int main() {
     con_show_echo(false);
     con_show_cursor(false);
 
-    saveDefaultScenario();
+    logInfo(settings, L"Main", L"Saving default scenario");
+    saveDefaultScenario(settings);
 
     mainMenuLoop(settings);
+    con_clear();
+
+    wprintf(L"Saving log file...\n");
     freeSettings(settings);
 
     con_show_echo(true);

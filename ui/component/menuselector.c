@@ -7,25 +7,32 @@
 #include "ui/con_lib.h"
 #include "ui/render.h"
 
+#define LOG_MODULE L"MenuSelector"
+
 MenuSelector * createMenuSelector(UserSettings * settings, MENU_SELECTOR_INIT_CALLBACK(*init_callback), MENU_SELECTOR_UPDATE_CALLBACK(*update_callback)) {
     MenuSelector * out = calloc(1, sizeof(MenuSelector));
     out->settings = settings;
     out->selected = -1;
     out->init_callback = init_callback;
     out->update_callback = update_callback;
+    logInfo(settings, LOG_MODULE, L"Created Menu");
     return out;
 }
 
 void addMenuItem(MenuSelector * menu_selector, wchar_t * name, char * text_data, void * other_data, MENU_ITEM_CALLBACK(*callback)) {
     menu_selector->items = realloc(menu_selector->items, sizeof(MenuItem) * ++(menu_selector->item_count));
     menu_selector->items[menu_selector->item_count - 1] = createMenuItem(menu_selector->settings, name, text_data, other_data, callback);
+    logInfo(menu_selector->settings, LOG_MODULE, L"Added item (current count: %d)", menu_selector->item_count);
     if (menu_selector->item_count == 1) {
         menu_selector->selected = 0;
         runMenuSelectorUpdateCallback(menu_selector);
+        logInfo(menu_selector->settings, LOG_MODULE, L"First item added: running update callback...");
     }
 }
 
 void displayMenuSelector(MenuSelector * menu_selector, Rect rect) {
+    logInfo(menu_selector->settings, LOG_MODULE, L"Displaying Menu...");
+
     size_t item_count = rect.height < menu_selector->item_count ? rect.height : menu_selector->item_count;
     size_t space = menu_selector->item_count - item_count;
     int offset = (int)(menu_selector->selected - (item_count + 1) / 2 + 1);
@@ -52,11 +59,17 @@ void displayMenuSelector(MenuSelector * menu_selector, Rect rect) {
 #endif
     }
 
-    if (offset_max_min > 0)
-        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(rect.x, rect.y, rect.width), L"/\\ ...");
+    if (offset_max_min > 0) {
+        logInfo(menu_selector->settings, LOG_MODULE, L"Menu Offset: Upper scroll indicator");
+        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, COLOR_DARK_GRAY,
+                                      RECT_LINE(rect.x, rect.y, rect.width), L"/\\ ...");
+    }
 
-    if (item_count < menu_selector->item_count && offset_max_min != space)
-        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(rect.x, rect.y + item_count, rect.width), L"\\/ ...");
+    if (item_count < menu_selector->item_count && offset_max_min != space) {
+        logInfo(menu_selector->settings, LOG_MODULE, L"Menu Offset: Lower scroll indicator");
+        renderTextColouredWrappedRect(menu_selector->settings, COLOR_RESET, COLOR_DARK_GRAY,
+                                      RECT_LINE(rect.x, rect.y + item_count, rect.width), L"\\/ ...");
+    }
 
 #ifdef DEBUG_MENU_RENDERING
     con_set_color(COLOR_GREEN, COLOR_BLACK);
@@ -73,12 +86,14 @@ void * getSelectedOtherData(MenuSelector * menu_selector) {
 }
 
 void runMenuSelectorInitCallback(MenuSelector * menu_selector) {
+    logInfo(menu_selector->settings, LOG_MODULE, L"Running init callback");
     if (menu_selector->init_callback != NULL)
         menu_selector->init_callback(menu_selector->settings);
     runMenuSelectorUpdateCallback(menu_selector);
 }
 
 void runMenuSelectorUpdateCallback(MenuSelector * menu_selector) {
+    logInfo(menu_selector->settings, LOG_MODULE, L"Running update callback");
     if (menu_selector->update_callback != NULL)
         menu_selector->update_callback(menu_selector->settings, getSelectedTextData(menu_selector), getSelectedOtherData(menu_selector));
 }
@@ -88,21 +103,26 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
 
     while ((key = con_read_key())) {
         if (key == KEY_ENTER || key == KEY_SPACE) {
+            logInfo(menu_selector->settings, LOG_MODULE, L"Executing item %d", menu_selector->selected);
             if (!runMenuItem(menu_selector->items[menu_selector->selected])) {
+                logInfo(menu_selector->settings, LOG_MODULE, L"Run wasn't final: resuming menu");
                 runMenuSelectorInitCallback(menu_selector);
                 continue;
             }
             if (auto_free)
                 freeMenuSelector(menu_selector);
+            logInfo(menu_selector->settings, LOG_MODULE, L"Run was final: ending menu");
             return false;
         }
 
         switch (key) {
             CASE_KEY_UP:
+                logInfo(menu_selector->settings, LOG_MODULE, L"Navigating up...");
                 if (menu_selector->selected-- == 0) menu_selector->selected = menu_selector->item_count - 1;
                 runMenuSelectorUpdateCallback(menu_selector);
                 break;
             CASE_KEY_DOWN:
+                logInfo(menu_selector->settings, LOG_MODULE, L"Navigating down...");
                 if (menu_selector->selected++ == menu_selector->item_count - 1) menu_selector->selected = 0;
                 runMenuSelectorUpdateCallback(menu_selector);
                 break;
@@ -118,6 +138,7 @@ bool_t updateMenuSelector(MenuSelector * menu_selector, bool_t auto_free) {
 }
 
 void freeMenuSelector(MenuSelector * menu_selector) {
+    logInfo(menu_selector->settings, LOG_MODULE, L"Freeing...");
     for (int i = 0; i < menu_selector->item_count;) {
         freeMenuItem(menu_selector->items[i++]);
     }
