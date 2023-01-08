@@ -44,12 +44,17 @@ MENU_SELECTOR_INIT_CALLBACK(initMainMenu) {
 }
 
 MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
-    if (settings->size.height < 12)
-        return;
+    if (settings->size.height > 15) {
+        displayMenuSelector(other_data, offsetRect(getScreenRect(), 2, 4, -2, -9));
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_DARK_GRAY, RECT_LINE(2, settings->size.height - 2, settings->size.width - 4), L"https://github.com/bloodwiing/UniProjectChess");
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, RECT_LINE(2, settings->size.height - 3, settings->size.width - 4), L"Created by @BLOODWIING (Donatas Kirda)");
+    }
+    else {
+        displayMenuSelector(other_data, offsetRect(getScreenRect(), 2, 4, -2, -5));
+    }
 
-    displayMenuSelector(other_data, offsetRect(getScreenRect(), 2, 4, -2, -4));
-
-    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, createRect(5, 8, settings->size.width - 5, 2), L"%hs", text_data);
+    if (settings->size.height >= 12)
+        renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, createRect(5, 8, settings->size.width - 5, 2), L"%hs", text_data);
     con_flush();
 }
 
