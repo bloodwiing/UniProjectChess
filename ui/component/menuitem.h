@@ -19,9 +19,15 @@ typedef struct MenuItem {
     MENU_ITEM_CALLBACK(*callback);
 } MenuItem;
 
+
+/// Creates a new menu option
 MenuItem * createMenuItem(UserSettings * settings, wchar_t * text, char * text_data, void * other_data, MENU_ITEM_CALLBACK(*callback));
+
+/// Runs the menu option's callback
 bool_t runMenuItem(MenuItem * menu_item);
 
+
+/// Clears used memory
 void freeMenuItem(MenuItem * menu_item);
 
 #endif //CHESS_MENUITEM_H

@@ -36,7 +36,7 @@ DIALOGBOX_CONTENT_CALLBACK(checkmateText) {
     Rect centered = centerRectInRect((int)(8 + strlen(winning_team->name)), 1, offsetRect(rect, 1, 0, -2, 0));
     ++centered.x;
 
-    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, centered, L"%s wins!", winning_team->name);
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_YELLOW, centered, L"%hs wins!", winning_team->name);
 }
 
 DIALOGBOX_CONTENT_CALLBACK(stalemateText) {

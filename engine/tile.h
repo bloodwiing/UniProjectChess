@@ -45,8 +45,13 @@ Path * findOrigin(Tile * tile, Vector vector, bool_t repeat, path_type_t type);
 bool_t hasOrigin(Tile * tile, Vector vector, bool_t repeat, path_type_t type);
 void clearOrigins(Tile * tile);
 
+/// Adds a new phantom piece (special move consequence)
 void addPhantom(struct Board * board, Tile * tile, GamePiece * game_piece);
+
+/// Update's every phantom piece (removes old, activates new)
 void updatePhantoms(Tile * tile);
+
+/// Causes all phantom pieces on that tile to be captured
 void capturePhantoms(struct Board * board, Tile * tile);
 
 void freeTile(Tile * tile);

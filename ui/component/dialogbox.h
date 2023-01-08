@@ -20,11 +20,18 @@ typedef struct DialogBox {
     void * data_ptr;
 } DialogBox;
 
+/// Creates a new dialog box
 DialogBox createDialogBox(wchar_t * title, uint16_t height, uint16_t width, DIALOGBOX_CONTENT_CALLBACK(*content_callback));
 
+
+/// Runs the dialog box's callback
 void runDialogBoxCallback(UserSettings * settings, DialogBox * dialog_box);
 
+
+/// Draws the dialog box to the screen at the given position
 void drawDialogBox(UserSettings * settings, DialogBox * dialog_box, int x, int y);
+
+/// Draws the dialog box centered to the console's screen
 void drawDialogBoxCentered(UserSettings * settings, DialogBox * dialog_box);
 
 #endif //CHESS_DIALOGBOX_H
