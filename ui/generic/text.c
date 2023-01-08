@@ -52,7 +52,7 @@ void renderTextColouredWrappedRect(UserSettings * settings, int bg, int fg, Rect
     va_start(argv1, format);
     va_copy(argv2, argv1);
 
-    int formatted_size = vfwslen(format, argv1);
+    int formatted_size = vfwslen(format, argv1) + 1;
     va_end(argv1);
 
     wchar_t * formatted = calloc(formatted_size + 1, sizeof(wchar_t));
@@ -98,11 +98,6 @@ void renderTextColouredWrappedRect(UserSettings * settings, int bg, int fg, Rect
         }
 
         cursor += word;
-    }
-
-    if (row_len < rect.width) {  // end with a space character
-        fputws(L" ", stdout);
-        ++row_len;
     }
 
     con_set_pos((int)(rect.x + row_len), (int)(rect.y + row - 1));
