@@ -261,7 +261,7 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
         clearRect(draw_rect);
-        logError(board->user_settings, LOG_MODULE, L"Failed to render scenario: %hs", exception.message);
+        logError(settings, LOG_MODULE, L"Failed to render scenario: %hs", exception.message);
         reportExceptionAtPos(settings, exception, draw_rect);
         return;
     }
