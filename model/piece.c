@@ -24,11 +24,11 @@ Piece createPiece(char * name, wchar_t * unicode, char symbol, wchar_t * notatio
 void savePiece(Piece piece, FILE * stream) {
     fwrite(&piece, STRUCT_PIECE_SIZE_WITHOUT_MOVE_SET, 1, stream);
 
-    wchar16_t * converted = createU16(piece.unicode, PIECE_UNICODE_LENGTH);
+    wchar16_t * converted = createU16(piece.unicode, PIECE_UNICODE_LENGTH * 2, PIECE_UNICODE_LENGTH);
     fwrite(converted, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
     free(converted);
 
-    converted = createU16(piece.notation_unicode, PIECE_UNICODE_LENGTH);
+    converted = createU16(piece.notation_unicode, PIECE_UNICODE_LENGTH * 2, PIECE_UNICODE_LENGTH);
     fwrite(converted, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
     free(converted);
 
@@ -42,13 +42,13 @@ Piece loadPiece(FILE * stream) {
     wchar16_t unicode[PIECE_UNICODE_LENGTH];
     fread(unicode, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
 
-    wchar_t * converted = createWStr(unicode, PIECE_UNICODE_LENGTH);
+    wchar_t * converted = createWStr(unicode, PIECE_UNICODE_LENGTH, PIECE_UNICODE_LENGTH);
     memcpy(out.unicode, converted, sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
     free(converted);
 
     fread(unicode, sizeof(wchar16_t), PIECE_UNICODE_LENGTH, stream);
 
-    converted = createWStr(unicode, PIECE_UNICODE_LENGTH);
+    converted = createWStr(unicode, PIECE_UNICODE_LENGTH, PIECE_UNICODE_LENGTH);
     memcpy(out.notation_unicode, converted, sizeof(wchar_t) * PIECE_UNICODE_LENGTH);
     free(converted);
 

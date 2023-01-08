@@ -8,9 +8,6 @@
 
 #include "utils/files.h"
 
-#define LOG_FOLDER "./logs"
-#define LATEST_FILE "./logs/_latest.log"
-
 #define MAX_TIME_STRING 25
 
 Log * createLog() {

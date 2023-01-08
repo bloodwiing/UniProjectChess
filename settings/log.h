@@ -7,6 +7,9 @@
 
 #include "abstract/defs.h"
 
+#define LOG_FOLDER "./logs"
+#define LATEST_FILE "./logs/_latest.log"
+
 typedef struct Log {
     FILE * latest;
     FILE * timestamp_file;
