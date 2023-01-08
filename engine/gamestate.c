@@ -94,6 +94,9 @@ void executeGameMove(UserSettings * settings, GameState * state) {
             logInfo(settings, LOG_MODULE, L"Checking for promotions...");
             handleGamePiecePromotion(state->board, game_piece);  // promotion check
 
+            state->stale = !hasTeamPossibleMoves(state->board, getActiveTeam(state->board));
+            state->check = isTeamChecked(getActiveTeam(state->board));
+
             state->piece_selected = false;
         }
         else {  // check for special/none
@@ -152,6 +155,9 @@ void executeGameMove(UserSettings * settings, GameState * state) {
                     }
                     nextBoardTurn(state->board);  // finish turn
 
+                    state->stale = !hasTeamPossibleMoves(state->board, getActiveTeam(state->board));
+                    state->check = isTeamChecked(getActiveTeam(state->board));
+
                     state->piece_selected = false;
                     return;
                 }
@@ -191,6 +197,8 @@ bool_t evaluateGameInput(UserSettings * settings, GameState * state, bool_t * ga
             CASE_KEY_CONFIRM:
                 logInfo(settings, LOG_MODULE, L"Running action...");
                 executeGameMove(settings, state);
+                if (state->stale)
+                    *game_active = false;
                 break;
 
             CASE_KEY_CANCEL:

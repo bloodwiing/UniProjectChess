@@ -21,6 +21,8 @@ void updateTilePaths(Board * board, ucoord_t x, ucoord_t y);
 
 bool_t isTileDangerous(Tile * tile, team_index_t team);
 
+bool_t hasTeamPossibleMoves(Board * board, Team * team);
+
 bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y);
 bool_t isTeamChecked(Team * team);
 bool_t isTeamCheckedAfterMove(Board * board, Team * team, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y);

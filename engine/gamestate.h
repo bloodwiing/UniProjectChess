@@ -13,6 +13,9 @@ typedef struct GameState {
 
     bool_t piece_selected;
     ucoord_t sel_x, sel_y;
+
+    bool_t stale;
+    bool_t check;
 } GameState;
 
 GameState * createGameState(Board * board);

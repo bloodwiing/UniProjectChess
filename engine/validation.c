@@ -190,6 +190,35 @@ bool_t isTileDangerous(Tile * tile, team_index_t team) {
     return false;
 }
 
+bool_t hasTeamPossibleMoves(Board * board, Team * team) {
+    for (tile_index_t tile_i = 0; tile_i < board->width * board->height;) {  // loop over every tile
+        Tile * tile = board->tiles[tile_i++];
+
+        GamePiece * game_piece;
+        if ((game_piece = tile->game_piece) != NULL) {  // where a piece exists
+
+            Team * gp_team = getGamePieceTeam(board, game_piece);  // of the same team as the one being checked
+            if (gp_team == team) {
+
+                for (path_index_t path_i = 0; path_i < tile->origin_count;) {  // and go over every origin
+                    Path * path = tile->origins[path_i++];
+
+                    Path * new_path = path->next_path;
+                    Tile * new_tile = path->next_tile;
+
+                    while (new_path != NULL) {
+                        if (isMoveValid(board, tile->x, tile->y, new_tile->x, new_tile->y, true))  // and see if they can at least move once
+                            return true;
+
+                        new_path = new_path->next_path;  // over the whole path of that origin
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 bool_t isMoveCheckingSelf(Board * board, ucoord_t origin_x, ucoord_t origin_y, ucoord_t target_x, ucoord_t target_y) {
     GamePiece * origin_gp = getTile(board, origin_x, origin_y)->game_piece;
     Piece * origin = getOriginalPiece(origin_gp, board->scenario);

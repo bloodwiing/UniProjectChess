@@ -50,6 +50,8 @@ VersionInfo getVersionInfo(version_t version) {
             return (VersionInfo){.name = "v0.14.2 Beta", .min_scenario_version = 20};  // updated menus
         case 23:
             return (VersionInfo){.name = "v0.14.4 Beta", .min_scenario_version = 20};  // new game screen
+        case 24:
+            return (VersionInfo){.name = "v0.15 Beta", .min_scenario_version = 20};  // checkmate, stalemate and victory screen
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }

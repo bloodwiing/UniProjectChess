@@ -2,6 +2,7 @@
 
 #include "ui/component/responsive/responsive.h"
 #include "ui/render.h"
+#include "ui/view/endmenu.h"
 
 #define LOG_MODULE L"GameMenu"
 
@@ -225,8 +226,15 @@ void resumeGameLoop(UserSettings * settings, GameState * state, bool_t save_stat
             renderResponsive(settings, responsive);
     }
 
-    if (save_state)
+    if (state->stale) {
+        logInfo(settings, LOG_MODULE, L"Ending game due to lack of moves (stalemate / checkmate)");
+        remove(GAME_STATE_SAVE_FILE);
+        showEndMenu(settings, state->board, state);
+    }
+    else if (save_state) {
+        logInfo(settings, LOG_MODULE, L"Saving game to file: %hs", GAME_STATE_SAVE_FILE);
         saveGameStateDefault(state);
+    }
 }
 
 void beginNewGameLoop(UserSettings * settings, Board * board, bool_t save_state) {
