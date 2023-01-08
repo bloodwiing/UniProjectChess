@@ -10,6 +10,10 @@ Rect offsetRect(Rect rect, int x, int y, int width, int height) {
     return createRect(rect.x + x, rect.y + y, rect.width + width, rect.height + height);
 }
 
+Rect insetRect(Rect rect, int amount) {
+    return offsetRect(rect, amount, amount, amount * -2, amount * -2);
+}
+
 Rect centerRectInRect(int inner_width, int inner_height, Rect outer) {
     int hor_pad = outer.width - inner_width,
         ver_pad = outer.height - inner_height;

@@ -45,6 +45,9 @@ void renderTextColouredWrappedRect(UserSettings * settings, int bg, int fg, Rect
     --rect.width;
     --rect.height;
 
+    if (rect.width < 0 || rect.height < 0)
+        return;
+
     va_list argv1, argv2;
     va_start(argv1, format);
     va_copy(argv2, argv1);

@@ -72,7 +72,7 @@ RESPONSIVE_CALLBACK(bp_scenarioCallback_Preview) {
     }
 
     Rect board_rect = getScenarioCenteredRect(scenario, rect, 0, 0);
-    renderScenario(scenario, result->selector->settings, rect, board_rect, false);
+    renderScenario(scenario, result->selector->settings, rect, board_rect, false, true);
     drawSingleBoxContained(result->selector->settings, rect, COLOR_RESET, COLOR_YELLOW);
 
     con_flush();

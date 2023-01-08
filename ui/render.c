@@ -30,7 +30,7 @@ void renderPiece(UserSettings * settings, Team team, Piece piece) {
     renderPieceWithBackground(settings, team, piece, COLOR_RESET, false);
 }
 
-void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, bool_t with_coords) {
+void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, bool_t with_coords, bool_t margin) {
     Rect original_rect = getBoardRect(board, 0, 0);
     original_rect.width -= 2;
     original_rect.height -= 2;
@@ -61,7 +61,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int 
 #ifdef DEBUG_BOARD_RENDERING
         con_set_color(COLOR_LIGHT_MAGENTA, COLOR_RESET);
 #endif
-        if (offset_x != 0)
+        if (offset_x != 0 && margin)
             wprintf(L"%*s", corrected_offset_x, "");
 
         for (i = reset_i; i <= width; i++) {
@@ -108,26 +108,29 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int 
 #ifdef DEBUG_BOARD_RENDERING
         con_set_color(COLOR_CYAN, COLOR_RESET);
 #endif
-        wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1 - corrected_offset_x, "");
+        if (margin)
+            wprintf(L"%*s", draw_rect.width - (width - reset_i) - 1 - corrected_offset_x, "");
     }
 
     // top margin clear
-    for (int end = draw_rect.height - board_rect.height + (offset_y != 0 ? offset_y + draw_rect.y - 1 : 0); end > 0; end--) {
+    if (margin)
+        for (int end = draw_rect.height - board_rect.height + (offset_y != 0 ? offset_y + draw_rect.y - 1 : 0); end > 0; end--) {
 #ifdef DEBUG_BOARD_RENDERING
-        con_set_color(COLOR_GREEN, COLOR_RESET);
+            con_set_color(COLOR_GREEN, COLOR_RESET);
 #endif
-        con_set_pos(draw_rect.x, draw_rect.y + end - 1);
-        wprintf(L"%*s", draw_rect.width, "");
-    }
+            con_set_pos(draw_rect.x, draw_rect.y + end - 1);
+            wprintf(L"%*s", draw_rect.width, "");
+        }
 
     // bottom margin clear
-    for (int end = (offset_y != 0 ? offset_y + draw_rect.y - 1 : 0); end < 0; end++) {
+    if (margin)
+        for (int end = (offset_y != 0 ? offset_y + draw_rect.y - 1 : 0); end < 0; end++) {
 #ifdef DEBUG_BOARD_RENDERING
-        con_set_color(COLOR_YELLOW, COLOR_RESET);
+            con_set_color(COLOR_YELLOW, COLOR_RESET);
 #endif
-        con_set_pos(draw_rect.x, draw_rect.y + draw_rect.height + end);
-        wprintf(L"%*s", draw_rect.width, "");
-    }
+            con_set_pos(draw_rect.x, draw_rect.y + draw_rect.height + end);
+            wprintf(L"%*s", draw_rect.width, "");
+        }
 
     if (with_coords) {
         // files
@@ -144,7 +147,7 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int 
                 }
                 // on border
                 con_set_pos(pos_x + i * 2 + corrected_offset_x + 1,
-                            draw_rect.y + draw_rect.height - board_rect.height - corrected_offset_y);
+                            pos_y - board_rect.height + board_rect.y * 2 + corrected_offset_y + 2);
             }
             renderTextColoured(board->user_settings, COLOR_RESET, i == cur_x ? COLOR_LIGHT_GREEN : COLOR_LIGHT_GRAY, L"%hs", file);
             free(file);
@@ -173,8 +176,8 @@ void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int 
     }
 }
 
-void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, int sel_x, int sel_y, bool_t with_coords) {
-    renderBoard(board, draw_rect, board_rect, cur_x, cur_y, with_coords);
+void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, int sel_x, int sel_y, bool_t with_coords, bool_t margin) {
+    renderBoard(board, draw_rect, board_rect, cur_x, cur_y, with_coords, margin);
 
     if (sel_x != -1 && sel_y != -1) {
         Tile * selected = getTile(board, sel_x, sel_y);
@@ -240,7 +243,7 @@ void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, in
     }
 }
 
-void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect, bool_t with_coords) {
+void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect, bool_t with_coords, bool_t margin) {
     Exception exception = {};
     Board * board = createBoard(scenario, settings, &exception);
     if (board == NULL && exception.status) {
@@ -248,14 +251,29 @@ void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect
         reportExceptionAtPos(settings, exception, draw_rect);
         return;
     }
-    renderBoard(board, draw_rect, board_rect, -1, -1, with_coords);
+    renderBoard(board, draw_rect, board_rect, -1, -1, with_coords, margin);
     freeBoard(board, false);
 }
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y) {
-    x = (x - board_rect.x + 1) * 2;
-    y = board_rect.y - 2 - y;
-    con_set_pos(draw_rect.x + x, draw_rect.y + draw_rect.height + y);
+    board_rect.x *= 2;
+
+    int offset_x = board_rect.x < 0 ? board_rect.x : 0,
+        offset_y = board_rect.y < 0 ? board_rect.y : 0;
+
+    int i = board_rect.x - offset_x,
+        j = board_rect.y - offset_y;
+
+    int pos_x = draw_rect.x - i + 1,
+        pos_y = draw_rect.y + draw_rect.height - 2 - j;
+
+    int corrected_offset_y = offset_y != 0 ? - offset_y + draw_rect.y - 1 : 0,
+        corrected_offset_x = offset_x != 0 ? - offset_x - draw_rect.x + 2 : 0;
+
+    x = pos_x + x * 2 + corrected_offset_x + 1;
+    y = pos_y - y + board_rect.y * 2 + corrected_offset_y;
+
+    con_set_pos(x, y);
 }
 
 bool_t isTileVisible(Rect board_rect, int x, int y) {

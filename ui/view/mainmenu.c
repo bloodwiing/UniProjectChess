@@ -45,7 +45,7 @@ MENU_SELECTOR_UPDATE_CALLBACK(updateMainMenu) {
     if (settings->size.height < 12)
         return;
 
-    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, createRect(5, 8, settings->size.width - 5, 2), L"%-*hs", MENU_ITEM_MAX_STRING_LEN, text_data);
+    renderTextColouredWrappedRect(settings, COLOR_RESET, COLOR_LIGHT_GREEN, createRect(5, 8, settings->size.width - 5, 2), L"%hs", text_data);
     con_flush();
 }
 

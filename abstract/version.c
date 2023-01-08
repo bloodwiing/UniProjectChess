@@ -42,6 +42,14 @@ VersionInfo getVersionInfo(version_t version) {
             return (VersionInfo){.name = "v0.12 Beta", .min_scenario_version = 16};  // pawn promotion
         case 19:
             return (VersionInfo){.name = "v0.13 Beta", .min_scenario_version = 19};  // algebraic notation + inverted map
+        case 20:
+            return (VersionInfo){.name = "v0.14 Beta", .min_scenario_version = 20};  // responsive layouts
+        case 21:
+            return (VersionInfo){.name = "v0.14.1 Beta", .min_scenario_version = 20};  // multiline text
+        case 22:
+            return (VersionInfo){.name = "v0.14.2 Beta", .min_scenario_version = 20};  // updated menus
+        case 23:
+            return (VersionInfo){.name = "v0.14.4 Beta", .min_scenario_version = 20};  // new game screen
         default:
             return (VersionInfo){.name = "Unknown", .min_scenario_version = VERSION_UNKNOWN};
     }

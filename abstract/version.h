@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define BUILD_VERSION 19
+#define BUILD_VERSION 23
 
 typedef uint16_t version_t;
 

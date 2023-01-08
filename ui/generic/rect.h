@@ -11,6 +11,7 @@ typedef struct Rect {
 Rect createRect(int x, int y, int width, int height);
 
 Rect offsetRect(Rect rect, int x, int y, int width, int height);
+Rect insetRect(Rect rect, int amount);
 
 Rect centerRectInRect(int inner_width, int inner_height, Rect outer);
 Rect getScreenCenteredRect(int width, int height);

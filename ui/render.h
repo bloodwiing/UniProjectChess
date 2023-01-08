@@ -22,9 +22,9 @@ void renderPieceWithBackground(UserSettings * settings, Team team, Piece piece, 
 void renderGamePieceWithBackground(UserSettings * settings, Scenario * scenario, GamePiece * game_piece, int bg, bool_t invert);
 void renderPiece(UserSettings * settings, Team team, Piece piece);
 
-void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, bool_t with_coords);
-void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, int sel_x, int sel_y, bool_t with_coords);
-void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect, bool_t with_coords);
+void renderBoard(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, bool_t with_coords, bool_t margin);
+void renderBoardWithSelection(Board * board, Rect draw_rect, Rect board_rect, int cur_x, int cur_y, int sel_x, int sel_y, bool_t with_coords, bool_t margin);
+void renderScenario(Scenario * scenario, UserSettings * settings, Rect draw_rect, Rect board_rect, bool_t with_coords, bool_t margin);
 
 void setCursorAtTile(Rect draw_rect, Rect board_rect, int x, int y);
 bool_t isTileVisible(Rect board_rect, int x, int y);
