@@ -254,26 +254,26 @@ Scenario * createDefaultScenario() {
     addTeam(scenario, createDefaultTeamWhite());
     addTeam(scenario, createDefaultTeamBlack());
 
-    addSpawn(scenario, createSpawn(0, 7, DEFAULT_TEAM_TYPE_BLACK, 1));  // black rook
-    addSpawn(scenario, createSpawn(1, 7, DEFAULT_TEAM_TYPE_BLACK, 2));  // black knight
-    addSpawn(scenario, createSpawn(2, 7, DEFAULT_TEAM_TYPE_BLACK, 3));  // black bishop
-    addSpawn(scenario, createSpawn(3, 7, DEFAULT_TEAM_TYPE_BLACK, 4));  // black queen
-    addSpawn(scenario, createSpawn(4, 7, DEFAULT_TEAM_TYPE_BLACK, 5));  // black king
-    addSpawn(scenario, createSpawn(5, 7, DEFAULT_TEAM_TYPE_BLACK, 3));  // black bishop
-    addSpawn(scenario, createSpawn(6, 7, DEFAULT_TEAM_TYPE_BLACK, 2));  // black knight
-    addSpawn(scenario, createSpawn(7, 7, DEFAULT_TEAM_TYPE_BLACK, 1));  // black rook
+    addSpawn(scenario, createSpawn(0, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_ROOK));  // black rook
+    addSpawn(scenario, createSpawn(1, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_KNIGHT));  // black knight
+    addSpawn(scenario, createSpawn(2, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_BISHOP));  // black bishop
+    addSpawn(scenario, createSpawn(3, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_QUEEN));  // black queen
+    addSpawn(scenario, createSpawn(4, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_KING));  // black king
+    addSpawn(scenario, createSpawn(5, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_BISHOP));  // black bishop
+    addSpawn(scenario, createSpawn(6, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_KNIGHT));  // black knight
+    addSpawn(scenario, createSpawn(7, 7, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_ROOK));  // black rook
     for (int i = 0; i < 8; i++) {
-        addSpawn(scenario, createSpawn(i, 6, DEFAULT_TEAM_TYPE_BLACK, 0));  // black pawn
-        addSpawn(scenario, createSpawn(i, 1, DEFAULT_TEAM_TYPE_WHITE, 0));  // white pawn
+        addSpawn(scenario, createSpawn(i, 6, DEFAULT_TEAM_TYPE_BLACK, DEFAULT_PIECE_TYPE_PAWN));  // black pawn
+        addSpawn(scenario, createSpawn(i, 1, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_PAWN));  // white pawn
     }
-    addSpawn(scenario, createSpawn(0, 0, DEFAULT_TEAM_TYPE_WHITE, 1));  // white rook
-    addSpawn(scenario, createSpawn(1, 0, DEFAULT_TEAM_TYPE_WHITE, 2));  // white knight
-    addSpawn(scenario, createSpawn(2, 0, DEFAULT_TEAM_TYPE_WHITE, 3));  // white bishop
-    addSpawn(scenario, createSpawn(3, 0, DEFAULT_TEAM_TYPE_WHITE, 4));  // white queen
-    addSpawn(scenario, createSpawn(4, 0, DEFAULT_TEAM_TYPE_WHITE, 5));  // white king
-    addSpawn(scenario, createSpawn(5, 0, DEFAULT_TEAM_TYPE_WHITE, 3));  // white bishop
-    addSpawn(scenario, createSpawn(6, 0, DEFAULT_TEAM_TYPE_WHITE, 2));  // white knight
-    addSpawn(scenario, createSpawn(7, 0, DEFAULT_TEAM_TYPE_WHITE, 1));  // white rook
+    addSpawn(scenario, createSpawn(0, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_ROOK));  // white rook
+    addSpawn(scenario, createSpawn(1, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_KNIGHT));  // white knight
+    addSpawn(scenario, createSpawn(2, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_BISHOP));  // white bishop
+    addSpawn(scenario, createSpawn(3, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_QUEEN));  // white queen
+    addSpawn(scenario, createSpawn(4, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_KING));  // white king
+    addSpawn(scenario, createSpawn(5, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_BISHOP));  // white bishop
+    addSpawn(scenario, createSpawn(6, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_KNIGHT));  // white knight
+    addSpawn(scenario, createSpawn(7, 0, DEFAULT_TEAM_TYPE_WHITE, DEFAULT_PIECE_TYPE_ROOK));  // white rook
 
     return scenario;
 }
